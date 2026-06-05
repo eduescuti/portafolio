@@ -197,8 +197,8 @@ export const aboutText = {
 export const navLinks = [
   { id: 'hero', es: 'Inicio', en: 'Home' },
   { id: 'about', es: 'Sobre mí', en: 'About' },
-  { id: 'skills', es: 'Skills', en: 'Skills' },
   { id: 'experience', es: 'Experiencia', en: 'Experience' },
   { id: 'projects', es: 'Proyectos', en: 'Projects' },
+  { id: 'skills', es: 'Skills', en: 'Skills' },
   { id: 'contact', es: 'Contacto', en: 'Contact' },
 ]
