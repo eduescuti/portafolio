@@ -30,7 +30,7 @@ export default function About() {
             </div>
           </div>
 
-          <div className="glass-card p-6">
+          <div className="glass-card glass-card-hover p-6">
             <h3 className="mb-5 text-lg font-semibold text-white">
               {lang === 'es' ? 'Educación' : 'Education'}
             </h3>

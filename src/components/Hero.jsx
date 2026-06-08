@@ -57,17 +57,32 @@ export default function Hero() {
         </div>
 
         <div className="animate-fade-up animation-delay-200 flex justify-center opacity-0 lg:justify-end">
-          <div className="relative">
-            <div className="absolute -inset-4 rounded-3xl bg-gradient-to-br from-accent/30 to-indigo-600/20 blur-2xl" />
-            <div className="relative overflow-hidden rounded-3xl border border-white/15 shadow-2xl shadow-black/40">
+          <div className="group relative cursor-default">
+            <div className="absolute -inset-4 rounded-3xl blur-2xl transition-[filter] duration-[1500ms] ease-out group-hover:blur-3xl">
+              <div
+                className="absolute inset-0 rounded-3xl bg-gradient-to-br from-accent/25 to-indigo-600/15"
+                aria-hidden
+              />
+              <div
+                className="absolute inset-0 rounded-3xl bg-gradient-to-br from-accent/45 to-indigo-500/30 opacity-0 transition-opacity duration-[1500ms] ease-out group-hover:opacity-100"
+                aria-hidden
+              />
+            </div>
+
+            <div className="relative overflow-hidden rounded-3xl border border-white/15 shadow-2xl shadow-black/40 transition-all duration-[1500ms] ease-out group-hover:-translate-y-1.5 group-hover:border-accent/35 group-hover:shadow-[0_24px_48px_-12px_rgba(79,140,255,0.25)] motion-reduce:group-hover:translate-y-0">
               <img
                 src="/profile.png"
                 alt={profile.name}
-                className="h-72 w-64 object-cover object-top md:h-80 md:w-72 lg:h-96 lg:w-80"
+                className="h-72 w-64 object-cover object-top transition-transform duration-[1500ms] ease-out will-change-transform group-hover:scale-[1.04] motion-reduce:group-hover:scale-100 md:h-80 md:w-72 lg:h-96 lg:w-80"
               />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-navy-950/50 via-transparent to-transparent opacity-60 transition-opacity duration-[1500ms] ease-out group-hover:opacity-40" />
+              <div className="pointer-events-none absolute -left-full top-0 h-full w-1/2 skew-x-12 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 transition-all duration-[1500ms] ease-out group-hover:left-full group-hover:opacity-100 motion-reduce:hidden" />
             </div>
-            <div className="absolute -bottom-3 -right-3 rounded-xl border border-white/10 bg-navy-900/90 px-4 py-2 backdrop-blur-md">
-              <p className="font-mono text-xs text-accent">Full Stack Dev</p>
+
+            <div className="absolute -bottom-3 -right-3 rounded-xl border border-white/10 bg-navy-900/90 px-4 py-2 shadow-lg backdrop-blur-md transition-all duration-[1500ms] ease-out group-hover:-translate-y-1 group-hover:border-accent/30 group-hover:bg-navy-800/95 group-hover:shadow-accent/20 motion-reduce:group-hover:translate-y-0">
+              <p className="font-mono text-xs text-accent transition-colors duration-[1500ms] ease-out group-hover:text-accent-light">
+                Full Stack Dev
+              </p>
             </div>
           </div>
         </div>

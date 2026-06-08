@@ -6,7 +6,7 @@ export default function Experience() {
   const { t, lang } = useLanguage()
 
   return (
-    <section id="experience" className="relative border-t border-white/5 bg-navy-900/50">
+    <section id="experience" className="relative border-t border-white/5">
       <div className="section-container">
         <span className="section-label">{lang === 'es' ? 'Experiencia' : 'Experience'}</span>
         <h2 className="section-title">
@@ -15,12 +15,12 @@ export default function Experience() {
 
         <div className="relative space-y-8 before:absolute before:left-[19px] before:top-2 before:h-[calc(100%-16px)] before:w-px before:bg-white/10 md:before:left-[23px]">
           {experience.map((job) => (
-            <article key={job.id} className="relative pl-12 md:pl-14">
-              <div className="absolute left-0 top-1 flex h-10 w-10 items-center justify-center rounded-xl border border-accent/30 bg-navy-800 text-accent md:h-12 md:w-12">
+            <article key={job.id} className="group relative pl-12 md:pl-14">
+              <div className="absolute left-0 top-1 flex h-10 w-10 items-center justify-center rounded-xl border border-accent/30 bg-navy-800 text-accent transition-all duration-300 group-hover:border-accent/50 group-hover:bg-accent/10 group-hover:shadow-md group-hover:shadow-accent/15 md:h-12 md:w-12">
                 <Briefcase size={18} />
               </div>
 
-              <div className="glass-card p-6 transition hover:border-accent/20">
+              <div className="glass-card glass-card-hover p-6">
                 <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
                   <div>
                     <h3 className="text-lg font-semibold text-white">{job.company}</h3>

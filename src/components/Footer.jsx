@@ -13,7 +13,7 @@ export default function Footer() {
           {lang === 'es' ? 'Todos los derechos reservados.' : 'All rights reserved.'}
         </p>
         <p className="font-mono text-xs text-slate-600">
-          {lang === 'es' ? 'Hecho con' : 'Built with'} React + Vite + Tailwind
+          {lang === 'es' ? 'Full Stack Dev - Eduardo Escuti' : 'Full Stack Dev - Eduardo Escuti'}
         </p>
       </div>
     </footer>
