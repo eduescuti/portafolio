@@ -24,15 +24,24 @@ const iconMap = {
 const DRAG_THRESHOLD = 8
 const SCROLL_EDGE = 8
 
+function getScrollAxis(deltaX, deltaY) {
+  const absX = Math.abs(deltaX)
+  const absY = Math.abs(deltaY)
+  if (absX < DRAG_THRESHOLD && absY < DRAG_THRESHOLD) return null
+  return absX > absY ? 'x' : 'y'
+}
+
 function useDragScroll() {
   const trackRef = useRef(null)
   const dragRef = useRef({
     active: false,
     startX: 0,
+    startY: 0,
     startScrollLeft: 0,
     moved: false,
     suppressClick: false,
     pointerId: null,
+    axis: null,
   })
   const [isDragging, setIsDragging] = useState(false)
   const [canScrollLeft, setCanScrollLeft] = useState(false)
@@ -63,80 +72,103 @@ function useDragScroll() {
     }
   }, [updateScrollHints])
 
-  const handlePointerDown = useCallback((e) => {
-    if (e.pointerType !== 'mouse' || e.button !== 0) return
-
+  useEffect(() => {
     const el = trackRef.current
     if (!el) return
 
-    dragRef.current = {
-      active: true,
-      startX: e.clientX,
-      startScrollLeft: el.scrollLeft,
-      moved: false,
-      suppressClick: false,
-      pointerId: e.pointerId,
-    }
-  }, [])
+    const onPointerDown = (e) => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return
 
-  const handlePointerMove = useCallback((e) => {
-    if (!dragRef.current.active || e.pointerId !== dragRef.current.pointerId) return
-
-    const el = trackRef.current
-    if (!el) return
-
-    const deltaX = e.clientX - dragRef.current.startX
-
-    if (!dragRef.current.moved && Math.abs(deltaX) > DRAG_THRESHOLD) {
-      dragRef.current.moved = true
-      setIsDragging(true)
-      el.setPointerCapture(e.pointerId)
+      dragRef.current = {
+        active: true,
+        startX: e.clientX,
+        startY: e.clientY,
+        startScrollLeft: el.scrollLeft,
+        moved: false,
+        suppressClick: false,
+        pointerId: e.pointerId,
+        axis: null,
+      }
     }
 
-    if (!dragRef.current.moved) return
+    const onPointerMove = (e) => {
+      const drag = dragRef.current
+      if (!drag.active || e.pointerId !== drag.pointerId) return
 
-    e.preventDefault()
-    el.scrollLeft = dragRef.current.startScrollLeft - deltaX
-    updateScrollHints()
+      const deltaX = e.clientX - drag.startX
+      const deltaY = e.clientY - drag.startY
+
+      if (drag.axis === null) {
+        const axis = getScrollAxis(deltaX, deltaY)
+        if (!axis) return
+
+        if (axis === 'y') {
+          drag.active = false
+          drag.pointerId = null
+          return
+        }
+
+        drag.axis = 'x'
+        drag.moved = true
+        setIsDragging(true)
+        el.setPointerCapture(e.pointerId)
+      }
+
+      if (drag.axis !== 'x') return
+
+      e.preventDefault()
+      el.scrollLeft = drag.startScrollLeft - deltaX
+      updateScrollHints()
+    }
+
+    const onPointerEnd = (e) => {
+      const drag = dragRef.current
+      if (!drag.active || e.pointerId !== drag.pointerId) return
+
+      if (drag.moved) {
+        drag.suppressClick = true
+      }
+
+      drag.active = false
+      drag.moved = false
+      drag.pointerId = null
+      drag.axis = null
+      setIsDragging(false)
+
+      if (el.hasPointerCapture(e.pointerId)) {
+        el.releasePointerCapture(e.pointerId)
+      }
+
+      updateScrollHints()
+    }
+
+    const onClickCapture = (e) => {
+      if (!dragRef.current.suppressClick) return
+      e.preventDefault()
+      e.stopPropagation()
+      dragRef.current.suppressClick = false
+    }
+
+    el.addEventListener('pointerdown', onPointerDown)
+    el.addEventListener('pointermove', onPointerMove, { passive: false })
+    el.addEventListener('pointerup', onPointerEnd)
+    el.addEventListener('pointercancel', onPointerEnd)
+    el.addEventListener('click', onClickCapture, true)
+
+    return () => {
+      el.removeEventListener('pointerdown', onPointerDown)
+      el.removeEventListener('pointermove', onPointerMove)
+      el.removeEventListener('pointerup', onPointerEnd)
+      el.removeEventListener('pointercancel', onPointerEnd)
+      el.removeEventListener('click', onClickCapture, true)
+    }
   }, [updateScrollHints])
-
-  const finishDrag = useCallback((e) => {
-    if (!dragRef.current.active || e.pointerId !== dragRef.current.pointerId) return
-
-    const el = trackRef.current
-
-    if (dragRef.current.moved) {
-      dragRef.current.suppressClick = true
-    }
-
-    dragRef.current.active = false
-    dragRef.current.moved = false
-    dragRef.current.pointerId = null
-    setIsDragging(false)
-
-    if (el?.hasPointerCapture(e.pointerId)) {
-      el.releasePointerCapture(e.pointerId)
-    }
-
-    updateScrollHints()
-  }, [updateScrollHints])
-
-  const handleClickCapture = useCallback((e) => {
-    if (!dragRef.current.suppressClick) return
-    e.preventDefault()
-    e.stopPropagation()
-    dragRef.current.suppressClick = false
-  }, [])
 
   return {
     trackRef,
     isDragging,
     canScrollLeft,
     canScrollRight,
-    handlePointerDown,
-    handlePointerMove,
-    finishDrag,
-    handleClickCapture,
   }
 }
 
@@ -288,10 +320,6 @@ export default function Projects() {
     isDragging,
     canScrollLeft,
     canScrollRight,
-    handlePointerDown,
-    handlePointerMove,
-    finishDrag,
-    handleClickCapture,
   } = useDragScroll()
 
   return (
@@ -313,11 +341,6 @@ export default function Projects() {
 
           <div
             ref={trackRef}
-            onPointerDown={handlePointerDown}
-            onPointerMove={handlePointerMove}
-            onPointerUp={finishDrag}
-            onPointerCancel={finishDrag}
-            onClickCapture={handleClickCapture}
             aria-label={lang === 'es' ? 'Carrusel de proyectos' : 'Projects carousel'}
             className={`projects-carousel flex items-stretch snap-x snap-proximity gap-4 overflow-x-auto scroll-smooth px-6 pb-2 pt-1 md:gap-5 md:px-8 md:snap-none ${isDragging ? 'is-dragging' : ''}`}
           >

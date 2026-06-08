@@ -96,6 +96,73 @@ body {
   animation-delay: 500ms;
 }
 
+.mobile-nav-header {
+  transition:
+    background-color 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.mobile-nav-drawer {
+  max-height: calc(100dvh - 4.25rem);
+}
+
+@keyframes mobile-nav-item-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mobile-nav-header--open .mobile-nav-item {
+  animation: mobile-nav-item-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.mobile-nav-header--open .mobile-nav-item--1 {
+  animation-delay: 0.06s;
+}
+
+.mobile-nav-header--open .mobile-nav-item--2 {
+  animation-delay: 0.1s;
+}
+
+.mobile-nav-header--open .mobile-nav-item--3 {
+  animation-delay: 0.14s;
+}
+
+.mobile-nav-header--open .mobile-nav-item--4 {
+  animation-delay: 0.18s;
+}
+
+.mobile-nav-header--open .mobile-nav-item--5 {
+  animation-delay: 0.22s;
+}
+
+.mobile-nav-header--open .mobile-nav-item--6 {
+  animation-delay: 0.26s;
+}
+
+.mobile-nav-header--open .mobile-nav-item--cta {
+  animation-delay: 0.32s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-nav-header,
+  .mobile-nav-backdrop,
+  .mobile-nav-drawer {
+    transition: none;
+  }
+
+  .mobile-nav-header--open .mobile-nav-item {
+    animation: none;
+  }
+}
+
 @keyframes pulse-soft {
 
   0%,
@@ -149,7 +216,9 @@ body {
   -ms-overflow-style: none;
   cursor: grab;
   -webkit-overflow-scrolling: touch;
-  touch-action: pan-x;
+  touch-action: manipulation;
+  overscroll-behavior-x: contain;
+  overflow-y: hidden;
 }
 
 .projects-carousel.is-dragging {

@@ -1,6 +1,6 @@
 import { useForm, ValidationError } from '@formspree/react'
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
-import { Mail, MapPin, Send, MessageCircle, Linkedin, Instagram } from 'lucide-react'
+import { Mail, MapPin, Send, MessageCircle, Linkedin, Instagram, CheckCircle2, RotateCcw } from 'lucide-react'
 import { profile } from '../data/portfolio'
 import { useLanguage } from '../context/LanguageContext'
 
@@ -9,7 +9,7 @@ const FORM_ID = 'mwvjlgzq'
 export default function Contact() {
   const { t, lang } = useLanguage()
   const { executeRecaptcha } = useGoogleReCaptcha()
-  const [state, handleSubmit] = useForm(FORM_ID, {
+  const [state, handleSubmit, reset] = useForm(FORM_ID, {
     data: { 'g-recaptcha-response': executeRecaptcha },
   })
 
@@ -106,17 +106,48 @@ export default function Contact() {
           </div>
 
           <div className="glass-card p-6">
-            <h3 className="mb-4 text-lg font-semibold text-white">
-              {lang === 'es' ? 'Enviame un mensaje' : 'Send me a message'}
-            </h3>
-
             {state.succeeded ? (
-              <p className="text-sm text-green-400">
-                {lang === 'es'
-                  ? '¡Mensaje enviado! Te responderé pronto.'
-                  : "Message sent! I'll get back to you soon."}
-              </p>
+              <div
+                className="flex min-h-[380px] flex-col items-center justify-center py-6 text-center"
+                role="status"
+                aria-live="polite"
+              >
+                <div className="animate-fade-up mb-6">
+                  <div className="relative mx-auto flex h-[72px] w-[72px] items-center justify-center">
+                    <span className="absolute inset-0 rounded-full bg-emerald-500/15 blur-xl" aria-hidden />
+                    <span
+                      className="relative flex h-full w-full items-center justify-center rounded-full border border-emerald-500/25 bg-emerald-500/10"
+                      aria-hidden
+                    >
+                      <CheckCircle2 className="text-emerald-400" size={36} strokeWidth={1.5} />
+                    </span>
+                  </div>
+                </div>
+
+                <h3 className="animate-fade-up animation-delay-100 mb-2 text-xl font-semibold text-white">
+                  {lang === 'es' ? '¡Mensaje enviado!' : 'Message sent!'}
+                </h3>
+
+                <p className="animate-fade-up animation-delay-200 mb-8 max-w-xs text-sm leading-relaxed text-slate-400">
+                  {lang === 'es'
+                    ? 'Gracias por escribirme. Revisaré tu mensaje y te responderé lo antes posible.'
+                    : "Thanks for reaching out. I'll review your message and get back to you as soon as possible."}
+                </p>
+
+                <button
+                  type="button"
+                  onClick={reset}
+                  className="animate-fade-up animation-delay-300 inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-5 py-2.5 text-sm font-medium text-slate-300 transition hover:border-accent/30 hover:bg-white/[0.07] hover:text-white"
+                >
+                  <RotateCcw size={15} />
+                  {lang === 'es' ? 'Enviar otro mensaje' : 'Send another message'}
+                </button>
+              </div>
             ) : (
+              <>
+                <h3 className="mb-4 text-lg font-semibold text-white">
+                  {lang === 'es' ? 'Enviame un mensaje' : 'Send me a message'}
+                </h3>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <input
                   type="text"
@@ -203,6 +234,7 @@ export default function Contact() {
                       : 'Send message'}
                 </button>
               </form>
+              </>
             )}
           </div>
         </div>
