@@ -15,9 +15,13 @@ export default function About() {
 
         <div className="grid gap-10 lg:grid-cols-2">
           <div>
-            <p className="mb-6 text-lg leading-relaxed text-slate-300">
-              {t(aboutText)}
-            </p>
+            <div className="mb-6 space-y-4">
+              {t(aboutText).map((paragraph, i) => (
+                <p key={i} className="text-lg leading-relaxed text-slate-300">
+                  {paragraph}
+                </p>
+              ))}
+            </div>
             <div className="flex flex-col gap-3">
               <div className="flex items-center gap-3 text-slate-400">
                 <MapPin size={18} className="shrink-0 text-accent" />

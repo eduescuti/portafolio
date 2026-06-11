@@ -47,7 +47,7 @@ export const skills = [
   { name: 'Filament', category: 'tools' },
   { name: 'AI Cursor', category: 'ai' },
   { name: 'Claude Code', category: 'ai' },
-  { name: 'Composer 2.5', category: 'ai' },
+  { name: 'Composer', category: 'ai' },
   { name: 'Sonnet', category: 'ai' },
   { name: 'Opus', category: 'ai' },
 ]
@@ -68,7 +68,7 @@ export const experience = [
       en: [
         'Backend & frontend development with React, Supabase and PostgreSQL.',
         'Integration of APIs such as Supabase Edge Functions and Brevo for email marketing.',
-        'Automation creation using Supabase crons and n8n workflows.',
+        'Automation with Supabase crons and n8n workflows.',
         'Analytics dashboard with charts, CSV data upload and survey management.',
       ],
     },
@@ -123,7 +123,7 @@ export const projects = [
       es: 'Panel para clientes médicos con auth Supabase, métricas de email marketing, funnels de encuestas, carga CSV y gráficos interactivos. Roles admin y cliente.',
       en: 'Medical client panel with Supabase auth, email marketing metrics, survey funnels, CSV upload and interactive charts. Admin and client roles.',
     },
-    tech: ['React', 'Supabase', 'UX/UI Design', 'APIs'],
+    tech: ['React', 'Supabase', 'UX/UI Design', 'APIs', 'Recharts', 'Email Marketing'],
     highlights: {
       es: ['Auth con roles', 'Gráficos interactivos', 'Carga de Archivos', 'Panel admin'],
       en: ['Role-based auth', 'Interactive charts', 'File Upload', 'Admin panel'],
@@ -204,8 +204,16 @@ export const projects = [
 ]
 
 export const aboutText = {
-  es: 'Sólida formación en diversos lenguajes de programación, en busca de trabajos part-time o pasantías para compaginar mis estudios con la adquisición de experiencia práctica. Dispuesto a enfrentar nuevos desafíos y seguir aprendiendo, con el objetivo de contribuir de manera significativa a cualquier equipo o proyecto del que participe.',
-  en: 'Solid background in various programming languages, seeking part-time positions or internships to balance my studies with practical workplace experience. Willing to take on new challenges and continue learning, with the aim of contributing meaningfully to any team or project I am involved in.',
+  es: [
+    'Soy estudiante de Ingeniería en Informática avanzado en la UCA y actualmente me desempeño como Full Stack Developer en AnderssonConsultores.',
+    'Tengo experiencia desarrollando soluciones SaaS con frameworks modernos, bases de datos y herramientas de automatización.',
+    'Busco seguir creciendo como profesional IT y colaborar en proyectos que generen impacto.',
+  ],
+  en: [
+    'I am a Software Engineering student advanced at UCA and currently working as a Full Stack Developer at AnderssonConsultores.',
+    'Experience building SaaS solutions with modern frameworks, databases and automation tools.',
+    'Looking to keep growing as an IT professional and collaborate on impactful projects.',
+  ],
 }
 
 export const navLinks = [

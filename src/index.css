@@ -181,6 +181,73 @@ body {
   animation: pulse-soft 2s ease-in-out infinite;
 }
 
+@keyframes pop-bounce {
+  0% {
+    opacity: 0;
+    transform: scale(0.85) translateY(12px);
+  }
+
+  55% {
+    transform: scale(1.04) translateY(-6px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes drag-hand {
+  0%,
+  100% {
+    transform: translateX(-6px);
+  }
+
+  50% {
+    transform: translateX(6px);
+  }
+}
+
+.animate-pop-bounce {
+  animation: pop-bounce 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes pop-out {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(0.92) translateY(10px);
+  }
+}
+
+.animate-pop-out {
+  animation: pop-out 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.animate-drag-hand {
+  animation: drag-hand 1.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-pop-out {
+    animation: fade-out 0.25s ease forwards;
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
 .section-container {
   @apply mx-auto max-w-6xl px-6 py-20 md:px-8 md:py-28;
 }
@@ -224,6 +291,7 @@ body {
 .projects-carousel.is-dragging {
   cursor: grabbing;
   scroll-behavior: auto;
+  scroll-snap-type: none;
   user-select: none;
 }
 

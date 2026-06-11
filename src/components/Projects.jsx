@@ -9,6 +9,9 @@ import {
   ExternalLink,
   ChevronLeft,
   ChevronRight,
+  MousePointer2,
+  X,
+  Sparkles,
 } from 'lucide-react'
 import { projects } from '../data/portfolio'
 import { useLanguage } from '../context/LanguageContext'
@@ -23,6 +26,8 @@ const iconMap = {
 
 const DRAG_THRESHOLD = 8
 const SCROLL_EDGE = 8
+const MOMENTUM_MIN_VELOCITY = 0.02
+const MOMENTUM_FRICTION = 0.92
 
 function getScrollAxis(deltaX, deltaY) {
   const absX = Math.abs(deltaX)
@@ -31,8 +36,15 @@ function getScrollAxis(deltaX, deltaY) {
   return absX > absY ? 'x' : 'y'
 }
 
+function averageVelocity(samples) {
+  if (!samples.length) return 0
+  const weightSum = samples.reduce((sum, _, i) => sum + i + 1, 0)
+  return samples.reduce((sum, velocity, i) => sum + velocity * (i + 1), 0) / weightSum
+}
+
 function useDragScroll() {
   const trackRef = useRef(null)
+  const momentumRef = useRef(null)
   const dragRef = useRef({
     active: false,
     startX: 0,
@@ -42,10 +54,22 @@ function useDragScroll() {
     suppressClick: false,
     pointerId: null,
     axis: null,
+    velocities: [],
+    lastTime: null,
+    lastScrollLeft: null,
   })
   const [isDragging, setIsDragging] = useState(false)
+  const [isMomentumScrolling, setIsMomentumScrolling] = useState(false)
   const [canScrollLeft, setCanScrollLeft] = useState(false)
   const [canScrollRight, setCanScrollRight] = useState(false)
+
+  const cancelMomentum = useCallback(() => {
+    if (momentumRef.current !== null) {
+      cancelAnimationFrame(momentumRef.current)
+      momentumRef.current = null
+    }
+    setIsMomentumScrolling(false)
+  }, [])
 
   const updateScrollHints = useCallback(() => {
     const el = trackRef.current
@@ -57,6 +81,56 @@ function useDragScroll() {
     setCanScrollLeft(scrollLeft > SCROLL_EDGE)
     setCanScrollRight(scrollLeft < maxScroll - SCROLL_EDGE)
   }, [])
+
+  const startMomentum = useCallback(
+    (el, velocityPxPerMs) => {
+      cancelMomentum()
+
+      if (Math.abs(velocityPxPerMs) < MOMENTUM_MIN_VELOCITY) return
+
+      setIsMomentumScrolling(true)
+
+      let velocity = velocityPxPerMs * 1.15
+      let lastTime = performance.now()
+
+      const step = (now) => {
+        const dt = Math.min(now - lastTime, 32)
+        lastTime = now
+
+        velocity *= MOMENTUM_FRICTION ** (dt / 16)
+
+        if (Math.abs(velocity) < MOMENTUM_MIN_VELOCITY) {
+          cancelMomentum()
+          updateScrollHints()
+          return
+        }
+
+        const maxScroll = el.scrollWidth - el.clientWidth
+        const nextScrollLeft = el.scrollLeft + velocity * dt
+
+        if (nextScrollLeft <= 0) {
+          el.scrollLeft = 0
+          cancelMomentum()
+          updateScrollHints()
+          return
+        }
+
+        if (nextScrollLeft >= maxScroll) {
+          el.scrollLeft = maxScroll
+          cancelMomentum()
+          updateScrollHints()
+          return
+        }
+
+        el.scrollLeft = nextScrollLeft
+        updateScrollHints()
+        momentumRef.current = requestAnimationFrame(step)
+      }
+
+      momentumRef.current = requestAnimationFrame(step)
+    },
+    [cancelMomentum, updateScrollHints]
+  )
 
   useEffect(() => {
     const el = trackRef.current
@@ -77,7 +151,10 @@ function useDragScroll() {
     if (!el) return
 
     const onPointerDown = (e) => {
+      if (e.pointerType === 'touch') return
       if (e.pointerType === 'mouse' && e.button !== 0) return
+
+      cancelMomentum()
 
       dragRef.current = {
         active: true,
@@ -88,6 +165,9 @@ function useDragScroll() {
         suppressClick: false,
         pointerId: e.pointerId,
         axis: null,
+        velocities: [],
+        lastTime: null,
+        lastScrollLeft: el.scrollLeft,
       }
     }
 
@@ -118,6 +198,18 @@ function useDragScroll() {
 
       e.preventDefault()
       el.scrollLeft = drag.startScrollLeft - deltaX
+
+      const now = performance.now()
+      if (drag.lastTime !== null && drag.lastScrollLeft !== null) {
+        const dt = now - drag.lastTime
+        if (dt > 0 && dt < 120) {
+          const instantVelocity = (el.scrollLeft - drag.lastScrollLeft) / dt
+          drag.velocities = [...drag.velocities, instantVelocity].slice(-6)
+        }
+      }
+
+      drag.lastTime = now
+      drag.lastScrollLeft = el.scrollLeft
       updateScrollHints()
     }
 
@@ -127,12 +219,16 @@ function useDragScroll() {
 
       if (drag.moved) {
         drag.suppressClick = true
+        startMomentum(el, averageVelocity(drag.velocities))
       }
 
       drag.active = false
       drag.moved = false
       drag.pointerId = null
       drag.axis = null
+      drag.velocities = []
+      drag.lastTime = null
+      drag.lastScrollLeft = null
       setIsDragging(false)
 
       if (el.hasPointerCapture(e.pointerId)) {
@@ -161,52 +257,174 @@ function useDragScroll() {
       el.removeEventListener('pointerup', onPointerEnd)
       el.removeEventListener('pointercancel', onPointerEnd)
       el.removeEventListener('click', onClickCapture, true)
+      cancelMomentum()
     }
-  }, [updateScrollHints])
+  }, [updateScrollHints, startMomentum, cancelMomentum])
 
   return {
     trackRef,
-    isDragging,
+    isDragging: isDragging || isMomentumScrolling,
     canScrollLeft,
     canScrollRight,
   }
 }
 
-function ScrollHint({ direction, visible }) {
+function ScrollHint({ direction, visible, onHintClick }) {
   const Icon = direction === 'left' ? ChevronLeft : ChevronRight
+
+  const handleClick = (e) => {
+    e.stopPropagation()
+    if (visible) onHintClick?.()
+  }
+
+  const desktopButtonClass = `flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-navy-800/95 text-accent-light shadow-lg transition-all duration-300 ${visible
+      ? 'pointer-events-auto cursor-pointer hover:scale-110 hover:border-accent/40 hover:bg-navy-700/95 hover:shadow-accent/25 active:scale-95'
+      : 'pointer-events-none'
+    } ${visible && direction === 'right' ? 'animate-pulse-soft' : ''}`
 
   return (
     <>
-      {/* Mobile: icono en el margen, sin degradado sobre la tarjeta */}
+      {/* Mobile: icono decorativo, sin interacción */}
       <div
         aria-hidden={!visible}
-        className={`pointer-events-none absolute top-1/2 z-10 -translate-y-1/2 transition-opacity duration-300 md:hidden ${
-          direction === 'left' ? 'left-0.5' : 'right-0.5'
-        } ${visible ? 'opacity-100' : 'opacity-0'}`}
+        className={`pointer-events-none absolute top-1/2 z-10 -translate-y-1/2 transition-opacity duration-300 md:hidden ${direction === 'left' ? 'left-0.5' : 'right-0.5'
+          } ${visible ? 'opacity-100' : 'opacity-0'}`}
       >
         <div className="flex h-7 w-7 items-center justify-center rounded-full bg-navy-950/95 text-accent-light shadow-md ring-1 ring-white/15">
           <Icon size={14} strokeWidth={2.5} />
         </div>
       </div>
 
-      {/* Desktop: degradado lateral + flecha */}
+      {/* Desktop: degradado lateral + flecha clicable */}
       <div
         aria-hidden={!visible}
-        className={`pointer-events-none absolute inset-y-0 z-10 hidden w-20 items-center transition-opacity duration-300 md:flex ${
-          direction === 'left'
+        className={`pointer-events-none absolute inset-y-0 z-10 hidden w-20 items-center transition-opacity duration-300 md:flex ${direction === 'left'
             ? 'left-0 justify-start bg-gradient-to-r from-navy-900 via-navy-900/70 to-transparent pl-3'
             : 'right-0 justify-end bg-gradient-to-l from-navy-900 via-navy-900/70 to-transparent pr-3'
-        } ${visible ? 'opacity-100' : 'opacity-0'}`}
+          } ${visible ? 'opacity-100' : 'opacity-0'}`}
       >
-        <div
-          className={`flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-navy-800/95 text-accent-light shadow-lg ${
-            visible && direction === 'right' ? 'animate-pulse-soft' : ''
-          }`}
+        <button
+          type="button"
+          onClick={handleClick}
+          tabIndex={visible ? 0 : -1}
+          aria-label={direction === 'left' ? 'Ver proyectos anteriores' : 'Ver más proyectos'}
+          className={desktopButtonClass}
         >
           <Icon size={18} strokeWidth={2.5} />
-        </div>
+        </button>
       </div>
     </>
+  )
+}
+
+const DRAG_HINT_EXIT_MS = 400
+
+function DragHintToast({ open, onClose, lang }) {
+  const [mounted, setMounted] = useState(false)
+  const [exiting, setExiting] = useState(false)
+
+  const dismiss = useCallback(() => {
+    setExiting(true)
+  }, [])
+
+  useEffect(() => {
+    if (open) {
+      setMounted(true)
+      setExiting(false)
+    }
+  }, [open])
+
+  useEffect(() => {
+    if (!exiting) return
+
+    const timer = window.setTimeout(() => {
+      setMounted(false)
+      setExiting(false)
+      onClose()
+    }, DRAG_HINT_EXIT_MS)
+
+    return () => window.clearTimeout(timer)
+  }, [exiting, onClose])
+
+  useEffect(() => {
+    if (!mounted || exiting) return
+
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') dismiss()
+    }
+
+    const timer = window.setTimeout(dismiss, 5000)
+    window.addEventListener('keydown', onKeyDown)
+
+    return () => {
+      window.clearTimeout(timer)
+      window.removeEventListener('keydown', onKeyDown)
+    }
+  }, [mounted, exiting, dismiss])
+
+  if (!mounted) return null
+
+  const copy = {
+    es: {
+      title: '¡Arrastrá con el mouse!',
+      body: 'Agarrá el carrusel y deslizalo hacia los lados para descubrir más proyectos.',
+    },
+    en: {
+      title: 'Drag with your mouse!',
+      body: 'Grab the carousel and drag sideways to discover more projects.',
+    },
+  }
+
+  const text = copy[lang] ?? copy.es
+
+  return (
+    <div
+      className="pointer-events-none absolute inset-x-0 top-1/2 z-50 hidden -translate-y-1/2 justify-center px-4 md:flex"
+      role="status"
+      aria-live="polite"
+    >
+      <div
+        className={`pointer-events-auto relative w-full max-w-sm rounded-2xl border border-accent/30 bg-navy-900/95 p-4 shadow-2xl shadow-accent/20 backdrop-blur-xl ${
+          exiting ? 'animate-pop-out' : 'animate-pop-bounce'
+        }`}
+      >
+        <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 overflow-hidden rounded-full bg-accent/20 blur-2xl" aria-hidden />
+        <div className="pointer-events-none absolute -bottom-8 -left-4 h-20 w-20 overflow-hidden rounded-full bg-indigo-500/15 blur-2xl" aria-hidden />
+
+        <button
+          type="button"
+          onPointerDown={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            dismiss()
+          }}
+          className="absolute right-1 top-1 z-20 flex h-10 w-10 items-center justify-center rounded-lg text-slate-400 transition hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+          aria-label={lang === 'es' ? 'Cerrar' : 'Close'}
+        >
+          <X size={18} strokeWidth={2} />
+        </button>
+
+        <div className="relative flex items-start gap-3.5 pr-8">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-accent/15 ring-1 ring-accent/25">
+            <MousePointer2 size={20} className="animate-drag-hand text-accent-light" />
+          </div>
+
+          <div className="min-w-0 flex-1 pt-0.5">
+            <p className="mb-1 flex items-center gap-1.5 text-base font-semibold leading-snug text-white">
+              {text.title}
+              <Sparkles size={15} className="shrink-0 text-amber-400" aria-hidden />
+            </p>
+            <p className="text-sm leading-relaxed text-slate-400">{text.body}</p>
+          </div>
+        </div>
+
+        <div className="relative mt-3 flex items-center justify-center gap-2 font-mono text-xs text-accent-light/80">
+          <ChevronLeft size={14} className="animate-pulse-soft" aria-hidden />
+          <span>{lang === 'es' ? 'deslizá' : 'drag'}</span>
+          <ChevronRight size={14} className="animate-pulse-soft" aria-hidden />
+        </div>
+      </div>
+    </div>
   )
 }
 
@@ -216,10 +434,10 @@ function ProjectCard({ project, t }) {
 
   const headerStyle = project.imageBackground
     ? {
-        backgroundImage: `url(${project.imageBackground})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center top',
-      }
+      backgroundImage: `url(${project.imageBackground})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center top',
+    }
     : undefined
 
   const cardContent = (
@@ -315,12 +533,20 @@ function ProjectCard({ project, t }) {
 
 export default function Projects() {
   const { t, lang } = useLanguage()
+  const [dragHintOpen, setDragHintOpen] = useState(false)
   const {
     trackRef,
     isDragging,
     canScrollLeft,
     canScrollRight,
   } = useDragScroll()
+
+  const openDragHint = useCallback(() => {
+    if (window.matchMedia('(min-width: 768px)').matches) {
+      setDragHintOpen(true)
+    }
+  }, [])
+  const closeDragHint = useCallback(() => setDragHintOpen(false), [])
 
   return (
     <section id="projects" className="relative border-t border-white/5 bg-navy-900/50">
@@ -336,13 +562,14 @@ export default function Projects() {
         </p>
 
         <div className="relative -mx-6 md:-mx-8">
-          <ScrollHint direction="left" visible={canScrollLeft} />
-          <ScrollHint direction="right" visible={canScrollRight} />
+          <ScrollHint direction="left" visible={canScrollLeft} onHintClick={openDragHint} />
+          <ScrollHint direction="right" visible={canScrollRight} onHintClick={openDragHint} />
+          <DragHintToast open={dragHintOpen} onClose={closeDragHint} lang={lang} />
 
           <div
             ref={trackRef}
             aria-label={lang === 'es' ? 'Carrusel de proyectos' : 'Projects carousel'}
-            className={`projects-carousel flex items-stretch snap-x snap-proximity gap-4 overflow-x-auto scroll-smooth px-6 pb-2 pt-1 md:gap-5 md:px-8 md:snap-none ${isDragging ? 'is-dragging' : ''}`}
+            className={`projects-carousel flex items-stretch snap-x snap-proximity gap-4 overflow-x-auto scroll-smooth px-6 pb-2 pt-1 md:gap-5 md:px-8 md:snap-none ${isDragging ? 'is-dragging' : ''} ${dragHintOpen ? 'pointer-events-none' : ''}`}
           >
             {projects.map((project) => (
               <ProjectCard key={project.id} project={project} t={t} />
