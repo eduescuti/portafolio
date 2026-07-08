@@ -31,6 +31,7 @@ export const skills = [
   { name: 'HTML / CSS', category: 'frontend' },
   { name: 'UX', category: 'frontend' },
   { name: 'Python', category: 'backend' },
+  { name: 'Supabase', category: 'backend' },
   { name: 'Redis', category: 'backend' },
   { name: 'PHP', category: 'backend' },
   { name: 'Flask', category: 'backend' },
@@ -38,6 +39,7 @@ export const skills = [
   { name: 'PostgreSQL', category: 'data' },
   { name: 'MySQL', category: 'data' },
   { name: 'Supabase', category: 'data' },
+  { name: 'Redis', category: 'data' },
   { name: 'phpMyAdmin', category: 'data' },
   { name: 'n8n', category: 'tools' },
   { name: 'Git', category: 'tools' },
@@ -45,7 +47,6 @@ export const skills = [
   { name: 'Brevo', category: 'tools' },
   { name: 'SendGrid', category: 'tools' },
   { name: 'Docker', category: 'tools' },
-  { name: 'Filament', category: 'tools' },
   { name: 'AI Cursor', category: 'ai' },
   { name: 'Claude Code', category: 'ai' },
   { name: 'Composer', category: 'ai' },
@@ -121,8 +122,8 @@ export const projects = [
     title: { es: 'Dashboard Analítico AC', en: 'AC Analytics Dashboard' },
     subtitle: { es: 'Andersson Consultores', en: 'Andersson Consultores' },
     description: {
-      es: 'Panel para clientes médicos con auth Supabase, métricas de email marketing, funnels de encuestas, carga CSV y gráficos interactivos. Roles admin y cliente.',
-      en: 'Medical client panel with Supabase auth, email marketing metrics, survey funnels, CSV upload and interactive charts. Admin and client roles.',
+      es: 'Panel para clientes médicos, con roles admin y cliente sobre Supabase.',
+      en: 'Medical client panel with admin and client roles, built on Supabase.',
     },
     tech: ['React', 'Supabase', 'UX/UI Design', 'APIs', 'Recharts', 'Email Marketing'],
     highlights: {
@@ -140,8 +141,8 @@ export const projects = [
     title: { es: 'Edge Functions & Automatizaciones', en: 'Edge Functions & Automations' },
     subtitle: { es: 'Andersson Consultores', en: 'Andersson Consultores' },
     description: {
-      es: 'Funciones serverless en Supabase para emails, encuestas, webhooks de Brevo y crons automatizados. Workflows en n8n para seguimiento y retargeting.',
-      en: 'Supabase serverless functions for emails, surveys, Brevo webhooks and automated crons. n8n workflows for follow-up and retargeting.',
+      es: 'Automatizaciones serverless para emails, encuestas y seguimiento de leads.',
+      en: 'Serverless automations for emails, surveys and lead follow-up.',
     },
     tech: ['Supabase', 'Brevo', 'PostgreSQL', 'JWT', 'Webhooks'],
     highlights: {
@@ -159,8 +160,8 @@ export const projects = [
     title: { es: 'CRM WhatsApp', en: 'WhatsApp CRM' },
     subtitle: { es: 'Andersson Consultores', en: 'Andersson Consultores' },
     description: {
-      es: 'CRM para secretarias: conversaciones WhatsApp con drag & drop, filtros y uso de AI Agents y Bots de respuesta usando Chatwoot.',
-      en: 'CRM for secretaries: WhatsApp chats with drag & drop, filters, AI Agents and Bots, using Chatwoot as main platform.',
+      es: 'CRM para secretarias: gestión de conversaciones de WhatsApp sobre Chatwoot.',
+      en: 'CRM for secretaries: WhatsApp conversation management built on Chatwoot.',
     },
     tech: ['n8n', 'Chatwoot', 'PostgreSQL', 'AI Agents', 'Bots'],
     highlights: {
@@ -178,8 +179,8 @@ export const projects = [
     title: { es: 'Sistema de Turnos — Estética', en: 'Appointment System — Beauty Salon' },
     subtitle: { es: 'Alexandria Solutions', en: 'Alexandria Solutions' },
     description: {
-      es: 'Gestión de turnos para centros de estética con paneles admin y cliente. Servicios, citas y pagos con Laravel Filament y Docker.',
-      en: 'Appointment system for beauty centers with admin and client panels. Services, bookings and payments with Laravel Filament and Docker.',
+      es: 'Gestión de turnos para centros de estética, construido con Laravel Filament.',
+      en: 'Appointment management for beauty centers, built with Laravel Filament.',
     },
     tech: ['Laravel', 'Filament', 'PHP', 'MySQL', 'Docker'],
     highlights: {
@@ -195,8 +196,8 @@ export const projects = [
     title: { es: 'UCA Planner', en: 'UCA Planner' },
     subtitle: { es: 'Proyecto universitario UCA', en: 'UCA university project' },
     description: {
-      es: 'Organizador de horarios UCA con cronogramas visuales e inscripciones a comisiones. Backend Flask, MySQL y roles admin/alumno.',
-      en: 'UCA schedule planner with visual timetables and section enrollment. Flask backend, MySQL and admin/student roles.',
+      es: 'Organizador de horarios para estudiantes de la UCA, con backend en Flask.',
+      en: 'Schedule organizer for UCA students, backend built with Flask.',
     },
     tech: ['Python', 'Flask', 'MySQL', 'JavaScript', 'HTML/CSS'],
     highlights: {
@@ -212,7 +213,7 @@ export const projects = [
     title: { es: 'Proximamente...', en: 'Coming soon...' },
     subtitle: { es: 'Desarrollando algo propio', en: 'Developing something on my own' },
     description: {
-      es: 'Intentando tambien de emprender por mi cuenta, estoy desarrollando un proyecto personal que pronto estará disponible.',
+      es: 'Intentando tambien de emprender por mi cuenta y desarrollando un proyecto personal.',
       en: 'Also trying to venture on my own, I am developing a personal project that will be available soon.',
     },
     tech: ['AWS', 'React', 'Tailwind CSS', 'Node.js', 'PostgreSQL', 'AI Agents'],

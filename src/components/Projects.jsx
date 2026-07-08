@@ -12,9 +12,12 @@ import {
   MousePointer2,
   X,
   Sparkles,
+  ArrowDown
 } from 'lucide-react'
 import { projects } from '../data/portfolio'
 import { useLanguage } from '../context/LanguageContext'
+import Reveal from './Reveal'
+import AmbientBackground from './AmbientBackground'
 
 const iconMap = {
   BarChart3,
@@ -278,8 +281,8 @@ function ScrollHint({ direction, visible, onHintClick }) {
   }
 
   const desktopButtonClass = `flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-navy-800/95 text-accent-light shadow-lg transition-all duration-300 ${visible
-      ? 'pointer-events-auto cursor-pointer hover:scale-110 hover:border-accent/40 hover:bg-navy-700/95 hover:shadow-accent/25 active:scale-95'
-      : 'pointer-events-none'
+    ? 'pointer-events-auto cursor-pointer hover:scale-110 hover:border-accent/40 hover:bg-navy-700/95 hover:shadow-accent/25 active:scale-95'
+    : 'pointer-events-none'
     } ${visible && direction === 'right' ? 'animate-pulse-soft' : ''}`
 
   return (
@@ -299,8 +302,8 @@ function ScrollHint({ direction, visible, onHintClick }) {
       <div
         aria-hidden={!visible}
         className={`pointer-events-none absolute inset-y-0 z-10 hidden w-20 items-center transition-opacity duration-300 md:flex ${direction === 'left'
-            ? 'left-0 justify-start bg-gradient-to-r from-navy-900 via-navy-900/70 to-transparent pl-3'
-            : 'right-0 justify-end bg-gradient-to-l from-navy-900 via-navy-900/70 to-transparent pr-3'
+          ? 'left-0 justify-start bg-gradient-to-r from-navy-900 via-navy-900/70 to-transparent pl-3'
+          : 'right-0 justify-end bg-gradient-to-l from-navy-900 via-navy-900/70 to-transparent pr-3'
           } ${visible ? 'opacity-100' : 'opacity-0'}`}
       >
         <button
@@ -384,9 +387,8 @@ function DragHintToast({ open, onClose, lang }) {
       aria-live="polite"
     >
       <div
-        className={`pointer-events-auto relative w-full max-w-sm rounded-2xl border border-accent/30 bg-navy-900/95 p-4 shadow-2xl shadow-accent/20 backdrop-blur-xl ${
-          exiting ? 'animate-pop-out' : 'animate-pop-bounce'
-        }`}
+        className={`pointer-events-auto relative w-full max-w-sm rounded-2xl border border-accent/30 bg-navy-900/95 p-4 shadow-2xl shadow-accent/20 backdrop-blur-xl ${exiting ? 'animate-pop-out' : 'animate-pop-bounce'
+          }`}
       >
         <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 overflow-hidden rounded-full bg-accent/20 blur-2xl" aria-hidden />
         <div className="pointer-events-none absolute -bottom-8 -left-4 h-20 w-20 overflow-hidden rounded-full bg-indigo-500/15 blur-2xl" aria-hidden />
@@ -476,11 +478,11 @@ function ProjectCard({ project, t }) {
       </div>
 
       <div className="flex min-h-0 flex-1 flex-col p-5">
-        <p className="mb-4 min-h-[5.75rem] shrink-0 line-clamp-4 text-sm leading-relaxed text-slate-300">
+        <p className="mb-3 min-h-[2.5rem] shrink-0 line-clamp-3 text-sm leading-relaxed text-slate-300">
           {t(project.description)}
         </p>
 
-        <div className="mb-4 flex min-h-[3.5rem] flex-wrap content-start gap-1.5">
+        <div className="mb-3 flex flex-wrap content-start gap-1.5">
           {t(project.highlights).map((h) => (
             <span
               key={h}
@@ -491,7 +493,7 @@ function ProjectCard({ project, t }) {
           ))}
         </div>
 
-        <div className="mt-auto flex min-h-[4.75rem] flex-wrap content-start gap-2 border-t border-white/5 pt-4">
+        <div className="mt-auto flex flex-wrap content-start gap-2 border-t border-white/5 pt-3">
           {project.tech.map((tech) => (
             <span
               key={tech}
@@ -506,7 +508,7 @@ function ProjectCard({ project, t }) {
   )
 
   const cardClass =
-    'group glass-card flex h-[31rem] w-[min(88vw,380px)] shrink-0 flex-col overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:border-accent/30 hover:shadow-2xl hover:shadow-accent/10 md:w-[380px]'
+    'group glass-card flex h-[25rem] w-[min(88vw,380px)] shrink-0 flex-col overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:border-accent/30 hover:shadow-2xl hover:shadow-accent/10 md:w-[380px]'
 
   if (hasLink) {
     return (
@@ -549,17 +551,22 @@ export default function Projects() {
   const closeDragHint = useCallback(() => setDragHintOpen(false), [])
 
   return (
-    <section id="projects" className="relative border-t border-white/5 bg-navy-900/50">
+    <section id="projects" className="relative flex min-h-screen items-center overflow-hidden border-t border-white/5 bg-navy-900/50">
+      <AmbientBackground
+        blobs={[{ className: '-left-40 top-0 h-[400px] w-[400px] bg-indigo-600/10', animation: 'animate-drift-alt' }]}
+      />
       <div className="section-container">
-        <span className="section-label">{lang === 'es' ? 'Proyectos' : 'Projects'}</span>
-        <h2 className="section-title">
-          {lang === 'es' ? 'Lo que he construido' : 'What I have built'}
-        </h2>
-        <p className="mb-10 max-w-2xl text-slate-400">
-          {lang === 'es'
-            ? 'Proyectos reales desarrollados en Andersson Consultores, Alexandria Solutions y la UCA.'
-            : 'Real projects developed at Andersson Consultores, Alexandria Solutions and UCA.'}
-        </p>
+        <Reveal>
+          <span className="section-label">{lang === 'es' ? 'Proyectos' : 'Projects'}</span>
+          <h2 className="section-title">
+            {lang === 'es' ? 'Lo que he construido' : 'What I have built'}
+          </h2>
+          <p className="mb-10 max-w-2xl text-slate-400">
+            {lang === 'es'
+              ? 'Proyectos reales desarrollados en Andersson Consultores, Alexandria Solutions y la UCA.'
+              : 'Real projects developed at Andersson Consultores, Alexandria Solutions and UCA.'}
+          </p>
+        </Reveal>
 
         <div className="relative -mx-6 md:-mx-8">
           <ScrollHint direction="left" visible={canScrollLeft} onHintClick={openDragHint} />
@@ -577,6 +584,13 @@ export default function Projects() {
           </div>
         </div>
       </div>
+      <a
+        href="#skills"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 text-slate-500 transition hover:text-accent"
+        aria-label="Scroll down"
+      >
+        <ArrowDown size={22} className="animate-bounce" />
+      </a>
     </section>
   )
 }

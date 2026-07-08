@@ -13,6 +13,8 @@ import {
 } from 'lucide-react'
 import { profile } from '../data/portfolio'
 import { useLanguage } from '../context/LanguageContext'
+import Reveal from './Reveal'
+import AmbientBackground from './AmbientBackground'
 
 const FORM_ID = 'mwvjlgzq'
 
@@ -21,14 +23,14 @@ function ContactLink({ href, icon: Icon, label, value, external = false }) {
     <a
       href={href}
       {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-      className="group glass-card glass-card-hover relative flex items-center gap-4 overflow-hidden p-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:ring-offset-2 focus-visible:ring-offset-navy-950 active:scale-[0.99]"
+      className="group glass-card glass-card-hover relative flex items-center gap-3 overflow-hidden p-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:ring-offset-2 focus-visible:ring-offset-navy-950 active:scale-[0.99] lg:gap-4 lg:p-5"
     >
       <span
         className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-accent/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
         aria-hidden
       />
 
-      <div className="relative rounded-xl bg-accent/15 p-3 text-accent transition-all duration-300 group-hover:scale-105 group-hover:bg-accent/25 group-hover:shadow-md group-hover:shadow-accent/20">
+      <div className="relative rounded-xl bg-accent/15 p-2.5 text-accent transition-all duration-300 group-hover:scale-105 group-hover:bg-accent/25 group-hover:shadow-md group-hover:shadow-accent/20 lg:p-3">
         <Icon size={20} className="transition-transform duration-300 group-hover:scale-110" />
       </div>
 
@@ -58,20 +60,25 @@ export default function Contact() {
   })
 
   return (
-    <section id="contact" className="relative border-t border-white/5 bg-navy-900/50">
+    <section id="contact" className="relative flex min-h-screen items-center overflow-hidden border-t border-white/5 bg-navy-900/50">
+      <AmbientBackground
+        blobs={[{ className: '-right-32 -bottom-24 h-[420px] w-[420px] bg-accent/10', animation: 'animate-drift' }]}
+      />
       <div className="section-container">
-        <span className="section-label">{lang === 'es' ? 'Contacto' : 'Contact'}</span>
-        <h2 className="section-title">
-          {lang === 'es' ? 'Hablemos' : "Let's talk"}
-        </h2>
-        <p className="mb-12 max-w-xl text-slate-400">
-          {lang === 'es'
-            ? 'Estoy buscando oportunidades part-time o pasantías. ¡No dudes en escribirme!'
-            : "I'm looking for part-time opportunities or internships. Don't hesitate to reach out!"}
-        </p>
+        <Reveal>
+          <span className="section-label">{lang === 'es' ? 'Contacto' : 'Contact'}</span>
+          <h2 className="section-title">
+            {lang === 'es' ? 'Hablemos' : "Let's talk"}
+          </h2>
+          <p className="mb-6 max-w-xl text-slate-400 lg:mb-12">
+            {lang === 'es'
+              ? 'Estoy buscando oportunidades part-time o pasantías. ¡No dudes en escribirme!'
+              : "I'm looking for part-time opportunities or internships. Don't hesitate to reach out!"}
+          </p>
+        </Reveal>
 
-        <div className="grid gap-8 lg:grid-cols-2">
-          <div className="space-y-4">
+        <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
+          <Reveal delay={100} className="space-y-2.5 lg:space-y-4">
             <ContactLink
               href={`mailto:${profile.email}`}
               icon={Mail}
@@ -110,9 +117,9 @@ export default function Contact() {
               value="Buenos Aires, Argentina"
               external
             />
-          </div>
+          </Reveal>
 
-          <div className="glass-card p-6">
+          <Reveal delay={200} className="glass-card p-5 lg:p-6">
             {state.succeeded ? (
               <div
                 className="flex min-h-[380px] flex-col items-center justify-center py-6 text-center"
@@ -152,10 +159,10 @@ export default function Contact() {
               </div>
             ) : (
               <>
-                <h3 className="mb-4 text-lg font-semibold text-white">
+                <h3 className="mb-3 text-lg font-semibold text-white lg:mb-4">
                   {lang === 'es' ? 'Enviame un mensaje' : 'Send me a message'}
                 </h3>
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit} className="space-y-3 lg:space-y-4">
                   <input
                     type="text"
                     name="_gotcha"
@@ -174,7 +181,7 @@ export default function Contact() {
                       type="text"
                       required
                       autoComplete="name"
-                      className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-accent/50 focus:ring-1 focus:ring-accent/30"
+                      className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-accent/50 focus:ring-1 focus:ring-accent/30 lg:py-3"
                       placeholder={lang === 'es' ? 'Tu nombre' : 'Your name'}
                     />
                     <ValidationError
@@ -195,7 +202,7 @@ export default function Contact() {
                       type="email"
                       required
                       autoComplete="email"
-                      className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-accent/50 focus:ring-1 focus:ring-accent/30"
+                      className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-accent/50 focus:ring-1 focus:ring-accent/30 lg:py-3"
                       placeholder="tu@email.com"
                     />
                     <ValidationError
@@ -213,9 +220,9 @@ export default function Contact() {
                     <textarea
                       id="message"
                       name="message"
-                      rows={4}
+                      rows={3}
                       required
-                      className="w-full resize-none rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-accent/50 focus:ring-1 focus:ring-accent/30"
+                      className="w-full resize-none rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-accent/50 focus:ring-1 focus:ring-accent/30 lg:py-3"
                       placeholder={lang === 'es' ? 'Tu mensaje...' : 'Your message...'}
                     />
                     <ValidationError
@@ -240,10 +247,31 @@ export default function Contact() {
                         ? 'Enviar mensaje'
                         : 'Send message'}
                   </button>
+
+                  <p className="text-center text-[11px] leading-relaxed text-slate-600">
+                    {lang === 'es' ? 'Protegido por reCAPTCHA · ' : 'Protected by reCAPTCHA · '}
+                    <a
+                      href="https://policies.google.com/privacy"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-slate-500 underline decoration-slate-700 underline-offset-2 transition hover:text-accent"
+                    >
+                      {lang === 'es' ? 'Privacidad' : 'Privacy'}
+                    </a>
+                    {' · '}
+                    <a
+                      href="https://policies.google.com/terms"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-slate-500 underline decoration-slate-700 underline-offset-2 transition hover:text-accent"
+                    >
+                      {lang === 'es' ? 'Términos' : 'Terms'}
+                    </a>
+                  </p>
                 </form>
               </>
             )}
-          </div>
+          </Reveal>
         </div>
       </div>
     </section>

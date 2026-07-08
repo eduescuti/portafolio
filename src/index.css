@@ -46,6 +46,14 @@ body {
   background: var(--color-navy-600);
 }
 
+/* Oculta el badge de reCAPTCHA v3. La atribución legal se muestra en el
+   formulario de contacto, según lo permiten los Términos de Google. */
+.grecaptcha-badge {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
 @keyframes fade-up {
   from {
     opacity: 0;
@@ -94,6 +102,107 @@ body {
 
 .animation-delay-500 {
   animation-delay: 500ms;
+}
+
+.reveal {
+  opacity: 0;
+}
+
+.reveal-visible {
+  animation: fade-up 0.7s ease-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+  }
+
+  .reveal-visible {
+    animation: none;
+  }
+}
+
+@keyframes grid-pan {
+  from { background-position: 0 0; }
+  to { background-position: 64px 64px; }
+}
+
+.animate-grid-pan {
+  animation: grid-pan 14s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-grid-pan {
+    animation: none;
+  }
+}
+
+@keyframes drift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(3%, -4%) scale(1.08); }
+}
+
+@keyframes drift-alt {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-4%, 3%) scale(1.05); }
+}
+
+.animate-drift {
+  animation: drift 30s ease-in-out infinite;
+}
+
+.animate-drift-slow {
+  animation: drift 40s ease-in-out infinite;
+}
+
+.animate-drift-alt {
+  animation: drift-alt 34s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-drift,
+  .animate-drift-slow,
+  .animate-drift-alt {
+    animation: none;
+  }
+}
+
+@keyframes aurora {
+  0%   { transform: translate(0, 0) scale(1.05);   opacity: 0.85; }
+  50%  { transform: translate(9%, 8%) scale(1.3);  opacity: 1; }
+  100% { transform: translate(0, 0) scale(1.05);   opacity: 0.85; }
+}
+
+@keyframes aurora-alt {
+  0%   { transform: translate(0, 0) scale(1.15);    opacity: 0.75; }
+  50%  { transform: translate(-10%, -7%) scale(0.92); opacity: 1; }
+  100% { transform: translate(0, 0) scale(1.15);    opacity: 0.75; }
+}
+
+@keyframes aurora-slow {
+  0%   { transform: translate(0, 0) scale(1);      opacity: 0.7; }
+  50%  { transform: translate(7%, -9%) scale(1.22); opacity: 0.95; }
+  100% { transform: translate(0, 0) scale(1);      opacity: 0.7; }
+}
+
+.animate-aurora {
+  animation: aurora 10s ease-in-out infinite;
+}
+
+.animate-aurora-2 {
+  animation: aurora-alt 13s ease-in-out infinite;
+}
+
+.animate-aurora-3 {
+  animation: aurora-slow 16s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-aurora,
+  .animate-aurora-2,
+  .animate-aurora-3 {
+    animation: none;
+  }
 }
 
 .mobile-nav-header {
@@ -249,7 +358,7 @@ body {
 }
 
 .section-container {
-  @apply mx-auto max-w-6xl px-6 py-20 md:px-8 md:py-28;
+  @apply mx-auto w-full max-w-6xl px-6 py-16 md:px-8 md:py-20;
 }
 
 .section-label {
