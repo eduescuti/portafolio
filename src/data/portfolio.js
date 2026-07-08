@@ -176,7 +176,7 @@ export const projects = [
   {
     id: 'estetica-app',
     folder: 'estetica-app',
-    title: { es: 'Sistema de Turnos — Estética', en: 'Appointment System — Beauty Salon' },
+    title: { es: 'Sistema de Turnos', en: 'Appointment System' },
     subtitle: { es: 'Alexandria Solutions', en: 'Alexandria Solutions' },
     description: {
       es: 'Gestión de turnos para centros de estética, construido con Laravel Filament.',
@@ -189,6 +189,8 @@ export const projects = [
     },
     color: 'from-pink-600 to-dark-700',
     icon: 'Calendar',
+    url: 'https://app-turnos.alexandriademo.com/',
+    imageBackground: '/projects/alexandria.png',
   },
   {
     id: 'uca-planner',
