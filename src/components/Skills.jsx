@@ -23,7 +23,9 @@ import {
   SiClaudecode,
   SiAnthropic,
   SiCursor,
-  SiMessenger
+  SiMessenger,
+  SiTypescript,
+  SiXampp
 } from 'react-icons/si'
 import { skills } from '../data/portfolio'
 import { useLanguage } from '../context/LanguageContext'
@@ -33,6 +35,7 @@ import AmbientBackground from './AmbientBackground'
 const skillIconMap = {
   React: SiReact,
   JavaScript: SiJavascript,
+  Typescript: SiTypescript,
   'Tailwind CSS': SiTailwindcss,
   'Material UI': SiMui,
   'HTML / CSS': SiHtml5,
@@ -45,6 +48,7 @@ const skillIconMap = {
   MySQL: SiMysql,
   Supabase: SiSupabase,
   phpMyAdmin: SiPhpmyadmin,
+  'XAMPP': SiXampp,
   n8n: SiN8N,
   Git: SiGit,
   GitHub: SiGithub,
@@ -93,7 +97,7 @@ const categories = {
     color: 'bg-fuchsia-500/20 text-fuchsia-300 border-fuchsia-500/30',
     hoverCard: 'hover:border-fuchsia-400/35 hover:shadow-lg hover:shadow-fuchsia-500/10',
     hoverBadge: 'hover:border-fuchsia-400/50 hover:bg-fuchsia-500/30 hover:shadow-md hover:shadow-fuchsia-500/15',
-  },
+  }
 }
 
 const layoutOrder = ['ai', 'frontend', 'backend', 'data', 'tools']
