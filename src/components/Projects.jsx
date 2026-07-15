@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { motion, AnimatePresence, useMotionValue, useSpring, useReducedMotion } from 'framer-motion'
+import { m, AnimatePresence, useMotionValue, useSpring, useReducedMotion } from 'framer-motion'
 import {
   BarChart3,
   MessageSquare,
@@ -85,7 +85,7 @@ function ProjectCard({ project, t, onOpen }) {
   }
 
   return (
-    <motion.button
+    <m.button
       ref={cardRef}
       type="button"
       onClick={() => onOpen(project)}
@@ -106,7 +106,7 @@ function ProjectCard({ project, t, onOpen }) {
         aria-hidden
       />
 
-      <motion.div
+      <m.div
         layoutId={`thumb-${project.id}`}
         className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-white/[0.03] ring-1 ring-white/5"
       >
@@ -115,7 +115,7 @@ function ProjectCard({ project, t, onOpen }) {
           className="transition-transform duration-500 ease-out group-hover:scale-[1.04]"
         />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-70" />
-      </motion.div>
+      </m.div>
 
       <div className="relative flex flex-1 flex-col px-2 pb-1 pt-4">
         <div className="mb-2 flex items-center gap-2.5">
@@ -146,7 +146,7 @@ function ProjectCard({ project, t, onOpen }) {
           )}
         </div>
       </div>
-    </motion.button>
+    </m.button>
   )
 }
 
@@ -190,8 +190,8 @@ function ProjectModal({ project, t, lang, onClose }) {
   }, [onClose])
 
   return (
-    <motion.div
-      className="fixed inset-0 z-[60] flex items-end justify-center overflow-y-auto bg-navy-950/80 p-0 backdrop-blur-sm sm:items-center sm:p-6"
+    <m.div
+      className="fixed inset-0 z-[60] flex items-end justify-center overflow-y-auto bg-navy-950/90 p-0 sm:items-center sm:p-6 sm:bg-navy-950/80 sm:backdrop-blur-sm"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -200,7 +200,7 @@ function ProjectModal({ project, t, lang, onClose }) {
       aria-modal="true"
       aria-labelledby="project-modal-title"
     >
-      <motion.div
+      <m.div
         ref={panelRef}
         onClick={(e) => e.stopPropagation()}
         initial={{ y: 40, scale: 0.97, opacity: 0 }}
@@ -219,13 +219,13 @@ function ProjectModal({ project, t, lang, onClose }) {
           <X size={18} />
         </button>
 
-        <motion.div
+        <m.div
           layoutId={`thumb-${project.id}`}
           className="relative aspect-[16/9] w-full overflow-hidden bg-navy-950"
         >
           <ProjectThumb project={project} />
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-navy-900 via-navy-900/20 to-transparent" />
-        </motion.div>
+        </m.div>
 
         <div className="p-6 sm:p-8">
           <div className="mb-4 flex items-center gap-3">
@@ -293,8 +293,8 @@ function ProjectModal({ project, t, lang, onClose }) {
             </button>
           </div>
         </div>
-      </motion.div>
-    </motion.div>
+      </m.div>
+    </m.div>
   )
 }
 

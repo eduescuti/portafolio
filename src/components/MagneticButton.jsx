@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import { motion, useMotionValue, useSpring, useReducedMotion } from 'framer-motion'
+import { m, useMotionValue, useSpring, useReducedMotion } from 'framer-motion'
 
 /**
  * Envuelve un elemento y lo "imanta" levemente hacia el cursor.
@@ -13,7 +13,7 @@ export default function MagneticButton({ as = 'a', strength = 0.35, className = 
   const sx = useSpring(x, { stiffness: 200, damping: 15, mass: 0.4 })
   const sy = useSpring(y, { stiffness: 200, damping: 15, mass: 0.4 })
 
-  const MotionTag = motion[as] || motion.a
+  const MotionTag = m[as] || m.a
 
   const handleMove = (e) => {
     if (reduce || !ref.current) return

@@ -9,7 +9,10 @@ import Lenis from 'lenis'
 export default function SmoothScroll() {
   useEffect(() => {
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    if (prefersReduced) return
+    // En táctil/mobile el scroll nativo ya es fluido y acelerado; Lenis (JS + RAF)
+    // pelea con el scroll táctil y es la causa principal del "scroll trabado" en celular.
+    const isTouch = window.matchMedia('(hover: none), (pointer: coarse)').matches
+    if (prefersReduced || isTouch) return
 
     const lenis = new Lenis({
       duration: 1.1,

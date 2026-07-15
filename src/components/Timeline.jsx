@@ -1,4 +1,4 @@
-import { motion, useReducedMotion } from 'framer-motion'
+import { m, useReducedMotion } from 'framer-motion'
 import { Briefcase, GraduationCap, FolderKanban, Clock } from 'lucide-react'
 import { timeline, projects, profile } from '../data/portfolio'
 import { techIcons } from '../lib/techIcons'
@@ -127,7 +127,7 @@ export default function Timeline() {
         {/* Línea de tiempo */}
         <div className="relative">
           {/* Tallo que se "dibuja" */}
-          <motion.div
+          <m.div
             className="absolute left-[22px] top-2 w-px origin-top bg-gradient-to-b from-accent/40 via-white/12 to-transparent md:left-[23px]"
             style={{ bottom: '0.5rem' }}
             initial={{ scaleY: reduce ? 1 : 0 }}

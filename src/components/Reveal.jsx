@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { m } from 'framer-motion'
 
 // Variantes reutilizables. `custom` = delay en segundos.
 const variants = {
@@ -7,14 +7,14 @@ const variants = {
     visible: (delay = 0) => ({
       opacity: 1,
       y: 0,
-      transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1], delay },
+      transition: { duration: 0.75, ease: [0.22, 1, 0.36, 1], delay },
     }),
   },
   fade: {
     hidden: { opacity: 0 },
     visible: (delay = 0) => ({
       opacity: 1,
-      transition: { duration: 0.5, ease: 'easeOut', delay },
+      transition: { duration: 0.7, ease: 'easeOut', delay },
     }),
   },
   scale: {
@@ -22,7 +22,7 @@ const variants = {
     visible: (delay = 0) => ({
       opacity: 1,
       scale: 1,
-      transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1], delay },
+      transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1], delay },
     }),
   },
 }
@@ -41,7 +41,7 @@ export default function Reveal({
   children,
   ...rest
 }) {
-  const MotionTag = motion[as] || motion.div
+  const MotionTag = m[as] || m.div
 
   return (
     <MotionTag
@@ -69,7 +69,7 @@ export function RevealGroup({
   children,
   ...rest
 }) {
-  const MotionTag = motion[as] || motion.div
+  const MotionTag = m[as] || m.div
 
   return (
     <MotionTag
@@ -89,7 +89,7 @@ export function RevealGroup({
 }
 
 export function RevealItem({ as = 'div', variant = 'fade-up', className = '', children, ...rest }) {
-  const MotionTag = motion[as] || motion.div
+  const MotionTag = m[as] || m.div
   const v = variants[variant] || variants['fade-up']
 
   return (

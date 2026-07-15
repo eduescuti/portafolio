@@ -30,6 +30,16 @@ section[id] {
   scroll-margin-top: 5rem;
 }
 
+/* Cursor personalizado: oculta el nativo solo en desktop con puntero fino.
+   En táctil o reduced-motion se conserva el cursor del sistema. */
+@media (hover: hover) and (pointer: fine) {
+  @media (prefers-reduced-motion: no-preference) {
+    html, a, button, [role="button"], input, textarea, select, label {
+      cursor: none;
+    }
+  }
+}
+
 ::selection {
   background-color: rgba(79, 140, 255, 0.35);
   color: #ffffff;
@@ -261,6 +271,22 @@ section[id] {
   .animate-aurora,
   .animate-aurora-2,
   .animate-aurora-3 {
+    animation: none;
+  }
+}
+
+/* Optimización mobile: los blobs con blur grande + scale animados en loop son el
+   costo #1 en GPU móvil. En pantallas chicas los dejamos estáticos (repintan una vez
+   y no más). El fondo sigue viéndose bien; solo pierde la deriva lenta. */
+@media (max-width: 768px) {
+
+  .animate-aurora,
+  .animate-aurora-2,
+  .animate-aurora-3,
+  .animate-drift,
+  .animate-drift-slow,
+  .animate-drift-alt,
+  .animate-grid-pan {
     animation: none;
   }
 }

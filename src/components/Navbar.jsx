@@ -74,7 +74,7 @@ export default function Navbar() {
   return (
     <>
       <div
-        className={`mobile-nav-backdrop fixed inset-0 z-40 bg-navy-950/65 backdrop-blur-sm transition-opacity duration-300 ease-out md:hidden ${
+        className={`mobile-nav-backdrop fixed inset-0 z-40 bg-navy-950/80 transition-opacity duration-300 ease-out md:hidden ${
           open ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'
         }`}
         onClick={() => setOpen(false)}
@@ -84,7 +84,7 @@ export default function Navbar() {
       <header
         className={`mobile-nav-header fixed inset-x-0 top-0 z-50 md:overflow-visible ${
           showBarBackground
-            ? 'border-b border-white/[0.08] bg-navy-950/70 backdrop-blur-md'
+            ? 'border-b border-white/[0.08] bg-navy-950/90 backdrop-blur-none md:bg-navy-950/70 md:backdrop-blur-md'
             : 'border-b border-transparent bg-transparent'
         } ${open ? 'mobile-nav-header--open' : ''}`}
       >
