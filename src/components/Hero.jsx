@@ -13,7 +13,7 @@ function SocialButton({ href, icon: Icon, label }) {
       target="_blank"
       rel="noopener noreferrer"
       aria-label={label}
-      whileHover={{ y: -3 }}
+      whileHover={{ y: -4 }}
       whileTap={{ scale: 0.94 }}
       className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 text-slate-300 transition-colors duration-300 hover:border-accent/40 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
     >
@@ -83,10 +83,12 @@ export default function Hero() {
             {t(profile.role)}
           </m.p>
 
-          <m.p variants={item} className="mb-8 max-w-md font-mono text-sm text-slate-500">
-            Buenos Aires, Argentina
-            <span className="mx-2 text-accent/60" aria-hidden>·</span>
+          <m.p variants={item} className="max-w-md font-mono text-sm text-slate-500">
             {t(profile.availability)}
+          </m.p>
+
+          <m.p variants={item} className="mb-8 max-w-md font-mono text-sm text-slate-500">
+            {t(profile.location)}
           </m.p>
 
           <m.div variants={item} className="flex flex-wrap items-center gap-3">

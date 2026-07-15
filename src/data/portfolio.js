@@ -9,28 +9,29 @@ export const profile = {
     en: 'I build end-to-end web solutions: interfaces, APIs and automations.',
   },
   availability: {
-    es: 'Abierto a oportunidades part-time y pasantías',
-    en: 'Open to part-time roles and internships',
+    es: 'Abierto a oportunidades part time y pasantías',
+    en: 'Open to part time roles and internships',
   },
   university: {
     es: 'Universidad Católica Argentina (UCA)',
     en: 'Argentina Catholic University (UCA)',
   },
   location: {
-    es: 'Recoleta, Ciudad Autónoma de Buenos Aires',
-    en: 'Recoleta, Buenos Aires City, Argentina',
+    es: 'Ciudad Autónoma de Buenos Aires, Argentina',
+    en: 'Buenos Aires, Argentina',
   },
   email: 'eduescuti99@gmail.com',
   phone: '+54 9 11-3878-2797',
   age: 26,
   linkedin: 'https://www.linkedin.com/in/eduardo-escuti',
   github: 'https://github.com/eduescuti',
+  instagram: 'https://instagram.com/eduescuti',
   cv: {
     es: '/cv-eduardo-escuti.pdf',
     en: '/cv-eduardo-escuti-en.pdf',
   },
   // Fecha ancla para calcular "años trabajando" de forma automática (no editar el número a mano).
-  experienceStart: '2024-01',
+  experienceStart: '2024-06',
   intro: {
     es: 'Estudiante avanzado de Ingeniería en Informática (UCA) y Full Stack Developer en Andersson Consultores. Combino frameworks modernos, bases de datos y automatización para llevar productos de la idea a producción.',
     en: 'Advanced Software Engineering student (UCA) and Full Stack Developer at Andersson Consultores. I combine modern frameworks, databases and automation to take products from idea to production.',
@@ -200,6 +201,10 @@ export const projects = [
     icon: 'BarChart3',
     url: 'https://app.anderssonconsultores.com',
     imageBackground: '/projects/dashboard-ac-preview.png',
+    previews: [
+      '/projects/previews/preview-ac-dash-1.png',
+      '/projects/previews/preview-ac-dash-2.png',
+    ],
   },
   {
     id: 'edge-functions',
@@ -219,6 +224,10 @@ export const projects = [
     icon: 'Zap',
     url: 'https://supabase.com/',
     imageBackground: '/projects/supabase.png',
+    previews: [
+      '/projects/previews/preview-supabase-1.png',
+      '/projects/previews/preview-supabase-2.png',
+    ],
   },
   {
     id: 'crm-whapp',
@@ -238,6 +247,7 @@ export const projects = [
     icon: 'MessageSquare',
     url: 'https://chatwoot.com/',
     imageBackground: '/projects/wapp2.png',
+    previews: ['/projects/previews/preview-chatwoot.png'],
   },
   {
     id: 'estetica-app',
@@ -257,6 +267,10 @@ export const projects = [
     icon: 'Calendar',
     url: 'https://app-turnos.alexandriademo.com/',
     imageBackground: '/projects/alexandria.png',
+    previews: [
+      '/projects/previews/preview-alexandria-1.png',
+      '/projects/previews/preview-alexandria-2.png',
+    ],
   },
   {
     id: 'uca-planner',

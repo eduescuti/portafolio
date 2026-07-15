@@ -36,16 +36,15 @@ function TimelineItem({ node, t, lang }) {
     <Reveal variant="fade-up" className="relative pl-14 md:pl-16">
       {/* Nodo sobre la línea */}
       <span
-        className={`absolute left-0 top-1 flex h-11 w-11 items-center justify-center rounded-xl border md:h-12 md:w-12 ${
-          isWork
-            ? 'border-accent/30 bg-navy-800 text-accent'
-            : 'border-white/10 bg-navy-900 text-slate-300'
-        }`}
+        className={`absolute left-0 top-1 flex h-11 w-11 items-center justify-center rounded-xl border md:h-12 md:w-12 ${isWork
+          ? 'border-accent/30 bg-navy-800 text-accent'
+          : 'border-white/10 bg-navy-900 text-slate-300'
+          }`}
       >
         <Icon size={18} />
       </span>
 
-      <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-4 transition-colors duration-300 hover:border-white/15 md:p-5">
+      <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-4 transition-colors duration-300 hover:border-white/35 md:p-5">
         <div className="mb-1.5 flex flex-wrap items-start justify-between gap-x-3 gap-y-1">
           <div className="min-w-0">
             <h3 className="text-base font-semibold text-white md:text-lg">{t(node.title)}</h3>

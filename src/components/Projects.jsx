@@ -9,6 +9,8 @@ import {
   FolderOpen,
   ExternalLink,
   ArrowLeft,
+  ChevronLeft,
+  ChevronRight,
   X,
 } from 'lucide-react'
 import { projects } from '../data/portfolio'
@@ -150,6 +152,91 @@ function ProjectCard({ project, t, onOpen }) {
   )
 }
 
+function ProjectGallery({ images, lang }) {
+  const reduce = useReducedMotion()
+  const [index, setIndex] = useState(0)
+  const [dir, setDir] = useState(0)
+  const count = images.length
+  const multiple = count > 1
+
+  const go = useCallback(
+    (step) => {
+      setDir(step)
+      setIndex((prev) => (prev + step + count) % count)
+    },
+    [count]
+  )
+
+  // Flechas del teclado para navegar la galería.
+  useEffect(() => {
+    if (!multiple) return
+    const onKey = (e) => {
+      if (e.key === 'ArrowRight') go(1)
+      else if (e.key === 'ArrowLeft') go(-1)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [multiple, go])
+
+  return (
+    <div className="relative h-full w-full">
+      <AnimatePresence initial={false} custom={dir} mode="popLayout">
+        <m.img
+          key={index}
+          src={images[index]}
+          alt=""
+          custom={dir}
+          initial={reduce ? { opacity: 0 } : { opacity: 0, x: dir === 0 ? 0 : dir * 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={reduce ? { opacity: 0 } : { opacity: 0, x: dir * -40 }}
+          transition={{ duration: 0.3, ease: 'easeOut' }}
+          className="absolute inset-0 h-full w-full object-cover object-top"
+          draggable={false}
+        />
+      </AnimatePresence>
+
+      {multiple && (
+        <>
+          <button
+            type="button"
+            onClick={() => go(-1)}
+            aria-label={lang === 'es' ? 'Imagen anterior' : 'Previous image'}
+            className="absolute left-3 top-1/2 z-10 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-navy-950/60 text-slate-200 backdrop-blur-sm transition-colors duration-300 hover:border-accent/40 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+          >
+            <ChevronLeft size={18} />
+          </button>
+          <button
+            type="button"
+            onClick={() => go(1)}
+            aria-label={lang === 'es' ? 'Imagen siguiente' : 'Next image'}
+            className="absolute right-3 top-1/2 z-10 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-navy-950/60 text-slate-200 backdrop-blur-sm transition-colors duration-300 hover:border-accent/40 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+          >
+            <ChevronRight size={18} />
+          </button>
+
+          <div className="absolute bottom-3 left-1/2 z-10 flex -translate-x-1/2 items-center gap-1.5">
+            {images.map((img, i) => (
+              <button
+                key={img}
+                type="button"
+                onClick={() => {
+                  setDir(i > index ? 1 : -1)
+                  setIndex(i)
+                }}
+                aria-label={`${lang === 'es' ? 'Ir a la imagen' : 'Go to image'} ${i + 1}`}
+                aria-current={i === index}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  i === index ? 'w-5 bg-accent' : 'w-1.5 bg-white/40 hover:bg-white/70'
+                }`}
+              />
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
+
 function ProjectModal({ project, t, lang, onClose }) {
   const panelRef = useRef(null)
   const closeRef = useRef(null)
@@ -223,7 +310,11 @@ function ProjectModal({ project, t, lang, onClose }) {
           layoutId={`thumb-${project.id}`}
           className="relative aspect-[16/9] w-full overflow-hidden bg-navy-950"
         >
-          <ProjectThumb project={project} />
+          {project.previews?.length ? (
+            <ProjectGallery images={project.previews} lang={lang} />
+          ) : (
+            <ProjectThumb project={project} />
+          )}
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-navy-900 via-navy-900/20 to-transparent" />
         </m.div>
 

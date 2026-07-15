@@ -18,8 +18,8 @@ export default function CustomCursor() {
   const [visible, setVisible] = useState(false)
 
   // Posición cruda del mouse (el punto la usa directo).
-  const x = useMotionValue(-100)
-  const y = useMotionValue(-100)
+  const x = useMotionValue(-50)
+  const y = useMotionValue(-50)
 
   // El anillo persigue con retraso -> sensación de "arrastre".
   const ringX = useSpring(x, { stiffness: 350, damping: 28, mass: 0.6 })

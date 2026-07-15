@@ -1,4 +1,4 @@
-import { Github, Linkedin, Mail } from 'lucide-react'
+import { Github, Linkedin, Mail, Instagram } from 'lucide-react'
 import { profile } from '../data/portfolio'
 import { useLanguage } from '../context/LanguageContext'
 
@@ -28,6 +28,7 @@ export default function Footer() {
         </p>
 
         <div className="flex items-center gap-2">
+          <FooterSocial href={profile.instagram} icon={Instagram} label="Instagram" />
           <FooterSocial href={profile.github} icon={Github} label="GitHub" />
           <FooterSocial href={profile.linkedin} icon={Linkedin} label="LinkedIn" />
           <FooterSocial href={`mailto:${profile.email}`} icon={Mail} label="Email" external={false} />

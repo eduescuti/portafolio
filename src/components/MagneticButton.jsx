@@ -10,8 +10,8 @@ export default function MagneticButton({ as = 'a', strength = 0.35, className = 
   const reduce = useReducedMotion()
   const x = useMotionValue(0)
   const y = useMotionValue(0)
-  const sx = useSpring(x, { stiffness: 200, damping: 15, mass: 0.4 })
-  const sy = useSpring(y, { stiffness: 200, damping: 15, mass: 0.4 })
+  const sx = useSpring(x, { stiffness: 100, damping: 30, mass: 0.4 })
+  const sy = useSpring(y, { stiffness: 100, damping: 30, mass: 0.4 })
 
   const MotionTag = m[as] || m.a
 
