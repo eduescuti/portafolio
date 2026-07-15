@@ -1,4 +1,5 @@
-import { useRef, useCallback, useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import { motion, AnimatePresence, useMotionValue, useSpring, useReducedMotion } from 'framer-motion'
 import {
   BarChart3,
   MessageSquare,
@@ -7,590 +8,332 @@ import {
   GraduationCap,
   FolderOpen,
   ExternalLink,
-  ChevronLeft,
-  ChevronRight,
-  MousePointer2,
+  ArrowLeft,
   X,
-  Sparkles,
-  ArrowDown
 } from 'lucide-react'
 import { projects } from '../data/portfolio'
+import { techIcons } from '../lib/techIcons'
 import { useLanguage } from '../context/LanguageContext'
-import Reveal from './Reveal'
-import AmbientBackground from './AmbientBackground'
+import Reveal, { RevealGroup, RevealItem } from './Reveal'
 
-const iconMap = {
-  BarChart3,
-  MessageSquare,
-  Zap,
-  Calendar,
-  GraduationCap,
-}
+const iconMap = { BarChart3, MessageSquare, Zap, Calendar, GraduationCap }
 
-const DRAG_THRESHOLD = 8
-const SCROLL_EDGE = 8
-const MOMENTUM_MIN_VELOCITY = 0.02
-const MOMENTUM_FRICTION = 0.92
-
-function getScrollAxis(deltaX, deltaY) {
-  const absX = Math.abs(deltaX)
-  const absY = Math.abs(deltaY)
-  if (absX < DRAG_THRESHOLD && absY < DRAG_THRESHOLD) return null
-  return absX > absY ? 'x' : 'y'
-}
-
-function averageVelocity(samples) {
-  if (!samples.length) return 0
-  const weightSum = samples.reduce((sum, _, i) => sum + i + 1, 0)
-  return samples.reduce((sum, velocity, i) => sum + velocity * (i + 1), 0) / weightSum
-}
-
-function useDragScroll() {
-  const trackRef = useRef(null)
-  const momentumRef = useRef(null)
-  const dragRef = useRef({
-    active: false,
-    startX: 0,
-    startY: 0,
-    startScrollLeft: 0,
-    moved: false,
-    suppressClick: false,
-    pointerId: null,
-    axis: null,
-    velocities: [],
-    lastTime: null,
-    lastScrollLeft: null,
-  })
-  const [isDragging, setIsDragging] = useState(false)
-  const [isMomentumScrolling, setIsMomentumScrolling] = useState(false)
-  const [canScrollLeft, setCanScrollLeft] = useState(false)
-  const [canScrollRight, setCanScrollRight] = useState(false)
-
-  const cancelMomentum = useCallback(() => {
-    if (momentumRef.current !== null) {
-      cancelAnimationFrame(momentumRef.current)
-      momentumRef.current = null
-    }
-    setIsMomentumScrolling(false)
-  }, [])
-
-  const updateScrollHints = useCallback(() => {
-    const el = trackRef.current
-    if (!el) return
-
-    const { scrollLeft, scrollWidth, clientWidth } = el
-    const maxScroll = scrollWidth - clientWidth
-
-    setCanScrollLeft(scrollLeft > SCROLL_EDGE)
-    setCanScrollRight(scrollLeft < maxScroll - SCROLL_EDGE)
-  }, [])
-
-  const startMomentum = useCallback(
-    (el, velocityPxPerMs) => {
-      cancelMomentum()
-
-      if (Math.abs(velocityPxPerMs) < MOMENTUM_MIN_VELOCITY) return
-
-      setIsMomentumScrolling(true)
-
-      let velocity = velocityPxPerMs * 1.15
-      let lastTime = performance.now()
-
-      const step = (now) => {
-        const dt = Math.min(now - lastTime, 32)
-        lastTime = now
-
-        velocity *= MOMENTUM_FRICTION ** (dt / 16)
-
-        if (Math.abs(velocity) < MOMENTUM_MIN_VELOCITY) {
-          cancelMomentum()
-          updateScrollHints()
-          return
-        }
-
-        const maxScroll = el.scrollWidth - el.clientWidth
-        const nextScrollLeft = el.scrollLeft + velocity * dt
-
-        if (nextScrollLeft <= 0) {
-          el.scrollLeft = 0
-          cancelMomentum()
-          updateScrollHints()
-          return
-        }
-
-        if (nextScrollLeft >= maxScroll) {
-          el.scrollLeft = maxScroll
-          cancelMomentum()
-          updateScrollHints()
-          return
-        }
-
-        el.scrollLeft = nextScrollLeft
-        updateScrollHints()
-        momentumRef.current = requestAnimationFrame(step)
-      }
-
-      momentumRef.current = requestAnimationFrame(step)
-    },
-    [cancelMomentum, updateScrollHints]
-  )
-
-  useEffect(() => {
-    const el = trackRef.current
-    if (!el) return
-
-    updateScrollHints()
-    el.addEventListener('scroll', updateScrollHints, { passive: true })
-    window.addEventListener('resize', updateScrollHints)
-
-    return () => {
-      el.removeEventListener('scroll', updateScrollHints)
-      window.removeEventListener('resize', updateScrollHints)
-    }
-  }, [updateScrollHints])
-
-  useEffect(() => {
-    const el = trackRef.current
-    if (!el) return
-
-    const onPointerDown = (e) => {
-      if (e.pointerType === 'touch') return
-      if (e.pointerType === 'mouse' && e.button !== 0) return
-
-      cancelMomentum()
-
-      dragRef.current = {
-        active: true,
-        startX: e.clientX,
-        startY: e.clientY,
-        startScrollLeft: el.scrollLeft,
-        moved: false,
-        suppressClick: false,
-        pointerId: e.pointerId,
-        axis: null,
-        velocities: [],
-        lastTime: null,
-        lastScrollLeft: el.scrollLeft,
-      }
-    }
-
-    const onPointerMove = (e) => {
-      const drag = dragRef.current
-      if (!drag.active || e.pointerId !== drag.pointerId) return
-
-      const deltaX = e.clientX - drag.startX
-      const deltaY = e.clientY - drag.startY
-
-      if (drag.axis === null) {
-        const axis = getScrollAxis(deltaX, deltaY)
-        if (!axis) return
-
-        if (axis === 'y') {
-          drag.active = false
-          drag.pointerId = null
-          return
-        }
-
-        drag.axis = 'x'
-        drag.moved = true
-        setIsDragging(true)
-        el.setPointerCapture(e.pointerId)
-      }
-
-      if (drag.axis !== 'x') return
-
-      e.preventDefault()
-      el.scrollLeft = drag.startScrollLeft - deltaX
-
-      const now = performance.now()
-      if (drag.lastTime !== null && drag.lastScrollLeft !== null) {
-        const dt = now - drag.lastTime
-        if (dt > 0 && dt < 120) {
-          const instantVelocity = (el.scrollLeft - drag.lastScrollLeft) / dt
-          drag.velocities = [...drag.velocities, instantVelocity].slice(-6)
-        }
-      }
-
-      drag.lastTime = now
-      drag.lastScrollLeft = el.scrollLeft
-      updateScrollHints()
-    }
-
-    const onPointerEnd = (e) => {
-      const drag = dragRef.current
-      if (!drag.active || e.pointerId !== drag.pointerId) return
-
-      if (drag.moved) {
-        drag.suppressClick = true
-        startMomentum(el, averageVelocity(drag.velocities))
-      }
-
-      drag.active = false
-      drag.moved = false
-      drag.pointerId = null
-      drag.axis = null
-      drag.velocities = []
-      drag.lastTime = null
-      drag.lastScrollLeft = null
-      setIsDragging(false)
-
-      if (el.hasPointerCapture(e.pointerId)) {
-        el.releasePointerCapture(e.pointerId)
-      }
-
-      updateScrollHints()
-    }
-
-    const onClickCapture = (e) => {
-      if (!dragRef.current.suppressClick) return
-      e.preventDefault()
-      e.stopPropagation()
-      dragRef.current.suppressClick = false
-    }
-
-    el.addEventListener('pointerdown', onPointerDown)
-    el.addEventListener('pointermove', onPointerMove, { passive: false })
-    el.addEventListener('pointerup', onPointerEnd)
-    el.addEventListener('pointercancel', onPointerEnd)
-    el.addEventListener('click', onClickCapture, true)
-
-    return () => {
-      el.removeEventListener('pointerdown', onPointerDown)
-      el.removeEventListener('pointermove', onPointerMove)
-      el.removeEventListener('pointerup', onPointerEnd)
-      el.removeEventListener('pointercancel', onPointerEnd)
-      el.removeEventListener('click', onClickCapture, true)
-      cancelMomentum()
-    }
-  }, [updateScrollHints, startMomentum, cancelMomentum])
-
-  return {
-    trackRef,
-    isDragging: isDragging || isMomentumScrolling,
-    canScrollLeft,
-    canScrollRight,
-  }
-}
-
-function ScrollHint({ direction, visible, onHintClick }) {
-  const Icon = direction === 'left' ? ChevronLeft : ChevronRight
-
-  const handleClick = (e) => {
-    e.stopPropagation()
-    if (visible) onHintClick?.()
-  }
-
-  const desktopButtonClass = `flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-navy-800/95 text-accent-light shadow-lg transition-all duration-300 ${visible
-    ? 'pointer-events-auto cursor-pointer hover:scale-110 hover:border-accent/40 hover:bg-navy-700/95 hover:shadow-accent/25 active:scale-95'
-    : 'pointer-events-none'
-    } ${visible && direction === 'right' ? 'animate-pulse-soft' : ''}`
-
-  return (
-    <>
-      {/* Mobile: icono decorativo, sin interacción */}
-      <div
-        aria-hidden={!visible}
-        className={`pointer-events-none absolute top-1/2 z-10 -translate-y-1/2 transition-opacity duration-300 md:hidden ${direction === 'left' ? 'left-0.5' : 'right-0.5'
-          } ${visible ? 'opacity-100' : 'opacity-0'}`}
-      >
-        <div className="flex h-7 w-7 items-center justify-center rounded-full bg-navy-950/95 text-accent-light shadow-md ring-1 ring-white/15">
-          <Icon size={14} strokeWidth={2.5} />
-        </div>
-      </div>
-
-      {/* Desktop: degradado lateral + flecha clicable */}
-      <div
-        aria-hidden={!visible}
-        className={`pointer-events-none absolute inset-y-0 z-10 hidden w-20 items-center transition-opacity duration-300 md:flex ${direction === 'left'
-          ? 'left-0 justify-start bg-gradient-to-r from-navy-900 via-navy-900/70 to-transparent pl-3'
-          : 'right-0 justify-end bg-gradient-to-l from-navy-900 via-navy-900/70 to-transparent pr-3'
-          } ${visible ? 'opacity-100' : 'opacity-0'}`}
-      >
-        <button
-          type="button"
-          onClick={handleClick}
-          tabIndex={visible ? 0 : -1}
-          aria-label={direction === 'left' ? 'Ver proyectos anteriores' : 'Ver más proyectos'}
-          className={desktopButtonClass}
-        >
-          <Icon size={18} strokeWidth={2.5} />
-        </button>
-      </div>
-    </>
-  )
-}
-
-const DRAG_HINT_EXIT_MS = 400
-
-function DragHintToast({ open, onClose, lang }) {
-  const [mounted, setMounted] = useState(false)
-  const [exiting, setExiting] = useState(false)
-
-  const dismiss = useCallback(() => {
-    setExiting(true)
-  }, [])
-
-  useEffect(() => {
-    if (open) {
-      setMounted(true)
-      setExiting(false)
-    }
-  }, [open])
-
-  useEffect(() => {
-    if (!exiting) return
-
-    const timer = window.setTimeout(() => {
-      setMounted(false)
-      setExiting(false)
-      onClose()
-    }, DRAG_HINT_EXIT_MS)
-
-    return () => window.clearTimeout(timer)
-  }, [exiting, onClose])
-
-  useEffect(() => {
-    if (!mounted || exiting) return
-
-    const onKeyDown = (e) => {
-      if (e.key === 'Escape') dismiss()
-    }
-
-    const timer = window.setTimeout(dismiss, 5000)
-    window.addEventListener('keydown', onKeyDown)
-
-    return () => {
-      window.clearTimeout(timer)
-      window.removeEventListener('keydown', onKeyDown)
-    }
-  }, [mounted, exiting, dismiss])
-
-  if (!mounted) return null
-
-  const copy = {
-    es: {
-      title: '¡Arrastrá con el mouse!',
-      body: 'Agarrá el carrusel y deslizalo hacia los lados para descubrir más proyectos.',
-    },
-    en: {
-      title: 'Drag with your mouse!',
-      body: 'Grab the carousel and drag sideways to discover more projects.',
-    },
-  }
-
-  const text = copy[lang] ?? copy.es
-
-  return (
-    <div
-      className="pointer-events-none absolute inset-x-0 top-1/2 z-50 hidden -translate-y-1/2 justify-center px-4 md:flex"
-      role="status"
-      aria-live="polite"
-    >
-      <div
-        className={`pointer-events-auto relative w-full max-w-sm rounded-2xl border border-accent/30 bg-navy-900/95 p-4 shadow-2xl shadow-accent/20 backdrop-blur-xl ${exiting ? 'animate-pop-out' : 'animate-pop-bounce'
-          }`}
-      >
-        <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 overflow-hidden rounded-full bg-accent/20 blur-2xl" aria-hidden />
-        <div className="pointer-events-none absolute -bottom-8 -left-4 h-20 w-20 overflow-hidden rounded-full bg-indigo-500/15 blur-2xl" aria-hidden />
-
-        <button
-          type="button"
-          onPointerDown={(e) => {
-            e.preventDefault()
-            e.stopPropagation()
-            dismiss()
-          }}
-          className="absolute right-1 top-1 z-20 flex h-10 w-10 items-center justify-center rounded-lg text-slate-400 transition hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
-          aria-label={lang === 'es' ? 'Cerrar' : 'Close'}
-        >
-          <X size={18} strokeWidth={2} />
-        </button>
-
-        <div className="relative flex items-start gap-3.5 pr-8">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-accent/15 ring-1 ring-accent/25">
-            <MousePointer2 size={20} className="animate-drag-hand text-accent-light" />
-          </div>
-
-          <div className="min-w-0 flex-1 pt-0.5">
-            <p className="mb-1 flex items-center gap-1.5 text-base font-semibold leading-snug text-white">
-              {text.title}
-              <Sparkles size={15} className="shrink-0 text-amber-400" aria-hidden />
-            </p>
-            <p className="text-sm leading-relaxed text-slate-400">{text.body}</p>
-          </div>
-        </div>
-
-        <div className="relative mt-3 flex items-center justify-center gap-2 font-mono text-xs text-accent-light/80">
-          <ChevronLeft size={14} className="animate-pulse-soft" aria-hidden />
-          <span>{lang === 'es' ? 'deslizá' : 'drag'}</span>
-          <ChevronRight size={14} className="animate-pulse-soft" aria-hidden />
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function ProjectCard({ project, t }) {
+function ProjectThumb({ project, className = '' }) {
   const Icon = iconMap[project.icon] || FolderOpen
-  const hasLink = Boolean(project.url)
 
-  const headerStyle = project.imageBackground
-    ? {
-      backgroundImage: `url(${project.imageBackground})`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center top',
-    }
-    : undefined
-
-  const cardContent = (
-    <>
-      <div
-        className={`relative h-44 shrink-0 overflow-hidden ${!project.imageBackground ? `bg-gradient-to-br ${project.color}` : ''}`}
-        style={headerStyle}
-      >
-        {project.imageBackground && (
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10" />
-        )}
-
-        <div className="relative flex h-full flex-col justify-between p-5">
-          <div className="flex items-start justify-between gap-3">
-            <div className="rounded-xl bg-white/15 p-2.5 backdrop-blur-sm ring-1 ring-white/10">
-              <Icon size={22} className="text-white" />
-            </div>
-            <span className="flex max-w-[55%] items-center gap-1 truncate rounded-lg bg-black/30 px-2.5 py-1 font-mono text-[10px] text-white/80 backdrop-blur-sm">
-              <FolderOpen size={11} className="shrink-0" />
-              <span className="truncate">{project.folder}</span>
-            </span>
-          </div>
-
-          <div>
-            <h3 className="text-lg font-bold leading-tight text-white">{t(project.title)}</h3>
-            <p className="mt-0.5 text-sm text-white/75">{t(project.subtitle)}</p>
-          </div>
-        </div>
-
-        {hasLink && (
-          <div className="absolute right-4 top-4 flex items-center gap-1 rounded-full bg-accent/90 px-2.5 py-1 text-[10px] font-medium text-white opacity-0 shadow-lg transition-all duration-300 group-hover:opacity-100">
-            <ExternalLink size={11} />
-            {t({ es: 'Visitar', en: 'Visit' })}
-          </div>
-        )}
-      </div>
-
-      <div className="flex min-h-0 flex-1 flex-col p-5">
-        <p className="mb-3 min-h-[2.5rem] shrink-0 line-clamp-3 text-sm leading-relaxed text-slate-300">
-          {t(project.description)}
-        </p>
-
-        <div className="mb-3 flex flex-wrap content-start gap-1.5">
-          {t(project.highlights).map((h) => (
-            <span
-              key={h}
-              className="rounded-full border border-white/10 bg-white/5 px-2.5 py-0.5 text-xs text-slate-400"
-            >
-              {h}
-            </span>
-          ))}
-        </div>
-
-        <div className="mt-auto flex flex-wrap content-start gap-2 border-t border-white/5 pt-3">
-          {project.tech.map((tech) => (
-            <span
-              key={tech}
-              className="rounded-md bg-accent/10 px-2.5 py-1 font-mono text-xs text-accent-light"
-            >
-              {tech}
-            </span>
-          ))}
-        </div>
-      </div>
-    </>
-  )
-
-  const cardClass =
-    'group glass-card flex h-[25rem] w-[min(88vw,380px)] shrink-0 flex-col overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:border-accent/30 hover:shadow-2xl hover:shadow-accent/10 md:w-[380px]'
-
-  if (hasLink) {
+  if (project.imageBackground) {
     return (
-      <a
-        href={project.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        data-carousel-card
-        className={`${cardClass} cursor-pointer`}
-        aria-label={t(project.title)}
-        draggable={false}
-      >
-        {cardContent}
-      </a>
+      <img
+        src={project.imageBackground}
+        alt=""
+        loading="lazy"
+        className={`h-full w-full object-cover object-top ${className}`}
+      />
     )
   }
 
   return (
-    <article data-carousel-card className={cardClass}>
-      {cardContent}
-    </article>
+    <div className={`flex h-full w-full items-center justify-center bg-gradient-to-br ${project.color || 'from-navy-800 to-navy-900'} ${className}`}>
+      <Icon size={44} className="text-white/80" />
+    </div>
+  )
+}
+
+function TechChip({ name, small = false }) {
+  const Icon = techIcons[name]
+  return (
+    <span
+      className={`inline-flex items-center gap-1.5 rounded-md bg-white/[0.04] font-mono text-accent-light ${
+        small ? 'px-2 py-0.5 text-[11px]' : 'px-2.5 py-1 text-xs'
+      }`}
+    >
+      {Icon && <Icon size={small ? 11 : 13} className="shrink-0" />}
+      {name}
+    </span>
+  )
+}
+
+function ProjectCard({ project, t, onOpen }) {
+  const Icon = iconMap[project.icon] || FolderOpen
+  const reduce = useReducedMotion()
+  const cardRef = useRef(null)
+
+  const rotateX = useSpring(useMotionValue(0), { stiffness: 150, damping: 18 })
+  const rotateY = useSpring(useMotionValue(0), { stiffness: 150, damping: 18 })
+
+  // El tilt 3D solo en desktop con mouse (>=1024px). En mobile/táctil descuadraba la card.
+  const canTilt = () =>
+    !reduce &&
+    typeof window !== 'undefined' &&
+    window.matchMedia('(hover: hover) and (pointer: fine)').matches &&
+    window.innerWidth >= 1024
+
+  const handleMove = (e) => {
+    if (!cardRef.current || !canTilt()) return
+    const rect = cardRef.current.getBoundingClientRect()
+    const px = (e.clientX - rect.left) / rect.width
+    const py = (e.clientY - rect.top) / rect.height
+    rotateY.set((px - 0.5) * 6)
+    rotateX.set((0.5 - py) * 6)
+    cardRef.current.style.setProperty('--mx', `${px * 100}%`)
+    cardRef.current.style.setProperty('--my', `${py * 100}%`)
+  }
+
+  const handleLeave = () => {
+    rotateX.set(0)
+    rotateY.set(0)
+  }
+
+  return (
+    <motion.button
+      ref={cardRef}
+      type="button"
+      onClick={() => onOpen(project)}
+      onMouseMove={handleMove}
+      onMouseLeave={handleLeave}
+      whileHover={reduce ? undefined : { y: -6 }}
+      style={{ rotateX, rotateY, transformPerspective: 1000 }}
+      className="group relative flex h-full w-full flex-col overflow-hidden rounded-3xl border border-white/[0.08] bg-white/[0.02] p-3 text-left transition-colors duration-300 hover:border-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+      aria-label={t(project.title)}
+    >
+      {/* Spotlight que sigue el mouse */}
+      <span
+        className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+        style={{
+          background:
+            'radial-gradient(400px circle at var(--mx, 50%) var(--my, 0%), rgba(79,140,255,0.10), transparent 60%)',
+        }}
+        aria-hidden
+      />
+
+      <motion.div
+        layoutId={`thumb-${project.id}`}
+        className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-white/[0.03] ring-1 ring-white/5"
+      >
+        <ProjectThumb
+          project={project}
+          className="transition-transform duration-500 ease-out group-hover:scale-[1.04]"
+        />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-70" />
+      </motion.div>
+
+      <div className="relative flex flex-1 flex-col px-2 pb-1 pt-4">
+        <div className="mb-2 flex items-center gap-2.5">
+          <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-white/10 text-accent">
+            <Icon size={16} />
+          </span>
+          <div className="min-w-0">
+            <h3 className="truncate text-lg font-semibold leading-tight text-white">{t(project.title)}</h3>
+            <p className="truncate text-xs text-slate-500">{t(project.subtitle)}</p>
+          </div>
+          <ExternalLink
+            size={15}
+            className="ml-auto shrink-0 text-slate-600 transition-all duration-300 group-hover:translate-x-0.5 group-hover:text-accent"
+            aria-hidden
+          />
+        </div>
+
+        <p className="mb-3 line-clamp-2 text-sm leading-relaxed text-slate-400">{t(project.description)}</p>
+
+        <div className="mt-auto flex flex-wrap gap-1.5">
+          {project.tech.slice(0, 4).map((tech) => (
+            <TechChip key={tech} name={tech} small />
+          ))}
+          {project.tech.length > 4 && (
+            <span className="inline-flex items-center px-1.5 py-0.5 font-mono text-[11px] text-slate-600">
+              +{project.tech.length - 4}
+            </span>
+          )}
+        </div>
+      </div>
+    </motion.button>
+  )
+}
+
+function ProjectModal({ project, t, lang, onClose }) {
+  const panelRef = useRef(null)
+  const closeRef = useRef(null)
+  const Icon = iconMap[project.icon] || FolderOpen
+  const hasLink = Boolean(project.url)
+
+  useEffect(() => {
+    document.body.style.overflow = 'hidden'
+    closeRef.current?.focus()
+
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        onClose()
+        return
+      }
+      if (e.key === 'Tab') {
+        const f = panelRef.current?.querySelectorAll(
+          'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )
+        if (!f || f.length === 0) return
+        const first = f[0]
+        const last = f[f.length - 1]
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault()
+          last.focus()
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault()
+          first.focus()
+        }
+      }
+    }
+
+    window.addEventListener('keydown', onKeyDown)
+    return () => {
+      document.body.style.overflow = ''
+      window.removeEventListener('keydown', onKeyDown)
+    }
+  }, [onClose])
+
+  return (
+    <motion.div
+      className="fixed inset-0 z-[60] flex items-end justify-center overflow-y-auto bg-navy-950/80 p-0 backdrop-blur-sm sm:items-center sm:p-6"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="project-modal-title"
+    >
+      <motion.div
+        ref={panelRef}
+        onClick={(e) => e.stopPropagation()}
+        initial={{ y: 40, scale: 0.97, opacity: 0 }}
+        animate={{ y: 0, scale: 1, opacity: 1 }}
+        exit={{ y: 20, scale: 0.98, opacity: 0 }}
+        transition={{ type: 'spring', stiffness: 260, damping: 26 }}
+        className="relative my-0 w-full max-w-2xl overflow-hidden rounded-t-3xl border border-white/10 bg-navy-900 shadow-2xl shadow-black/50 sm:my-8 sm:rounded-3xl"
+      >
+        <button
+          ref={closeRef}
+          type="button"
+          onClick={onClose}
+          aria-label={lang === 'es' ? 'Cerrar' : 'Close'}
+          className="absolute right-4 top-4 z-10 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-navy-950/60 text-slate-300 backdrop-blur-sm transition-colors duration-300 hover:border-accent/40 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+        >
+          <X size={18} />
+        </button>
+
+        <motion.div
+          layoutId={`thumb-${project.id}`}
+          className="relative aspect-[16/9] w-full overflow-hidden bg-navy-950"
+        >
+          <ProjectThumb project={project} />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-navy-900 via-navy-900/20 to-transparent" />
+        </motion.div>
+
+        <div className="p-6 sm:p-8">
+          <div className="mb-4 flex items-center gap-3">
+            <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/10 text-accent">
+              <Icon size={20} />
+            </span>
+            <div className="min-w-0">
+              <h2 id="project-modal-title" className="text-2xl font-bold leading-tight text-white">
+                {t(project.title)}
+              </h2>
+              <p className="text-sm text-slate-500">{t(project.subtitle)}</p>
+            </div>
+          </div>
+
+          <p className="mb-6 text-[15px] leading-relaxed text-slate-300">{t(project.description)}</p>
+
+          <RevealGroup className="mb-6 flex flex-wrap gap-2" stagger={0.05}>
+            {t(project.highlights).map((h) => (
+              <RevealItem
+                as="span"
+                key={h}
+                className="rounded-full border border-white/10 px-3 py-1 text-xs text-slate-300"
+              >
+                {h}
+              </RevealItem>
+            ))}
+          </RevealGroup>
+
+          <div className="mb-8">
+            <p className="mb-2 font-mono text-xs uppercase tracking-widest text-slate-500">Stack</p>
+            <RevealGroup className="flex flex-wrap gap-2" stagger={0.04}>
+              {project.tech.map((tech) => (
+                <RevealItem as="span" key={tech}>
+                  <TechChip name={tech} />
+                </RevealItem>
+              ))}
+            </RevealGroup>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            {hasLink ? (
+              <a
+                href={project.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-white transition-colors duration-300 hover:bg-accent-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+              >
+                <ExternalLink size={16} />
+                {lang === 'es' ? 'Ir al proyecto' : 'Visit project'}
+              </a>
+            ) : (
+              <span className="inline-flex items-center gap-2 rounded-xl border border-dashed border-white/15 px-5 py-3 text-sm font-medium text-slate-400">
+                <Zap size={16} className="text-accent" />
+                {lang === 'es' ? 'En desarrollo' : 'In development'}
+              </span>
+            )}
+
+            <button
+              type="button"
+              onClick={onClose}
+              className="inline-flex items-center gap-2 rounded-xl border border-white/15 px-5 py-3 text-sm font-semibold text-slate-200 transition-colors duration-300 hover:border-accent/40 hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+            >
+              <ArrowLeft size={16} />
+              {lang === 'es' ? 'Volver' : 'Back'}
+            </button>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
   )
 }
 
 export default function Projects() {
   const { t, lang } = useLanguage()
-  const [dragHintOpen, setDragHintOpen] = useState(false)
-  const {
-    trackRef,
-    isDragging,
-    canScrollLeft,
-    canScrollRight,
-  } = useDragScroll()
+  const [selected, setSelected] = useState(null)
 
-  const openDragHint = useCallback(() => {
-    if (window.matchMedia('(min-width: 768px)').matches) {
-      setDragHintOpen(true)
-    }
-  }, [])
-  const closeDragHint = useCallback(() => setDragHintOpen(false), [])
+  const openProject = useCallback((project) => setSelected(project), [])
+  const closeProject = useCallback(() => setSelected(null), [])
 
   return (
-    <section id="projects" className="relative flex min-h-screen items-center overflow-hidden border-t border-white/5 bg-navy-900/50">
-      <AmbientBackground
-        blobs={[{ className: '-left-40 top-0 h-[400px] w-[400px] bg-indigo-600/10', animation: 'animate-drift-alt' }]}
-      />
+    <section id="projects" className="relative overflow-hidden border-t border-white/5">
       <div className="section-container">
         <Reveal>
           <span className="section-label">{lang === 'es' ? 'Proyectos' : 'Projects'}</span>
-          <h2 className="section-title">
-            {lang === 'es' ? 'Lo que he construido' : 'What I have built'}
-          </h2>
-          <p className="mb-10 max-w-2xl text-slate-400">
+        </Reveal>
+        <Reveal as="h2" delay={80} className="section-title">
+          {lang === 'es' ? 'Lo que he construido' : 'What I have built'}
+        </Reveal>
+        <Reveal delay={160}>
+          <p className="mb-12 max-w-2xl text-lg text-slate-400">
             {lang === 'es'
-              ? 'Proyectos reales desarrollados en Andersson Consultores, Alexandria Solutions y la UCA.'
-              : 'Real projects developed at Andersson Consultores, Alexandria Solutions and UCA.'}
+              ? 'Proyectos reales desarrollados en Andersson Consultores, Alexandria Solutions y la UCA. Tocá cualquiera para ver más detalles.'
+              : 'Real projects developed at Andersson Consultores, Alexandria Solutions and UCA. Tap any of them to see more details.'}
           </p>
         </Reveal>
 
-        <div className="relative -mx-6 md:-mx-8">
-          <ScrollHint direction="left" visible={canScrollLeft} onHintClick={openDragHint} />
-          <ScrollHint direction="right" visible={canScrollRight} onHintClick={openDragHint} />
-          <DragHintToast open={dragHintOpen} onClose={closeDragHint} lang={lang} />
-
-          <div
-            ref={trackRef}
-            aria-label={lang === 'es' ? 'Carrusel de proyectos' : 'Projects carousel'}
-            className={`projects-carousel flex items-stretch snap-x snap-proximity gap-4 overflow-x-auto scroll-smooth px-6 pb-2 pt-1 md:gap-5 md:px-8 md:snap-none ${isDragging ? 'is-dragging' : ''} ${dragHintOpen ? 'pointer-events-none' : ''}`}
-          >
-            {projects.map((project) => (
-              <ProjectCard key={project.id} project={project} t={t} />
-            ))}
-          </div>
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+          {projects.map((project, i) => (
+            <Reveal key={project.id} delay={(i % 2) * 80} className="h-full min-w-0">
+              <ProjectCard project={project} t={t} onOpen={openProject} />
+            </Reveal>
+          ))}
         </div>
       </div>
-      <a
-        href="#skills"
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 text-slate-500 transition hover:text-accent"
-        aria-label="Scroll down"
-      >
-        <ArrowDown size={22} className="animate-bounce" />
-      </a>
+
+      <AnimatePresence>
+        {selected && <ProjectModal project={selected} t={t} lang={lang} onClose={closeProject} />}
+      </AnimatePresence>
     </section>
   )
 }

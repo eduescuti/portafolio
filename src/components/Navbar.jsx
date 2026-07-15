@@ -60,7 +60,13 @@ export default function Navbar() {
 
   const scrollTo = (id) => {
     setOpen(false)
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
+    const el = document.getElementById(id)
+    if (!el) return
+    if (window.__lenis) {
+      window.__lenis.scrollTo(el, { offset: -72 })
+    } else {
+      el.scrollIntoView({ behavior: 'smooth' })
+    }
   }
 
   const showBarBackground = scrolled || open
@@ -78,7 +84,7 @@ export default function Navbar() {
       <header
         className={`mobile-nav-header fixed inset-x-0 top-0 z-50 md:overflow-visible ${
           showBarBackground
-            ? 'border-b border-white/10 bg-navy-950/95 shadow-xl shadow-black/20 backdrop-blur-xl'
+            ? 'border-b border-white/[0.08] bg-navy-950/70 backdrop-blur-md'
             : 'border-b border-transparent bg-transparent'
         } ${open ? 'mobile-nav-header--open' : ''}`}
       >
@@ -141,7 +147,7 @@ export default function Navbar() {
           className={`mobile-nav-drawer grid overflow-hidden transition-[grid-template-rows] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] md:hidden ${
             open ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
           }`}
-          aria-hidden={!open}
+          inert={!open ? '' : undefined}
         >
           <div className="min-h-0 overflow-hidden">
             <div className="relative border-t border-white/10 px-6 pb-8 pt-5">

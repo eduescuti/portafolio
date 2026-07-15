@@ -23,3 +23,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Archivos de trabajo locales (no versionar)
+notas.txt
+PLAN_CAMBIOS_PORTAFOLIO.md

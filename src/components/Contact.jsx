@@ -6,7 +6,7 @@ import {
   Send,
   MessageCircle,
   Linkedin,
-  Instagram,
+  Github,
   CheckCircle2,
   RotateCcw,
   ChevronRight,
@@ -14,7 +14,6 @@ import {
 import { profile } from '../data/portfolio'
 import { useLanguage } from '../context/LanguageContext'
 import Reveal from './Reveal'
-import AmbientBackground from './AmbientBackground'
 
 const FORM_ID = 'mwvjlgzq'
 
@@ -60,24 +59,22 @@ export default function Contact() {
   })
 
   return (
-    <section id="contact" className="relative flex min-h-screen items-center overflow-hidden border-t border-white/5 bg-navy-900/50">
-      <AmbientBackground
-        blobs={[{ className: '-right-32 -bottom-24 h-[420px] w-[420px] bg-accent/10', animation: 'animate-drift' }]}
-      />
+    <section id="contact" className="relative overflow-hidden border-t border-white/5">
       <div className="section-container">
-        <Reveal>
-          <span className="section-label">{lang === 'es' ? 'Contacto' : 'Contact'}</span>
-          <h2 className="section-title">
-            {lang === 'es' ? 'Hablemos' : "Let's talk"}
-          </h2>
-          <p className="mb-6 max-w-xl text-slate-400 lg:mb-12">
-            {lang === 'es'
-              ? 'Estoy buscando oportunidades part-time o pasantías. ¡No dudes en escribirme!'
-              : "I'm looking for part-time opportunities or internships. Don't hesitate to reach out!"}
-          </p>
-        </Reveal>
+        <div className="rounded-[2rem] border border-white/[0.08] bg-white/[0.02] p-6 sm:p-10 lg:p-14">
+          <Reveal>
+            <span className="section-label">{lang === 'es' ? 'Contacto' : 'Contact'}</span>
+            <h2 className="mb-4 text-4xl font-extrabold leading-[1.05] tracking-tight text-white md:text-5xl">
+              {lang === 'es' ? 'Hablemos' : "Let's talk"}
+            </h2>
+            <p className="mb-10 max-w-xl text-lg text-slate-400">
+              {lang === 'es'
+                ? 'Estoy buscando oportunidades part-time o pasantías. ¡No dudes en escribirme!'
+                : "I'm looking for part-time opportunities or internships. Don't hesitate to reach out!"}
+            </p>
+          </Reveal>
 
-        <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
+          <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
           <Reveal delay={100} className="space-y-2.5 lg:space-y-4">
             <ContactLink
               href={`mailto:${profile.email}`}
@@ -103,9 +100,9 @@ export default function Contact() {
             />
 
             <ContactLink
-              href={profile.instagram}
-              icon={Instagram}
-              label="Instagram"
+              href={profile.github}
+              icon={Github}
+              label="GitHub"
               value="@eduescuti"
               external
             />
@@ -272,6 +269,7 @@ export default function Contact() {
               </>
             )}
           </Reveal>
+          </div>
         </div>
       </div>
     </section>

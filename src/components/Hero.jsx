@@ -1,97 +1,151 @@
-import { ArrowDown, Mail, Download } from 'lucide-react'
+import { ArrowDown, Mail, Download, Github, Linkedin } from 'lucide-react'
+import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion'
+import { useRef } from 'react'
 import { profile } from '../data/portfolio'
 import { useLanguage } from '../context/LanguageContext'
-import AmbientBackground from './AmbientBackground'
+import MagneticButton from './MagneticButton'
+
+function SocialButton({ href, icon: Icon, label }) {
+  return (
+    <motion.a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={label}
+      whileHover={{ y: -3 }}
+      whileTap={{ scale: 0.94 }}
+      className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 text-slate-300 transition-colors duration-300 hover:border-accent/40 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+    >
+      <Icon size={18} />
+    </motion.a>
+  )
+}
+
+const container = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.08, delayChildren: 0.1 } },
+}
+const item = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
+}
 
 export default function Hero() {
   const { t, lang } = useLanguage()
+  const reduce = useReducedMotion()
+  const sectionRef = useRef(null)
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start start', 'end start'],
+  })
+  const photoY = useTransform(scrollYProgress, [0, 1], [0, reduce ? 0 : 80])
+  const textY = useTransform(scrollYProgress, [0, 1], [0, reduce ? 0 : 40])
+
+  const [firstName, ...rest] = profile.name.split(' ')
+  const lastName = rest.join(' ')
 
   return (
-    <section id="hero" className="relative flex min-h-screen items-center overflow-hidden pt-20">
-      <AmbientBackground
-        animatedGrid
-        blobs={[
-          { className: '-right-20 -top-20 h-[560px] w-[560px] bg-accent/30', animation: 'animate-aurora' },
-          { className: '-bottom-40 -left-24 h-[500px] w-[500px] bg-accent/25 lg:bg-indigo-500/25', animation: 'animate-aurora-2' },
-          { className: 'left-1/3 top-1/4 hidden h-[440px] w-[440px] bg-violet-500/20 lg:block', animation: 'animate-aurora-3' },
-        ]}
-      />
+    <section ref={sectionRef} id="hero" className="relative flex min-h-screen items-center overflow-hidden pt-20">
+      {/* Blobs aurora locales del hero, encima del fondo global */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
+        <div className="animate-aurora absolute -right-24 -top-24 h-[520px] w-[520px] rounded-full bg-accent/20 blur-3xl" />
+        <div className="animate-aurora-2 absolute -bottom-40 -left-24 h-[460px] w-[460px] rounded-full bg-indigo-500/15 blur-3xl" />
+      </div>
 
-      <div className="section-container relative grid w-full items-center gap-12 lg:grid-cols-[1fr_auto] lg:gap-16">
-        <div className="animate-fade-up opacity-0">
-          <p className="mb-4 font-mono text-sm text-accent">
+      <motion.div
+        variants={container}
+        initial="hidden"
+        animate="visible"
+        className="section-container relative grid w-full items-center gap-12 lg:grid-cols-[1fr_auto] lg:gap-16"
+      >
+        <motion.div style={{ y: textY }}>
+          <motion.p variants={item} className="mb-4 font-mono text-sm text-accent">
             {lang === 'es' ? 'Hola, soy' : "Hi, I'm"}
-          </p>
-          <h1 className="mb-4 text-5xl font-extrabold leading-tight tracking-tight text-white md:text-6xl lg:text-7xl">
-            {profile.name.split(' ')[0]}
-            <br />
-            <span className="gradient-text">{profile.name.split(' ')[1]}</span>
-          </h1>
-          <p className="mb-2 text-xl font-medium text-slate-300 md:text-2xl">
-            {t(profile.role)}
-          </p>
-          <p className="mb-8 max-w-lg text-base text-slate-400">
-            {t(profile.university)} · {profile.age} {lang === 'es' ? 'años' : 'years old'}
-          </p>
+          </motion.p>
 
-          <div className="flex flex-wrap gap-3">
-            <a
+          <h1 className="mb-4 text-5xl font-extrabold leading-[1.02] tracking-tight text-white sm:text-6xl md:text-7xl lg:text-8xl">
+            <motion.span variants={item} className="block">
+              {firstName}
+            </motion.span>
+            <motion.span variants={item} className="gradient-text block">
+              {lastName}
+            </motion.span>
+          </h1>
+
+          <motion.p variants={item} className="mb-3 text-xl font-medium text-slate-200 md:text-2xl">
+            {t(profile.role)}
+          </motion.p>
+
+          <motion.p variants={item} className="mb-8 max-w-md font-mono text-sm text-slate-500">
+            Buenos Aires, Argentina
+            <span className="mx-2 text-accent/60" aria-hidden>·</span>
+            {t(profile.availability)}
+          </motion.p>
+
+          <motion.div variants={item} className="flex flex-wrap items-center gap-3">
+            <MagneticButton
               href="#contact"
-              className="inline-flex items-center gap-2 rounded-xl bg-accent px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-accent/25 transition hover:bg-accent-light hover:shadow-accent/40"
+              className="inline-flex items-center gap-2 rounded-xl bg-accent px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-accent/20 transition-colors duration-300 hover:bg-accent-light"
             >
               <Mail size={16} />
               {lang === 'es' ? 'Contactame' : 'Contact me'}
-            </a>
-            <a
+            </MagneticButton>
+
+            <MagneticButton
               href={lang === 'es' ? profile.cv.es : profile.cv.en}
               download
-              className="inline-flex items-center gap-2 rounded-xl border border-white/15 px-6 py-3 text-sm font-semibold text-slate-200 transition hover:border-accent/40 hover:bg-white/5"
+              strength={0.25}
+              className="inline-flex items-center gap-2 rounded-xl border border-white/15 px-6 py-3 text-sm font-semibold text-slate-200 transition-colors duration-300 hover:border-accent/40 hover:bg-white/5"
             >
               <Download size={16} />
               {lang === 'es' ? 'Descargar CV' : 'Download CV'}
-            </a>
-          </div>
-        </div>
+            </MagneticButton>
 
-        <div className="animate-fade-up animation-delay-200 flex justify-center opacity-0 lg:justify-end">
-          <div className="group relative cursor-default">
-            <div className="absolute -inset-4 rounded-3xl blur-2xl transition-[filter] duration-500 ease-out group-hover:blur-3xl">
-              <div
-                className="absolute inset-0 rounded-3xl bg-gradient-to-br from-accent/25 to-indigo-600/15"
-                aria-hidden
-              />
-              <div
-                className="absolute inset-0 rounded-3xl bg-gradient-to-br from-accent/45 to-indigo-500/30 opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100"
-                aria-hidden
-              />
+            <div className="ml-1 flex items-center gap-2">
+              <SocialButton href={profile.github} icon={Github} label="GitHub" />
+              <SocialButton href={profile.linkedin} icon={Linkedin} label="LinkedIn" />
+              <SocialButton href={`mailto:${profile.email}`} icon={Mail} label="Email" />
             </div>
+          </motion.div>
+        </motion.div>
 
-            <div className="relative overflow-hidden rounded-3xl border border-white/15 shadow-2xl shadow-black/40 transition-all duration-500 ease-out group-hover:-translate-y-1.5 group-hover:border-accent/35 group-hover:shadow-[0_24px_48px_-12px_rgba(79,140,255,0.25)] motion-reduce:group-hover:translate-y-0">
+        <motion.div variants={item} style={{ y: photoY }} className="flex justify-center lg:justify-end">
+          <motion.div
+            whileHover={reduce ? undefined : { y: -8, rotate: -1 }}
+            transition={{ type: 'spring', stiffness: 200, damping: 18 }}
+            className="group relative w-full max-w-xs"
+          >
+            {/* Glow detrás de la foto */}
+            <div className="absolute -inset-4 rounded-[2.5rem] bg-gradient-to-br from-accent/30 to-indigo-600/20 opacity-60 blur-2xl transition-opacity duration-500 group-hover:opacity-100" />
+
+            <div className="relative overflow-hidden rounded-[2rem] border border-white/12 bg-white/[0.03] p-2 shadow-2xl shadow-black/40">
               <img
                 src="/profile.png"
                 alt={profile.name}
-                className="h-72 w-64 object-cover object-top transition-transform duration-500 ease-out will-change-transform group-hover:scale-[1.04] motion-reduce:group-hover:scale-100 md:h-80 md:w-72 lg:h-96 lg:w-80"
+                className="h-80 w-full rounded-[1.5rem] object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.05] md:h-96"
               />
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-navy-950/50 via-transparent to-transparent opacity-60 transition-opacity duration-500 ease-out group-hover:opacity-40" />
+              {/* Shine que cruza al hover */}
               <div className="pointer-events-none absolute -left-full top-0 h-full w-1/2 skew-x-12 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 transition-all duration-700 ease-out group-hover:left-full group-hover:opacity-100 motion-reduce:hidden" />
             </div>
 
-            <div className="absolute -bottom-3 -right-3 rounded-xl border border-white/10 bg-navy-900/90 px-4 py-2 shadow-lg backdrop-blur-md transition-all duration-500 ease-out group-hover:-translate-y-1 group-hover:border-accent/30 group-hover:bg-navy-800/95 group-hover:shadow-accent/20 motion-reduce:group-hover:translate-y-0">
-              <p className="font-mono text-xs text-accent transition-colors duration-500 ease-out group-hover:text-accent-light">
-                Full Stack Dev
-              </p>
+            <div className="absolute -bottom-3 -right-3 rounded-xl border border-white/10 bg-navy-900/90 px-4 py-2 shadow-lg backdrop-blur-md">
+              <p className="font-mono text-xs text-accent">Full Stack Dev</p>
             </div>
-          </div>
-        </div>
-      </div>
+          </motion.div>
+        </motion.div>
+      </motion.div>
 
-      <a
-        href="#about"
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 text-slate-500 transition hover:text-accent"
-        aria-label="Scroll down"
+      <motion.a
+        href="#projects"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1 }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 text-slate-500 transition-colors hover:text-accent"
+        aria-label={lang === 'es' ? 'Ir a proyectos' : 'Go to projects'}
       >
         <ArrowDown size={22} className="animate-bounce" />
-      </a>
+      </motion.a>
     </section>
   )
 }

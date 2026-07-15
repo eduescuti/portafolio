@@ -1,8 +1,16 @@
 export const profile = {
   name: 'Eduardo Escuti',
   role: {
-    es: 'Estudiante de Ingeniería en Informática',
-    en: 'Software Engineering Student',
+    es: 'Software Engineer · Full Stack Developer',
+    en: 'Software Engineer · Full Stack Developer',
+  },
+  tagline: {
+    es: 'Construyo soluciones web de punta a punta: interfaces, APIs y automatizaciones.',
+    en: 'I build end-to-end web solutions: interfaces, APIs and automations.',
+  },
+  availability: {
+    es: 'Abierto a oportunidades part-time y pasantías',
+    en: 'Open to part-time roles and internships',
   },
   university: {
     es: 'Universidad Católica Argentina (UCA)',
@@ -16,10 +24,16 @@ export const profile = {
   phone: '+54 9 11-3878-2797',
   age: 26,
   linkedin: 'https://www.linkedin.com/in/eduardo-escuti',
-  instagram: 'https://www.instagram.com/eduescuti',
+  github: 'https://github.com/eduescuti',
   cv: {
     es: '/cv-eduardo-escuti.pdf',
     en: '/cv-eduardo-escuti-en.pdf',
+  },
+  // Fecha ancla para calcular "años trabajando" de forma automática (no editar el número a mano).
+  experienceStart: '2024-01',
+  intro: {
+    es: 'Estudiante avanzado de Ingeniería en Informática (UCA) y Full Stack Developer en Andersson Consultores. Combino frameworks modernos, bases de datos y automatización para llevar productos de la idea a producción.',
+    en: 'Advanced Software Engineering student (UCA) and Full Stack Developer at Andersson Consultores. I combine modern frameworks, databases and automation to take products from idea to production.',
   },
 }
 
@@ -51,8 +65,6 @@ export const skills = [
   { name: 'AI Cursor', category: 'ai' },
   { name: 'Claude Code', category: 'ai' },
   { name: 'Composer', category: 'ai' },
-  { name: 'Sonnet', category: 'ai' },
-  { name: 'Opus', category: 'ai' },
 ]
 
 export const experience = [
@@ -113,6 +125,59 @@ export const education = [
     institution: { es: 'Colegio Champagnat', en: 'Champagnat School' },
     degree: { es: 'Primaria y Secundaria', en: 'Primary & Secondary' },
     period: { es: '2003 — 2017', en: '2003 — 2017' },
+  },
+]
+
+// Línea de tiempo unificada: experiencia laboral + educación, ordenada de más reciente a más antigua.
+// `sort` = año.mes de inicio (para ordenar). Highlights acotados a 1–2 líneas cortas.
+export const timeline = [
+  {
+    id: 'andersson',
+    type: 'work',
+    sort: 2025.04,
+    title: { es: 'Desarrollador Full Stack', en: 'Full Stack Developer' },
+    place: 'Andersson Consultores',
+    period: { es: 'Abr 2025 — Actualidad', en: 'Apr 2025 — Present' },
+    highlights: {
+      es: [
+        'Desarrollo full stack con React, Supabase y PostgreSQL.',
+        'Automatizaciones con Edge Functions, crons y workflows en n8n.',
+      ],
+      en: [
+        'Full stack development with React, Supabase and PostgreSQL.',
+        'Automations with Edge Functions, crons and n8n workflows.',
+      ],
+    },
+    tech: ['React', 'Supabase', 'PostgreSQL', 'n8n'],
+  },
+  {
+    id: 'alexandria',
+    type: 'work',
+    sort: 2025.01,
+    title: { es: 'Desarrollador Web', en: 'Web Developer' },
+    place: 'Alexandria Solutions',
+    period: { es: 'Ene 2025 — Jun 2025', en: 'Jan 2025 — Jun 2025' },
+    highlights: {
+      es: ['Sistema de turnos con Laravel + Filament, containerizado con Docker.'],
+      en: ['Appointment system with Laravel + Filament, containerized with Docker.'],
+    },
+    tech: ['Laravel', 'Filament', 'MySQL', 'Docker'],
+  },
+  {
+    id: 'uca',
+    type: 'education',
+    sort: 2023.03,
+    title: { es: 'Ingeniería en Informática', en: 'Software Engineering' },
+    place: { es: 'Universidad Católica Argentina (UCA)', en: 'Argentina Catholic University (UCA)' },
+    period: { es: 'Mar 2023 — Actualidad', en: 'Mar 2023 — Present' },
+  },
+  {
+    id: 'uba',
+    type: 'education',
+    sort: 2018.03,
+    title: { es: 'Ingeniería en Informática (sin finalizar)', en: 'Software Engineering (not completed)' },
+    place: { es: 'Universidad de Buenos Aires (UBA)', en: 'University of Buenos Aires (UBA)' },
+    period: { es: 'Mar 2018 — Dic 2022', en: 'Mar 2018 — Dec 2022' },
   },
 ]
 
@@ -213,11 +278,11 @@ export const projects = [
   {
     id: 'coming-soon',
     folder: '...',
-    title: { es: 'Proximamente...', en: 'Coming soon...' },
+    title: { es: 'Próximamente...', en: 'Coming soon...' },
     subtitle: { es: 'Desarrollando algo propio', en: 'Developing something on my own' },
     description: {
-      es: 'Intentando tambien de emprender por mi cuenta y desarrollando un proyecto personal.',
-      en: 'Also trying to venture on my own, I am developing a personal project that will be available soon.',
+      es: 'Estoy emprendiendo por mi cuenta: un proyecto personal que combina una aplicación web con integración de agentes de IA, y que estará disponible pronto.',
+      en: 'I am venturing out on my own: a personal project that combines a web application with AI agent integration, coming soon.',
     },
     tech: ['AWS', 'React', 'Tailwind CSS', 'Node.js', 'PostgreSQL', 'AI Agents'],
     highlights: {
@@ -245,9 +310,7 @@ export const aboutText = {
 
 export const navLinks = [
   { id: 'hero', es: 'Inicio', en: 'Home' },
-  { id: 'about', es: 'Sobre mí', en: 'About' },
-  { id: 'experience', es: 'Experiencia', en: 'Experience' },
   { id: 'projects', es: 'Proyectos', en: 'Projects' },
-  { id: 'skills', es: 'Skills', en: 'Skills' },
+  { id: 'timeline', es: 'Trayectoria', en: 'Journey' },
   { id: 'contact', es: 'Contacto', en: 'Contact' },
 ]

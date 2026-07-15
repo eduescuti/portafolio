@@ -22,6 +22,12 @@ body {
   color: #e2e8f0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Evita que el navbar fijo tape el título al navegar por anclas. */
+section[id] {
+  scroll-margin-top: 5rem;
 }
 
 ::selection {
@@ -30,20 +36,20 @@ body {
 }
 
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-navy-950);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-navy-700);
-  border-radius: 4px;
+  background: rgba(148, 163, 184, 0.18);
+  border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-navy-600);
+  background: rgba(148, 163, 184, 0.3);
 }
 
 /* Oculta el badge de reCAPTCHA v3. La atribución legal se muestra en el
@@ -57,7 +63,7 @@ body {
 @keyframes fade-up {
   from {
     opacity: 0;
-    transform: translateY(24px);
+    transform: translateY(12px);
   }
 
   to {
@@ -77,7 +83,7 @@ body {
 }
 
 .animate-fade-up {
-  animation: fade-up 0.7s ease-out forwards;
+  animation: fade-up 0.5s ease-out forwards;
 }
 
 .animate-fade-in {
@@ -109,7 +115,7 @@ body {
 }
 
 .reveal-visible {
-  animation: fade-up 0.7s ease-out forwards;
+  animation: fade-up 0.5s ease-out forwards;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -123,8 +129,13 @@ body {
 }
 
 @keyframes grid-pan {
-  from { background-position: 0 0; }
-  to { background-position: 64px 64px; }
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 64px 64px;
+  }
 }
 
 .animate-grid-pan {
@@ -138,13 +149,27 @@ body {
 }
 
 @keyframes drift {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(3%, -4%) scale(1.08); }
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate(3%, -4%) scale(1.08);
+  }
 }
 
 @keyframes drift-alt {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(-4%, 3%) scale(1.05); }
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate(-4%, 3%) scale(1.05);
+  }
 }
 
 .animate-drift {
@@ -160,6 +185,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .animate-drift,
   .animate-drift-slow,
   .animate-drift-alt {
@@ -168,21 +194,54 @@ body {
 }
 
 @keyframes aurora {
-  0%   { transform: translate(0, 0) scale(1.05);   opacity: 0.85; }
-  50%  { transform: translate(9%, 8%) scale(1.3);  opacity: 1; }
-  100% { transform: translate(0, 0) scale(1.05);   opacity: 0.85; }
+  0% {
+    transform: translate(0, 0) scale(1.05);
+    opacity: 0.85;
+  }
+
+  50% {
+    transform: translate(9%, 8%) scale(1.3);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translate(0, 0) scale(1.05);
+    opacity: 0.85;
+  }
 }
 
 @keyframes aurora-alt {
-  0%   { transform: translate(0, 0) scale(1.15);    opacity: 0.75; }
-  50%  { transform: translate(-10%, -7%) scale(0.92); opacity: 1; }
-  100% { transform: translate(0, 0) scale(1.15);    opacity: 0.75; }
+  0% {
+    transform: translate(0, 0) scale(1.15);
+    opacity: 0.75;
+  }
+
+  50% {
+    transform: translate(-10%, -7%) scale(0.92);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translate(0, 0) scale(1.15);
+    opacity: 0.75;
+  }
 }
 
 @keyframes aurora-slow {
-  0%   { transform: translate(0, 0) scale(1);      opacity: 0.7; }
-  50%  { transform: translate(7%, -9%) scale(1.22); opacity: 0.95; }
-  100% { transform: translate(0, 0) scale(1);      opacity: 0.7; }
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.7;
+  }
+
+  50% {
+    transform: translate(7%, -9%) scale(1.22);
+    opacity: 0.95;
+  }
+
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.7;
+  }
 }
 
 .animate-aurora {
@@ -198,6 +257,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .animate-aurora,
   .animate-aurora-2,
   .animate-aurora-3 {
@@ -261,6 +321,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .mobile-nav-header,
   .mobile-nav-backdrop,
   .mobile-nav-drawer {
@@ -307,6 +368,7 @@ body {
 }
 
 @keyframes drag-hand {
+
   0%,
   100% {
     transform: translateX(-6px);
@@ -358,7 +420,7 @@ body {
 }
 
 .section-container {
-  @apply mx-auto w-full max-w-6xl px-6 py-16 md:px-8 md:py-20;
+  @apply mx-auto w-full max-w-6xl px-6 py-24 md:px-8 md:py-32;
 }
 
 .section-label {
@@ -366,44 +428,23 @@ body {
 }
 
 .section-title {
-  @apply mb-4 text-3xl font-bold tracking-tight text-white md:text-4xl;
+  @apply mb-4 text-3xl font-bold leading-tight tracking-tight text-white md:text-4xl;
 }
 
+/* Card editorial: fondo casi plano, borde sutil; el hover solo intensifica el borde. */
 .glass-card {
-  @apply rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md;
+  @apply rounded-3xl border border-white/[0.08] bg-white/[0.02];
 }
 
 .glass-card-hover {
-  @apply transition-all duration-300 ease-out hover:-translate-y-1 hover:border-accent/30 hover:bg-white/[0.07] hover:shadow-lg hover:shadow-accent/10;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .glass-card-hover:hover {
-    transform: none;
-  }
+  @apply transition-colors duration-300 ease-out hover:border-white/15 hover:bg-white/[0.04];
 }
 
 .gradient-text {
   @apply bg-gradient-to-r from-accent to-accent-light bg-clip-text text-transparent;
 }
 
-.projects-carousel {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  cursor: grab;
-  -webkit-overflow-scrolling: touch;
-  touch-action: manipulation;
-  overscroll-behavior-x: contain;
-  overflow-y: hidden;
-}
-
-.projects-carousel.is-dragging {
-  cursor: grabbing;
-  scroll-behavior: auto;
-  scroll-snap-type: none;
-  user-select: none;
-}
-
-.projects-carousel::-webkit-scrollbar {
-  display: none;
+/* Textura de ruido tenue para el fondo global (evita el look "plano"). */
+.bg-noise {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
