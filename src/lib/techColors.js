@@ -37,5 +37,5 @@ export const techColors = {
   JWT: '#FB015B',
   Chatwoot: '#1F93FF',
   'Node.js': '#339933',
-  Whatsapp: '#339933'
+  Whatsapp: '#25D366'
 }

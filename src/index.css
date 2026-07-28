@@ -615,40 +615,6 @@ section[id] {
   @apply mb-4 text-3xl font-bold leading-tight tracking-tight text-white md:text-4xl;
 }
 
-/* Acordeón sin JS por frame: la fila del grid pasa de 0fr a 1fr y el navegador
-   interpola. Nada de `height: auto` animado por Motion — eso recalcula layout en
-   cada frame desde el hilo principal y encima desmonta el formulario al cerrarlo.
-   El hijo lleva overflow/min-height porque una fila de 0fr no recorta sola. */
-.accordion {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 300ms cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.accordion[data-open='true'] {
-  grid-template-rows: 1fr;
-}
-
-.accordion > * {
-  min-height: 0;
-  overflow: hidden;
-}
-
-/* Desde lg el formulario está siempre visible y no hay trigger que lo cierre:
-   se fuerza abierto por CSS en vez de por estado de React. */
-@media (min-width: 1024px) {
-  .accordion {
-    grid-template-rows: 1fr;
-    transition: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .accordion {
-    transition: none;
-  }
-}
-
 /* Card editorial: fondo casi plano, borde sutil; el hover solo intensifica el borde. */
 .glass-card {
   @apply rounded-3xl border border-white/[0.08] bg-white/[0.02];
