@@ -89,7 +89,7 @@ export default function Contact() {
                 icon={Mail}
                 label={profile.email}
                 value="Gmail"
-                color="#4f8cff"
+                color="#ff784f"
               />
 
               <ContactLink
@@ -106,7 +106,7 @@ export default function Contact() {
                 icon={Linkedin}
                 label="Eduardo Escuti"
                 value="LinkedIn"
-                color="#0A66C2"
+                color="#1b8dff"
                 external
               />
 
@@ -176,110 +176,110 @@ export default function Contact() {
                   <div className="px-5 pb-5 lg:px-6 lg:pb-6">
                     <form onSubmit={handleSubmit} className="space-y-3 lg:space-y-4">
                       <input
+                        type="text"
+                        name="_gotcha"
+                        style={{ display: 'none' }}
+                        tabIndex={-1}
+                        autoComplete="off"
+                      />
+
+                      <div>
+                        <label htmlFor="name" className="mb-1.5 block text-sm text-slate-400">
+                          {lang === 'es' ? 'Nombre' : 'Name'}
+                        </label>
+                        <input
+                          id="name"
+                          name="name"
                           type="text"
-                          name="_gotcha"
-                          style={{ display: 'none' }}
-                          tabIndex={-1}
-                          autoComplete="off"
+                          required
+                          autoComplete="name"
+                          className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-accent/50 focus:ring-1 focus:ring-accent/30 lg:py-3"
+                          placeholder={lang === 'es' ? 'Tu nombre' : 'Your name'}
                         />
+                        <ValidationError
+                          prefix={lang === 'es' ? 'Nombre' : 'Name'}
+                          field="name"
+                          errors={state.errors}
+                          className="mt-1 text-sm text-red-400"
+                        />
+                      </div>
 
-                        <div>
-                          <label htmlFor="name" className="mb-1.5 block text-sm text-slate-400">
-                            {lang === 'es' ? 'Nombre' : 'Name'}
-                          </label>
-                          <input
-                            id="name"
-                            name="name"
-                            type="text"
-                            required
-                            autoComplete="name"
-                            className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-accent/50 focus:ring-1 focus:ring-accent/30 lg:py-3"
-                            placeholder={lang === 'es' ? 'Tu nombre' : 'Your name'}
-                          />
-                          <ValidationError
-                            prefix={lang === 'es' ? 'Nombre' : 'Name'}
-                            field="name"
-                            errors={state.errors}
-                            className="mt-1 text-sm text-red-400"
-                          />
-                        </div>
+                      <div>
+                        <label htmlFor="email" className="mb-1.5 block text-sm text-slate-400">
+                          Email
+                        </label>
+                        <input
+                          id="email"
+                          name="email"
+                          type="email"
+                          required
+                          autoComplete="email"
+                          className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-accent/50 focus:ring-1 focus:ring-accent/30 lg:py-3"
+                          placeholder="tu@email.com"
+                        />
+                        <ValidationError
+                          prefix="Email"
+                          field="email"
+                          errors={state.errors}
+                          className="mt-1 text-sm text-red-400"
+                        />
+                      </div>
 
-                        <div>
-                          <label htmlFor="email" className="mb-1.5 block text-sm text-slate-400">
-                            Email
-                          </label>
-                          <input
-                            id="email"
-                            name="email"
-                            type="email"
-                            required
-                            autoComplete="email"
-                            className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-accent/50 focus:ring-1 focus:ring-accent/30 lg:py-3"
-                            placeholder="tu@email.com"
-                          />
-                          <ValidationError
-                            prefix="Email"
-                            field="email"
-                            errors={state.errors}
-                            className="mt-1 text-sm text-red-400"
-                          />
-                        </div>
+                      <div>
+                        <label htmlFor="message" className="mb-1.5 block text-sm text-slate-400">
+                          {lang === 'es' ? 'Mensaje' : 'Message'}
+                        </label>
+                        <textarea
+                          id="message"
+                          name="message"
+                          rows={3}
+                          required
+                          className="w-full resize-none rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-accent/50 focus:ring-1 focus:ring-accent/30 lg:py-3"
+                          placeholder={lang === 'es' ? 'Tu mensaje...' : 'Your message...'}
+                        />
+                        <ValidationError
+                          prefix={lang === 'es' ? 'Mensaje' : 'Message'}
+                          field="message"
+                          errors={state.errors}
+                          className="mt-1 text-sm text-red-400"
+                        />
+                      </div>
 
-                        <div>
-                          <label htmlFor="message" className="mb-1.5 block text-sm text-slate-400">
-                            {lang === 'es' ? 'Mensaje' : 'Message'}
-                          </label>
-                          <textarea
-                            id="message"
-                            name="message"
-                            rows={3}
-                            required
-                            className="w-full resize-none rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-accent/50 focus:ring-1 focus:ring-accent/30 lg:py-3"
-                            placeholder={lang === 'es' ? 'Tu mensaje...' : 'Your message...'}
-                          />
-                          <ValidationError
-                            prefix={lang === 'es' ? 'Mensaje' : 'Message'}
-                            field="message"
-                            errors={state.errors}
-                            className="mt-1 text-sm text-red-400"
-                          />
-                        </div>
+                      <button
+                        type="submit"
+                        disabled={state.submitting}
+                        className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-6 py-3 text-sm font-semibold text-white transition hover:bg-accent-light disabled:opacity-60"
+                      >
+                        <Send size={16} />
+                        {state.submitting
+                          ? lang === 'es'
+                            ? 'Enviando...'
+                            : 'Sending...'
+                          : lang === 'es'
+                            ? 'Enviar mensaje'
+                            : 'Send message'}
+                      </button>
 
-                        <button
-                          type="submit"
-                          disabled={state.submitting}
-                          className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-6 py-3 text-sm font-semibold text-white transition hover:bg-accent-light disabled:opacity-60"
+                      <p className="text-center text-[11px] leading-relaxed text-slate-600">
+                        {lang === 'es' ? 'Protegido por reCAPTCHA · ' : 'Protected by reCAPTCHA · '}
+                        <a
+                          href="https://policies.google.com/privacy"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-slate-500 underline decoration-slate-700 underline-offset-2 transition hover:text-accent"
                         >
-                          <Send size={16} />
-                          {state.submitting
-                            ? lang === 'es'
-                              ? 'Enviando...'
-                              : 'Sending...'
-                            : lang === 'es'
-                              ? 'Enviar mensaje'
-                              : 'Send message'}
-                        </button>
-
-                        <p className="text-center text-[11px] leading-relaxed text-slate-600">
-                          {lang === 'es' ? 'Protegido por reCAPTCHA · ' : 'Protected by reCAPTCHA · '}
-                          <a
-                            href="https://policies.google.com/privacy"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-slate-500 underline decoration-slate-700 underline-offset-2 transition hover:text-accent"
-                          >
-                            {lang === 'es' ? 'Privacidad' : 'Privacy'}
-                          </a>
-                          {' · '}
-                          <a
-                            href="https://policies.google.com/terms"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-slate-500 underline decoration-slate-700 underline-offset-2 transition hover:text-accent"
-                          >
-                            {lang === 'es' ? 'Términos' : 'Terms'}
-                          </a>
-                        </p>
+                          {lang === 'es' ? 'Privacidad' : 'Privacy'}
+                        </a>
+                        {' · '}
+                        <a
+                          href="https://policies.google.com/terms"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-slate-500 underline decoration-slate-700 underline-offset-2 transition hover:text-accent"
+                        >
+                          {lang === 'es' ? 'Términos' : 'Terms'}
+                        </a>
+                      </p>
                     </form>
                   </div>
                 </>
