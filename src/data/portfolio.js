@@ -8,6 +8,10 @@ export const profile = {
     es: 'Construyo soluciones web de punta a punta: interfaces, APIs y automatizaciones.',
     en: 'I build end-to-end web solutions: interfaces, APIs and automations.',
   },
+  phrase: {
+    es: 'En continuo desarrollo',
+    en: 'Constantly evolving'
+  },
   availability: {
     es: 'Abierto a oportunidades part time y pasantías',
     en: 'Open to part time roles and internships',
@@ -17,7 +21,7 @@ export const profile = {
     en: 'Argentina Catholic University (UCA)',
   },
   location: {
-    es: 'Ciudad Autónoma de Buenos Aires, Argentina',
+    es: 'Buenos Aires, Argentina',
     en: 'Buenos Aires, Argentina',
   },
   email: 'eduescuti99@gmail.com',

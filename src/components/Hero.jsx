@@ -84,7 +84,7 @@ export default function Hero() {
           </m.p>
 
           <m.p variants={item} className="max-w-md font-mono text-sm text-slate-500">
-            {t(profile.availability)}
+            {t(profile.phrase)}
           </m.p>
 
           <m.p variants={item} className="mb-8 max-w-md font-mono text-sm text-slate-500">
