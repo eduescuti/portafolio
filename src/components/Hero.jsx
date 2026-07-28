@@ -1,4 +1,12 @@
-import { ArrowDown, Mail, Download, Github, Linkedin, MapPin } from 'lucide-react'
+import {
+  ArrowDown,
+  Mail,
+  Download,
+  Github,
+  Linkedin,
+  MapPin,
+  MousePointerClick,
+} from 'lucide-react'
 import { m, useScroll, useTransform, useReducedMotion } from 'framer-motion'
 import { useRef } from 'react'
 import { profile } from '../data/portfolio'
@@ -47,6 +55,11 @@ export default function Hero() {
   const [firstName, ...rest] = profile.name.split(' ')
   const lastName = rest.join(' ')
 
+  // El rol viene como "Software Engineer · Full Stack Developer". En mobile la segunda
+  // mitad empuja el subtítulo a dos líneas y encima repite el badge de la carta, así que
+  // ahí se muestra sólo la primera. En desktop entra en una línea y se deja completo.
+  const [mainRole, ...extraRole] = t(profile.role).split('·').map((s) => s.trim())
+
   return (
     <section
       ref={sectionRef}
@@ -81,8 +94,10 @@ export default function Hero() {
             {lang === 'es' ? 'Hola, soy' : "Hi, I'm"}
           </m.p>
 
-          {/* Tipografía fluida: escala con el ancho sin saltos de breakpoint. */}
-          <h1 className="mb-3 text-[clamp(2.5rem,11vw,3.5rem)] font-extrabold leading-[1.05] tracking-tight text-white lg:mb-4 lg:text-7xl lg:leading-[1.02] xl:text-8xl">
+          {/* Tipografía fluida: escala con el ancho sin saltos de breakpoint. En mobile
+              el nombre es la pieza dominante junto con la carta, por eso el clamp es
+              bastante más agresivo que el del resto del texto. */}
+          <h1 className="mb-3 text-[clamp(2.75rem,14vw,4.5rem)] font-extrabold leading-[1.05] tracking-tight text-white short:text-[clamp(2.5rem,12vw,3.75rem)] lg:mb-4 lg:text-7xl lg:leading-[1.02] xl:text-8xl">
             <m.span variants={item} className="block">
               {firstName}
             </m.span>
@@ -95,7 +110,10 @@ export default function Hero() {
             variants={item}
             className="mb-4 text-[clamp(1.125rem,4.8vw,1.5rem)] font-medium leading-snug text-slate-200 short:mb-3 lg:text-2xl"
           >
-            {t(profile.role)}
+            {mainRole}
+            {extraRole.length > 0 && (
+              <span className="hidden lg:inline"> · {extraRole.join(' · ')}</span>
+            )}
           </m.p>
 
           {/* Dos chips independientes: si no entran en una línea, envuelven prolijo. */}
@@ -117,15 +135,37 @@ export default function Hero() {
           style={{ y: photoY }}
           className="flex justify-start lg:row-span-2 lg:justify-end lg:self-center"
         >
-          <ProfileCard />
+          {/* La columna existe solo para colgarle la pista debajo de la carta. En
+              desktop se disuelve con `contents`: la carta vuelve a ser hija directa del
+              flex y el layout queda idéntico al de antes. */}
+          <div className="flex flex-col items-start lg:contents">
+            <ProfileCard />
+
+            {/* Pista de descubribilidad, debajo de la carta. Solo mobile: en desktop se
+                descubre sola con el hover. `aria-hidden` porque la carta ya trae su
+                propio aria-label y aria-haspopup — repetirlo ensucia el lector. */}
+            <p
+              aria-hidden
+              className="mt-3 flex items-center gap-1.5 font-mono text-[11px] text-slate-400 lg:hidden"
+            >
+              <MousePointerClick size={13} className="animate-pulse-soft text-accent" />
+              {lang === 'es' ? 'Tocá mi carta' : 'Tap my card'}
+            </p>
+          </div>
         </m.div>
 
+        {/*
+          Fila de acciones: solo desktop. En mobile las tres cosas que vivían acá ya
+          están en otro lado —el CV y las redes en el dorso de la carta, el contacto en
+          el navbar y al final de la página— y el botón a ancho completo empujaba los
+          proyectos fuera de la primera pantalla. Se oculta el bloque entero y no cada
+          hijo por separado: si no, el `gap-6` del contenedor deja el hueco igual.
+        */}
         <m.div
           variants={item}
-          className="flex w-full flex-col items-start gap-3 lg:w-auto lg:flex-row lg:flex-wrap lg:gap-3"
+          className="hidden w-full flex-col items-start gap-3 lg:flex lg:w-auto lg:flex-row lg:flex-wrap lg:gap-3"
         >
-          {/* Mobile: 2 columnas (ahorra alto vs. apilados). Desktop: fila. */}
-          <div className="grid w-full max-w-sm grid-cols-2 gap-3 lg:flex lg:w-auto lg:max-w-none">
+          <div className="flex gap-3">
             <MagneticButton
               href="#contact"
               className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-accent/20 transition-colors duration-300 hover:bg-accent-light lg:px-6"

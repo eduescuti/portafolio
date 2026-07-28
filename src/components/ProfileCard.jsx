@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import {
   AnimatePresence,
   animate,
@@ -14,6 +15,7 @@ import { profile, projects, skills } from '../data/portfolio'
 import { yearsSince } from '../lib/careerStats'
 import { useLanguage } from '../context/LanguageContext'
 import { useCoarsePointer } from '../lib/useDeviceCapabilities'
+import { useScrollLock } from '../lib/useScrollLock'
 import AnimatedCounter from './AnimatedCounter'
 import TechBadge from './TechBadge'
 import SocialButton from './SocialButton'
@@ -65,17 +67,14 @@ function computeTarget() {
 }
 
 /**
- * Cara frontal. La misma en el hero y en el overlay: `fill` decide si se dimensiona
- * sola (hero) o si llena a su contenedor (overlay, que ya tiene medidas exactas).
+ * Cara frontal. La misma en el hero y en el overlay. La carta siempre llena a su
+ * contenedor —el tamaño y el aspecto los fija quien la monta—, así que `fill` ya no
+ * dimensiona nada: sólo distingue la escala tipográfica de la grande y la chica.
  */
 function CardFront({ fill = false, children }) {
   return (
-    <div
-      className={`holo-border relative rounded-2xl p-1.5 shadow-xl shadow-black/40 lg:rounded-[2rem] lg:p-2 lg:shadow-2xl ${fill ? 'h-full' : ''}`}
-    >
-      <div
-        className={`relative overflow-hidden rounded-xl lg:rounded-[1.5rem] ${fill ? 'h-full' : ''}`}
-      >
+    <div className="holo-border relative h-full rounded-2xl p-1.5 shadow-xl shadow-black/40 lg:rounded-[2rem] lg:p-2 lg:shadow-2xl">
+      <div className="relative h-full overflow-hidden rounded-xl lg:rounded-[1.5rem]">
         <img
           src="/profile.png"
           alt={profile.name}
@@ -83,11 +82,9 @@ function CardFront({ fill = false, children }) {
           // Sin esto el navegador inicia su propio arrastre nativo de imagen al apretar
           // con el mouse y cancela el gesto de Motion: en desktop la carta no giraba.
           draggable={false}
-          className={
-            fill
-              ? 'h-full w-full object-cover object-top'
-              : 'h-36 w-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.05] short:h-32 shorter:h-28 lg:h-96'
-          }
+          className={`h-full w-full object-cover object-top ${
+            fill ? '' : 'transition-transform duration-700 ease-out group-hover:scale-[1.05]'
+          }`}
         />
 
         {/* Degradado inferior: sostiene el texto sobre cualquier zona de la foto */}
@@ -96,12 +93,14 @@ function CardFront({ fill = false, children }) {
           className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/85 via-black/35 to-transparent"
         />
 
-        <div className={`absolute inset-x-0 bottom-0 ${fill ? 'p-4' : 'p-2 lg:p-4'}`}>
+        <div
+          className={`absolute inset-x-0 bottom-0 ${fill ? 'p-4' : 'p-3.5 short:p-3 shorter:p-2.5 lg:p-4'}`}
+        >
           <p
             className={
               fill
                 ? 'text-2xl font-bold leading-tight text-white'
-                : 'text-xs font-bold leading-tight text-white lg:text-xl'
+                : 'text-lg font-bold leading-tight text-white short:text-base shorter:text-sm lg:text-xl'
             }
           >
             {profile.name}
@@ -110,7 +109,7 @@ function CardFront({ fill = false, children }) {
             className={
               fill
                 ? 'mt-1.5 font-mono text-sm leading-none text-accent'
-                : 'mt-0.5 font-mono text-[10px] leading-none text-accent lg:mt-1.5 lg:text-xs'
+                : 'mt-1 font-mono text-xs leading-none text-accent short:text-[11px] shorter:text-[10px] lg:mt-1.5 lg:text-xs'
             }
           >
             Full Stack Dev
@@ -296,8 +295,11 @@ function CardOverlay({ originRect, target, onClose, lang, reduce }) {
     onClose()
   }, [onClose, reduce, rotate])
 
+  // La carta abierta queda fija hasta que el usuario la cierre: el scroll se congela
+  // mientras el overlay esté montado (incluida la animación de salida).
+  useScrollLock()
+
   useEffect(() => {
-    document.body.style.overflow = 'hidden'
     cardRef.current?.focus()
 
     const onKeyDown = (e) => {
@@ -323,10 +325,7 @@ function CardOverlay({ originRect, target, onClose, lang, reduce }) {
     }
 
     window.addEventListener('keydown', onKeyDown)
-    return () => {
-      document.body.style.overflow = ''
-      window.removeEventListener('keydown', onKeyDown)
-    }
+    return () => window.removeEventListener('keydown', onKeyDown)
   }, [requestClose])
 
   // Invert: con transform-origin en la esquina superior izquierda, un translate + scale
@@ -581,13 +580,16 @@ export default function ProfileCard() {
           }
         }}
         style={{ visibility: hidden ? 'hidden' : 'visible' }}
-        className="w-32 cursor-pointer rounded-2xl shorter:w-28 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-4 focus-visible:ring-offset-navy-950 lg:w-full lg:max-w-xs [perspective:900px]"
+        // El aspecto 3/4 es el mismo que usa `computeTarget` para la carta abierta: con
+        // los dos rects proporcionales, el FLIP escala parejo en X e Y y la foto deja de
+        // deformarse durante la apertura y el cierre.
+        className="aspect-[3/4] w-60 cursor-pointer rounded-2xl short:w-52 shorter:w-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-4 focus-visible:ring-offset-navy-950 lg:w-full lg:max-w-xs short:lg:max-w-[16rem] [perspective:900px]"
       >
         {/* Capa 1 — balanceo 3D de descubribilidad (una sola vez) */}
         <m.div
           animate={wobble ? { rotateY: [0, 6, -6, 0] } : { rotateY: 0 }}
           transition={{ duration: 1.2, ease: 'easeInOut', delay: 0.8 }}
-          className="[transform-style:preserve-3d]"
+          className="h-full [transform-style:preserve-3d]"
         >
           {/* Capa 2 — flotación y balanceo continuos, desfasados entre sí */}
           <m.div
@@ -596,12 +598,13 @@ export default function ProfileCard() {
               y: { duration: 5, repeat: Infinity, ease: 'easeInOut' },
               rotate: { duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 0.4 },
             }}
+            className="h-full"
           >
             {/* Capa 3 — hover de escritorio (en touch Motion no dispara whileHover) */}
             <m.div
               whileHover={reduce ? undefined : { y: -8, rotate: -1 }}
               transition={{ type: 'spring', stiffness: 200, damping: 18 }}
-              className="group relative"
+              className="group relative h-full"
             >
               {/* Glow que respira */}
               <m.div
@@ -643,24 +646,32 @@ export default function ProfileCard() {
         </m.div>
       </div>
 
-      <AnimatePresence
-        onExitComplete={() => {
-          setHidden(false)
-          // El foco espera al repintado: sobre un elemento todavía `visibility: hidden`
-          // el focus() no tiene efecto y el teclado se quedaría sin punto de retorno.
-          requestAnimationFrame(() => ref.current?.focus())
-        }}
-      >
-        {open && geometry && (
-          <CardOverlay
-            originRect={geometry.originRect}
-            target={geometry.target}
-            onClose={handleClose}
-            lang={lang}
-            reduce={reduce}
-          />
-        )}
-      </AnimatePresence>
+      {/* El overlay se monta en <body> y no acá. Es `position: fixed`, pero el hero lo
+          envuelve en el m.div del parallax: apenas se scrollea, ese wrapper pasa a tener
+          un `transform` real y se convierte en el bloque contenedor de sus descendientes
+          fijos. La carta abierta dejaba de estar anclada al viewport y saltaba a la
+          columna derecha de la grilla. Con el portal ya no hay ancestro transformado. */}
+      {createPortal(
+        <AnimatePresence
+          onExitComplete={() => {
+            setHidden(false)
+            // El foco espera al repintado: sobre un elemento todavía `visibility: hidden`
+            // el focus() no tiene efecto y el teclado se quedaría sin punto de retorno.
+            requestAnimationFrame(() => ref.current?.focus())
+          }}
+        >
+          {open && geometry && (
+            <CardOverlay
+              originRect={geometry.originRect}
+              target={geometry.target}
+              onClose={handleClose}
+              lang={lang}
+              reduce={reduce}
+            />
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </>
   )
 }
