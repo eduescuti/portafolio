@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { m, AnimatePresence } from 'framer-motion'
 import { useForm, ValidationError } from '@formspree/react'
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
 import {
@@ -15,28 +16,32 @@ import {
 } from 'lucide-react'
 import { profile } from '../data/portfolio'
 import { useLanguage } from '../context/LanguageContext'
+import { useIsDesktop } from '../lib/useDeviceCapabilities'
 import Reveal from './Reveal'
 
 const FORM_ID = 'mwvjlgzq'
 
-function ContactLink({ href, icon: Icon, label, value, external = false }) {
+/**
+ * Link de contacto. Etiqueta arriba / valor abajo: alinea parejo entre filas y se lee
+ * mucho mejor que en una sola línea. El tile del ícono lleva el color de cada red
+ * (via --lc) para que la lista sea escaneable y no cinco tiles azules iguales.
+ * El chevron es visible siempre en mobile: es la señal de "esto es tocable".
+ */
+function ContactLink({ href, icon: Icon, label, value, color, external = false }) {
   return (
-    <a
+    <m.a
       href={href}
       {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-      className="group glass-card glass-card-hover relative flex items-center gap-3 overflow-hidden p-3.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:ring-offset-2 focus-visible:ring-offset-navy-950 active:scale-[0.99] lg:gap-4 lg:p-5"
+      whileTap={{ scale: 0.98 }}
+      style={color ? { '--lc': color } : undefined}
+      className="contact-link group glass-card relative flex items-center gap-3 overflow-hidden p-3.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:ring-offset-2 focus-visible:ring-offset-navy-950 lg:flex-1 lg:gap-4 lg:p-5"
     >
-      <span
-        className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-accent/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-        aria-hidden
-      />
-
-      <div className="relative shrink-0 rounded-xl bg-accent/15 p-2 text-accent transition-all duration-300 group-hover:scale-105 group-hover:bg-accent/25 group-hover:shadow-md group-hover:shadow-accent/20 lg:p-3">
+      <span className="contact-link__tile relative shrink-0 rounded-xl p-2.5 lg:p-3" aria-hidden>
         <Icon size={18} className="transition-transform duration-300 group-hover:scale-110 lg:h-5 lg:w-5" />
-      </div>
+      </span>
 
-      <div className="relative flex min-w-0 flex-1 items-baseline gap-2 lg:block">
-        <p className="shrink-0 text-[11px] font-medium uppercase tracking-wider text-slate-500 transition-colors duration-300 group-hover:text-slate-400 lg:text-xs">
+      <div className="relative min-w-0 flex-1">
+        <p className="text-[10px] font-medium uppercase tracking-wider text-slate-500 lg:text-xs">
           {label}
         </p>
         <p className="truncate text-sm font-medium text-white transition-colors duration-300 group-hover:text-accent-light lg:text-base">
@@ -45,11 +50,11 @@ function ContactLink({ href, icon: Icon, label, value, external = false }) {
       </div>
 
       <ChevronRight
-        size={18}
-        className="relative hidden shrink-0 translate-x-1 text-slate-600 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:text-accent group-hover:opacity-100 lg:block"
+        size={16}
+        className="contact-link__chevron relative shrink-0 text-slate-600 transition-transform duration-300"
         aria-hidden
       />
-    </a>
+    </m.a>
   )
 }
 
@@ -59,9 +64,11 @@ export default function Contact() {
   const [state, handleSubmit, reset] = useForm(FORM_ID, {
     data: { 'g-recaptcha-response': executeRecaptcha },
   })
-  // En mobile el formulario arranca colapsado (acordeón) para que la sección
-  // no abra tan alta; desde lg siempre se muestra completo (ver className abajo).
+  // En mobile el formulario arranca colapsado (acordeón) para que la sección no abra
+  // tan alta. En desktop se muestra siempre: como AnimatePresence lo desmonta al
+  // cerrarse, hace falta saberlo en JS (no alcanza con clases CSS).
   const [formOpen, setFormOpen] = useState(false)
+  const alwaysOpen = useIsDesktop()
 
   return (
     <section id="contact" className="cv-auto relative overflow-hidden border-t border-white/5">
@@ -79,13 +86,20 @@ export default function Contact() {
             </p>
           </Reveal>
 
-          <div className="grid gap-5 lg:grid-cols-2 lg:gap-8">
-          <Reveal delay={100} className="space-y-2 lg:space-y-4">
+          <div className="grid gap-5 lg:grid-cols-2 lg:items-stretch lg:gap-8">
+          {/*
+            En desktop esta columna es flex y cada card lleva `lg:flex-1`: así las 5
+            quedan de igual alto entre sí y en conjunto llenan exactamente el alto del
+            formulario. Antes coincidían de casualidad (por padding) y cualquier cambio
+            de contenido las desalineaba.
+          */}
+          <Reveal delay={100} className="flex flex-col gap-2 lg:h-full lg:gap-4">
             <ContactLink
               href={`mailto:${profile.email}`}
               icon={Mail}
               label="Email"
               value={profile.email}
+              color="#4f8cff"
             />
 
             <ContactLink
@@ -93,6 +107,7 @@ export default function Contact() {
               icon={MessageCircle}
               label="WhatsApp"
               value={profile.phone}
+              color="#25D366"
               external
             />
 
@@ -101,6 +116,7 @@ export default function Contact() {
               icon={Linkedin}
               label="LinkedIn"
               value="Eduardo Escuti"
+              color="#0A66C2"
               external
             />
 
@@ -109,6 +125,7 @@ export default function Contact() {
               icon={Github}
               label="GitHub"
               value="@eduescuti"
+              color="#CBD5E1"
               external
             />
 
@@ -117,6 +134,7 @@ export default function Contact() {
               icon={MapPin}
               label={lang === 'es' ? 'Ubicación' : 'Location'}
               value="Buenos Aires, Argentina"
+              color="#F59E0B"
               external
             />
           </Reveal>
@@ -162,143 +180,165 @@ export default function Contact() {
             ) : (
               <>
                 {/* Trigger del acordeón: solo mobile. Desde lg el form siempre está visible. */}
-                <button
+                <m.button
                   type="button"
                   onClick={() => setFormOpen((v) => !v)}
+                  whileTap={{ scale: 0.99 }}
                   aria-expanded={formOpen}
                   aria-controls="contact-form-panel"
                   className="flex w-full items-center justify-between gap-3 p-5 text-left lg:hidden"
                 >
-                  <span className="text-lg font-semibold text-white">
+                  <span className="text-base font-semibold text-white">
                     {lang === 'es' ? 'Enviame un mensaje' : 'Send me a message'}
                   </span>
-                  <ChevronDown
-                    size={20}
-                    className={`shrink-0 text-slate-400 transition-transform duration-300 ${formOpen ? 'rotate-180' : ''}`}
-                    aria-hidden
-                  />
-                </button>
+                  <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-accent">
+                    <ChevronDown
+                      size={18}
+                      className={`transition-transform duration-300 ${formOpen ? 'rotate-180' : ''}`}
+                      aria-hidden
+                    />
+                  </span>
+                </m.button>
 
                 <h3 className="hidden text-lg font-semibold text-white lg:block lg:p-6 lg:pb-4">
                   {lang === 'es' ? 'Enviame un mensaje' : 'Send me a message'}
                 </h3>
 
-                <div
-                  id="contact-form-panel"
-                  className={`grid overflow-hidden transition-[grid-template-rows] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] lg:!grid-rows-[1fr] ${
-                    formOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
-                  }`}
-                >
-                  <div className="min-h-0 overflow-hidden px-5 pb-5 lg:px-6 lg:pb-6">
-                    <form onSubmit={handleSubmit} className="space-y-3 lg:space-y-4">
-                      <input
-                        type="text"
-                        name="_gotcha"
-                        style={{ display: 'none' }}
-                        tabIndex={-1}
-                        autoComplete="off"
-                      />
+                {/*
+                  Acordeón con AnimatePresence: anima height a spring (mucho más natural
+                  que grid-template-rows lineal) y desmonta el form al cerrarse, así no
+                  quedan nodos de más en mobile. El padding va DENTRO del panel que se
+                  recorta: si estuviera en el elemento con overflow-hidden, el recorte
+                  ocurre en el borde de la caja de padding y el contenido se asoma.
+                */}
+                <AnimatePresence initial={false}>
+                  {(formOpen || alwaysOpen) && (
+                    <m.div
+                      id="contact-form-panel"
+                      key="form-panel"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{
+                        type: 'spring',
+                        stiffness: 320,
+                        damping: 34,
+                        opacity: { duration: 0.2 },
+                      }}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-5 pb-5 lg:px-6 lg:pb-6">
+                        <form onSubmit={handleSubmit} className="space-y-3 lg:space-y-4">
+                          <input
+                            type="text"
+                            name="_gotcha"
+                            style={{ display: 'none' }}
+                            tabIndex={-1}
+                            autoComplete="off"
+                          />
 
-                      <div>
-                        <label htmlFor="name" className="mb-1.5 block text-sm text-slate-400">
-                          {lang === 'es' ? 'Nombre' : 'Name'}
-                        </label>
-                        <input
-                          id="name"
-                          name="name"
-                          type="text"
-                          required
-                          autoComplete="name"
-                          className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-accent/50 focus:ring-1 focus:ring-accent/30 lg:py-3"
-                          placeholder={lang === 'es' ? 'Tu nombre' : 'Your name'}
-                        />
-                        <ValidationError
-                          prefix={lang === 'es' ? 'Nombre' : 'Name'}
-                          field="name"
-                          errors={state.errors}
-                          className="mt-1 text-sm text-red-400"
-                        />
+                          <div>
+                            <label htmlFor="name" className="mb-1.5 block text-sm text-slate-400">
+                              {lang === 'es' ? 'Nombre' : 'Name'}
+                            </label>
+                            <input
+                              id="name"
+                              name="name"
+                              type="text"
+                              required
+                              autoComplete="name"
+                              className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-accent/50 focus:ring-1 focus:ring-accent/30 lg:py-3"
+                              placeholder={lang === 'es' ? 'Tu nombre' : 'Your name'}
+                            />
+                            <ValidationError
+                              prefix={lang === 'es' ? 'Nombre' : 'Name'}
+                              field="name"
+                              errors={state.errors}
+                              className="mt-1 text-sm text-red-400"
+                            />
+                          </div>
+
+                          <div>
+                            <label htmlFor="email" className="mb-1.5 block text-sm text-slate-400">
+                              Email
+                            </label>
+                            <input
+                              id="email"
+                              name="email"
+                              type="email"
+                              required
+                              autoComplete="email"
+                              className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-accent/50 focus:ring-1 focus:ring-accent/30 lg:py-3"
+                              placeholder="tu@email.com"
+                            />
+                            <ValidationError
+                              prefix="Email"
+                              field="email"
+                              errors={state.errors}
+                              className="mt-1 text-sm text-red-400"
+                            />
+                          </div>
+
+                          <div>
+                            <label htmlFor="message" className="mb-1.5 block text-sm text-slate-400">
+                              {lang === 'es' ? 'Mensaje' : 'Message'}
+                            </label>
+                            <textarea
+                              id="message"
+                              name="message"
+                              rows={3}
+                              required
+                              className="w-full resize-none rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-accent/50 focus:ring-1 focus:ring-accent/30 lg:py-3"
+                              placeholder={lang === 'es' ? 'Tu mensaje...' : 'Your message...'}
+                            />
+                            <ValidationError
+                              prefix={lang === 'es' ? 'Mensaje' : 'Message'}
+                              field="message"
+                              errors={state.errors}
+                              className="mt-1 text-sm text-red-400"
+                            />
+                          </div>
+
+                          <button
+                            type="submit"
+                            disabled={state.submitting}
+                            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-6 py-3 text-sm font-semibold text-white transition hover:bg-accent-light disabled:opacity-60"
+                          >
+                            <Send size={16} />
+                            {state.submitting
+                              ? lang === 'es'
+                                ? 'Enviando...'
+                                : 'Sending...'
+                              : lang === 'es'
+                                ? 'Enviar mensaje'
+                                : 'Send message'}
+                          </button>
+
+                          <p className="text-center text-[11px] leading-relaxed text-slate-600">
+                            {lang === 'es' ? 'Protegido por reCAPTCHA · ' : 'Protected by reCAPTCHA · '}
+                            <a
+                              href="https://policies.google.com/privacy"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-slate-500 underline decoration-slate-700 underline-offset-2 transition hover:text-accent"
+                            >
+                              {lang === 'es' ? 'Privacidad' : 'Privacy'}
+                            </a>
+                            {' · '}
+                            <a
+                              href="https://policies.google.com/terms"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-slate-500 underline decoration-slate-700 underline-offset-2 transition hover:text-accent"
+                            >
+                              {lang === 'es' ? 'Términos' : 'Terms'}
+                            </a>
+                          </p>
+                        </form>
                       </div>
-
-                      <div>
-                        <label htmlFor="email" className="mb-1.5 block text-sm text-slate-400">
-                          Email
-                        </label>
-                        <input
-                          id="email"
-                          name="email"
-                          type="email"
-                          required
-                          autoComplete="email"
-                          className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-accent/50 focus:ring-1 focus:ring-accent/30 lg:py-3"
-                          placeholder="tu@email.com"
-                        />
-                        <ValidationError
-                          prefix="Email"
-                          field="email"
-                          errors={state.errors}
-                          className="mt-1 text-sm text-red-400"
-                        />
-                      </div>
-
-                      <div>
-                        <label htmlFor="message" className="mb-1.5 block text-sm text-slate-400">
-                          {lang === 'es' ? 'Mensaje' : 'Message'}
-                        </label>
-                        <textarea
-                          id="message"
-                          name="message"
-                          rows={3}
-                          required
-                          className="w-full resize-none rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-accent/50 focus:ring-1 focus:ring-accent/30 lg:py-3"
-                          placeholder={lang === 'es' ? 'Tu mensaje...' : 'Your message...'}
-                        />
-                        <ValidationError
-                          prefix={lang === 'es' ? 'Mensaje' : 'Message'}
-                          field="message"
-                          errors={state.errors}
-                          className="mt-1 text-sm text-red-400"
-                        />
-                      </div>
-
-                      <button
-                        type="submit"
-                        disabled={state.submitting}
-                        className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-6 py-3 text-sm font-semibold text-white transition hover:bg-accent-light disabled:opacity-60"
-                      >
-                        <Send size={16} />
-                        {state.submitting
-                          ? lang === 'es'
-                            ? 'Enviando...'
-                            : 'Sending...'
-                          : lang === 'es'
-                            ? 'Enviar mensaje'
-                            : 'Send message'}
-                      </button>
-
-                      <p className="text-center text-[11px] leading-relaxed text-slate-600">
-                        {lang === 'es' ? 'Protegido por reCAPTCHA · ' : 'Protected by reCAPTCHA · '}
-                        <a
-                          href="https://policies.google.com/privacy"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-slate-500 underline decoration-slate-700 underline-offset-2 transition hover:text-accent"
-                        >
-                          {lang === 'es' ? 'Privacidad' : 'Privacy'}
-                        </a>
-                        {' · '}
-                        <a
-                          href="https://policies.google.com/terms"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-slate-500 underline decoration-slate-700 underline-offset-2 transition hover:text-accent"
-                        >
-                          {lang === 'es' ? 'Términos' : 'Terms'}
-                        </a>
-                      </p>
-                    </form>
-                  </div>
-                </div>
+                    </m.div>
+                  )}
+                </AnimatePresence>
               </>
             )}
           </Reveal>

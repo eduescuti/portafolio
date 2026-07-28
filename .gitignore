@@ -25,6 +25,8 @@ dist-ssr
 *.sw?
 
 # Archivos de trabajo locales (no versionar)
+# Nota: Tailwind v4 respeta .gitignore al escanear clases, así que esto además evita
+# que los ejemplos de código dentro de los planes generen CSS que no se usa.
 notas.txt
-PLAN_CAMBIOS_PORTAFOLIO.md
+PLAN_*.md
 skills.png
