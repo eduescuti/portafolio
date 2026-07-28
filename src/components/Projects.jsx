@@ -16,6 +16,7 @@ import {
 import { projects } from '../data/portfolio'
 import { techIcons } from '../lib/techIcons'
 import { useLanguage } from '../context/LanguageContext'
+import { useCoarsePointer } from '../lib/useDeviceCapabilities'
 import Reveal, { RevealGroup, RevealItem } from './Reveal'
 
 const iconMap = { BarChart3, MessageSquare, Zap, Calendar, GraduationCap }
@@ -29,6 +30,7 @@ function ProjectThumb({ project, className = '' }) {
         src={project.imageBackground}
         alt=""
         loading="lazy"
+        decoding="async"
         className={`h-full w-full object-cover object-top ${className}`}
       />
     )
@@ -55,7 +57,7 @@ function TechChip({ name, small = false }) {
   )
 }
 
-function ProjectCard({ project, t, onOpen }) {
+function ProjectCard({ project, t, onOpen, sharedLayout }) {
   const Icon = iconMap[project.icon] || FolderOpen
   const reduce = useReducedMotion()
   const cardRef = useRef(null)
@@ -109,7 +111,7 @@ function ProjectCard({ project, t, onOpen }) {
       />
 
       <m.div
-        layoutId={`thumb-${project.id}`}
+        layoutId={sharedLayout ? `thumb-${project.id}` : undefined}
         className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-white/[0.03] ring-1 ring-white/5"
       >
         <ProjectThumb
@@ -186,6 +188,8 @@ function ProjectGallery({ images, lang }) {
           src={images[index]}
           alt=""
           custom={dir}
+          loading="lazy"
+          decoding="async"
           initial={reduce ? { opacity: 0 } : { opacity: 0, x: dir === 0 ? 0 : dir * 40 }}
           animate={{ opacity: 1, x: 0 }}
           exit={reduce ? { opacity: 0 } : { opacity: 0, x: dir * -40 }}
@@ -237,7 +241,7 @@ function ProjectGallery({ images, lang }) {
   )
 }
 
-function ProjectModal({ project, t, lang, onClose }) {
+function ProjectModal({ project, t, lang, onClose, sharedLayout }) {
   const panelRef = useRef(null)
   const closeRef = useRef(null)
   const Icon = iconMap[project.icon] || FolderOpen
@@ -307,7 +311,7 @@ function ProjectModal({ project, t, lang, onClose }) {
         </button>
 
         <m.div
-          layoutId={`thumb-${project.id}`}
+          layoutId={sharedLayout ? `thumb-${project.id}` : undefined}
           className="relative aspect-[16/9] w-full overflow-hidden bg-navy-950"
         >
           {project.previews?.length ? (
@@ -392,6 +396,11 @@ function ProjectModal({ project, t, lang, onClose }) {
 export default function Projects() {
   const { t, lang } = useLanguage()
   const [selected, setSelected] = useState(null)
+  // La shared layout animation (layoutId card→modal) mide y proyecta el thumbnail:
+  // en la compu fluye, pero en un celu real traba al abrir la card. La apagamos en
+  // táctil; el modal conserva su entrada con spring (y/scale/opacity).
+  const coarse = useCoarsePointer()
+  const sharedLayout = !coarse
 
   const openProject = useCallback((project) => setSelected(project), [])
   const closeProject = useCallback(() => setSelected(null), [])
@@ -416,14 +425,16 @@ export default function Projects() {
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           {projects.map((project, i) => (
             <Reveal key={project.id} delay={(i % 2) * 80} className="h-full min-w-0">
-              <ProjectCard project={project} t={t} onOpen={openProject} />
+              <ProjectCard project={project} t={t} onOpen={openProject} sharedLayout={sharedLayout} />
             </Reveal>
           ))}
         </div>
       </div>
 
       <AnimatePresence>
-        {selected && <ProjectModal project={selected} t={t} lang={lang} onClose={closeProject} />}
+        {selected && (
+          <ProjectModal project={selected} t={t} lang={lang} onClose={closeProject} sharedLayout={sharedLayout} />
+        )}
       </AnimatePresence>
     </section>
   )
