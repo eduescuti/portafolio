@@ -48,8 +48,8 @@ function ProjectCard({ project, t, onOpen, sharedLayout }) {
   const reduce = useReducedMotion()
   const cardRef = useRef(null)
 
-  const rotateX = useSpring(useMotionValue(0), { stiffness: 150, damping: 18 })
-  const rotateY = useSpring(useMotionValue(0), { stiffness: 150, damping: 18 })
+  const rotateX = useSpring(useMotionValue(0), { stiffness: 250, damping: 10 })
+  const rotateY = useSpring(useMotionValue(0), { stiffness: 250, damping: 10 })
 
   // El tilt 3D solo en desktop con mouse (>=1024px). En mobile/táctil descuadraba la card.
   const canTilt = () =>
@@ -215,9 +215,8 @@ function ProjectGallery({ images, lang }) {
                 }}
                 aria-label={`${lang === 'es' ? 'Ir a la imagen' : 'Go to image'} ${i + 1}`}
                 aria-current={i === index}
-                className={`h-1.5 rounded-full transition-all duration-300 ${
-                  i === index ? 'w-5 bg-accent' : 'w-1.5 bg-white/40 hover:bg-white/70'
-                }`}
+                className={`h-1.5 rounded-full transition-all duration-300 ${i === index ? 'w-5 bg-accent' : 'w-1.5 bg-white/40 hover:bg-white/70'
+                  }`}
               />
             ))}
           </div>

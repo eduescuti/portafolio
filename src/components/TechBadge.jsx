@@ -8,17 +8,18 @@ import { techColors } from '../lib/techColors'
  * en index.css) — sin motion values ni listeners por chip, barato en mobile
  * incluso con muchos badges en pantalla.
  */
-export default function TechBadge({ name, size = 'md', className = '' }) {
+export default function TechBadge({ name, size = 'md', tone = 'neutral', className = '' }) {
   const Icon = techIcons[name]
   const color = techColors[name]
 
   const sizeClasses =
     size === 'sm' ? 'px-2 py-0.5 text-[11px]' : 'px-2.5 py-1 text-xs'
   const iconSize = size === 'sm' ? 11 : 13
+  const toneClass = tone === 'brand' ? 'tech-badge--brand' : ''
 
   return (
     <span
-      className={`tech-badge font-mono ${sizeClasses} ${className}`}
+      className={`tech-badge font-mono ${sizeClasses} ${toneClass} ${className}`}
       style={color ? { '--tc': color } : undefined}
     >
       {Icon && <Icon size={iconSize} className="shrink-0" />}

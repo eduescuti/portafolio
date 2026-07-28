@@ -26,6 +26,8 @@ export const techColors = {
   Git: '#F05033',
   GitHub: NEUTRAL_LIGHT,
   Brevo: '#0FA968',
+  SendGrid: '#1A82E2',
+  Composer: '#885630',
   Docker: '#2496ED',
   Filament: '#FDAE4B',
   'Claude Code': '#D97757',

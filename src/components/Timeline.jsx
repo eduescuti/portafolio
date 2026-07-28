@@ -2,15 +2,10 @@ import { m, useReducedMotion } from 'framer-motion'
 import { Briefcase, GraduationCap, FolderKanban, Clock } from 'lucide-react'
 import { timeline, projects, profile } from '../data/portfolio'
 import { useLanguage } from '../context/LanguageContext'
+import { yearsSince } from '../lib/careerStats'
 import Reveal, { RevealGroup, RevealItem } from './Reveal'
 import AnimatedCounter from './AnimatedCounter'
 import TechBadge from './TechBadge'
-
-function yearsSince(anchor) {
-  const start = new Date(`${anchor}-01T00:00:00`)
-  const diff = (Date.now() - start.getTime()) / (365.25 * 24 * 60 * 60 * 1000)
-  return Math.max(0, diff)
-}
 
 function Metric({ icon: Icon, value, decimals, suffix, label }) {
   return (

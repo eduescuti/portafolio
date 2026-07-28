@@ -530,6 +530,16 @@ section[id] {
   transform: translateY(-1px) scale(1.04);
 }
 
+/* Variante "de marca": el color no espera al hover, se muestra en reposo. La usa el
+   dorso de ProfileCard, donde la gracia es justamente que la tira de tecnologías
+   aporte color. En listas largas (Trayectoria, Proyectos) se sigue usando la neutra,
+   que es más escaneable. */
+.tech-badge--brand {
+  border-color: color-mix(in srgb, var(--tc, #4f8cff) 40%, transparent);
+  background-color: color-mix(in srgb, var(--tc, #4f8cff) 12%, transparent);
+  color: color-mix(in srgb, var(--tc, #4f8cff) 80%, white);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .tech-badge {
     transition: none;
@@ -540,6 +550,36 @@ section[id] {
   .tech-badge:active {
     transform: none;
   }
+}
+
+/* Botón de red social con color de marca en reposo, igual que los tiles de Contacto.
+   El color entra por --lc desde el componente. */
+.social-brand {
+  color: var(--lc, var(--color-accent));
+}
+
+.social-brand:hover,
+.social-brand:focus-visible {
+  border-color: color-mix(in srgb, var(--lc, #4f8cff) 55%, transparent);
+  background-color: color-mix(in srgb, var(--lc, #4f8cff) 14%, transparent);
+  box-shadow: 0 4px 14px -4px color-mix(in srgb, var(--lc, #4f8cff) 55%, transparent);
+}
+
+/* Borde con degradado tipo "holográfico" para la tarjeta del Hero.
+   Técnica de doble background: el color de relleno se pinta en el padding-box y el
+   degradado en el border-box, con el borde transparente. Es puro pintado — no anima
+   nada ni agrega capas extra, a diferencia de un pseudo-elemento con blur. */
+.holo-border {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--color-navy-900), var(--color-navy-900)) padding-box,
+    linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--color-accent) 55%, transparent),
+        transparent 42%,
+        color-mix(in srgb, #818cf8 45%, transparent)
+      )
+      border-box;
 }
 
 /* Deja que el navegador saltee el render de secciones lejos del viewport.
