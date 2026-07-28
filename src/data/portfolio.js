@@ -288,6 +288,12 @@ export const projects = [
     },
     color: 'from-blue-800 to-black-800',
     icon: 'GraduationCap',
+    url: 'https://uca-planner.vercel.app/',
+    imageBackground: '/projects/uca-planner.png',
+    previews: [
+      '/projects/previews/uca-planner-1.png',
+      '/projects/previews/uca-planner-2.png',
+    ],
   },
   {
     id: 'coming-soon',
