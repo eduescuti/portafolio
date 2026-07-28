@@ -445,12 +445,54 @@ section[id] {
   }
 }
 
+/* Padding vertical progresivo: bastante menos en mobile (para que las secciones
+   quepan mejor en el viewport) y el mismo valor de antes desde lg. */
 .section-container {
-  @apply mx-auto w-full max-w-6xl px-6 py-24 md:px-8 md:py-32;
+  @apply mx-auto w-full max-w-6xl px-6 py-14 sm:py-20 md:px-8 md:py-28 lg:py-32;
 }
 
 .section-label {
   @apply mb-3 inline-block font-mono text-xs font-medium uppercase tracking-widest text-accent;
+}
+
+/* TechBadge: chip de tecnología con color de marca dinámico. El color se pasa
+   por variable CSS (--tc) desde el componente; hover/tap/focus lo activan con
+   color-mix, sin JS ni motion values (barato, funciona igual en mobile con :active). */
+.tech-badge {
+  @apply inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-white/[0.04] text-accent-light transition-[color,background-color,border-color,box-shadow,transform] duration-300 ease-out;
+}
+
+.tech-badge:hover,
+.tech-badge:focus-visible,
+.tech-badge:active {
+  border-color: color-mix(in srgb, var(--tc, #4f8cff) 55%, transparent);
+  background-color: color-mix(in srgb, var(--tc, #4f8cff) 16%, transparent);
+  color: color-mix(in srgb, var(--tc, #4f8cff) 85%, white);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--tc, #4f8cff) 25%, transparent),
+    0 4px 14px -4px color-mix(in srgb, var(--tc, #4f8cff) 55%, transparent);
+  transform: translateY(-1px) scale(1.04);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tech-badge {
+    transition: none;
+  }
+
+  .tech-badge:hover,
+  .tech-badge:focus-visible,
+  .tech-badge:active {
+    transform: none;
+  }
+}
+
+/* Deja que el navegador saltee el render de secciones lejos del viewport.
+   contain-intrinsic-size evita el salto de scrollbar/layout antes del primer
+   paint real. Solo en secciones alejadas del fold, sin layoutId ni medidas
+   sensibles (Timeline, Contact) para no interferir con los reveals de Motion. */
+.cv-auto {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 900px;
 }
 
 .section-title {

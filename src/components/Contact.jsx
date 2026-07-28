@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useForm, ValidationError } from '@formspree/react'
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
 import {
@@ -10,6 +11,7 @@ import {
   CheckCircle2,
   RotateCcw,
   ChevronRight,
+  ChevronDown,
 } from 'lucide-react'
 import { profile } from '../data/portfolio'
 import { useLanguage } from '../context/LanguageContext'
@@ -22,29 +24,29 @@ function ContactLink({ href, icon: Icon, label, value, external = false }) {
     <a
       href={href}
       {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-      className="group glass-card glass-card-hover relative flex items-center gap-3 overflow-hidden p-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:ring-offset-2 focus-visible:ring-offset-navy-950 active:scale-[0.99] lg:gap-4 lg:p-5"
+      className="group glass-card glass-card-hover relative flex items-center gap-3 overflow-hidden p-3.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:ring-offset-2 focus-visible:ring-offset-navy-950 active:scale-[0.99] lg:gap-4 lg:p-5"
     >
       <span
         className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-accent/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
         aria-hidden
       />
 
-      <div className="relative rounded-xl bg-accent/15 p-2.5 text-accent transition-all duration-300 group-hover:scale-105 group-hover:bg-accent/25 group-hover:shadow-md group-hover:shadow-accent/20 lg:p-3">
-        <Icon size={20} className="transition-transform duration-300 group-hover:scale-110" />
+      <div className="relative shrink-0 rounded-xl bg-accent/15 p-2 text-accent transition-all duration-300 group-hover:scale-105 group-hover:bg-accent/25 group-hover:shadow-md group-hover:shadow-accent/20 lg:p-3">
+        <Icon size={18} className="transition-transform duration-300 group-hover:scale-110 lg:h-5 lg:w-5" />
       </div>
 
-      <div className="relative min-w-0 flex-1">
-        <p className="text-xs font-medium uppercase tracking-wider text-slate-500 transition-colors duration-300 group-hover:text-slate-400">
+      <div className="relative flex min-w-0 flex-1 items-baseline gap-2 lg:block">
+        <p className="shrink-0 text-[11px] font-medium uppercase tracking-wider text-slate-500 transition-colors duration-300 group-hover:text-slate-400 lg:text-xs">
           {label}
         </p>
-        <p className="truncate font-medium text-white transition-colors duration-300 group-hover:text-accent-light">
+        <p className="truncate text-sm font-medium text-white transition-colors duration-300 group-hover:text-accent-light lg:text-base">
           {value}
         </p>
       </div>
 
       <ChevronRight
         size={18}
-        className="relative shrink-0 translate-x-1 text-slate-600 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:text-accent group-hover:opacity-100"
+        className="relative hidden shrink-0 translate-x-1 text-slate-600 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:text-accent group-hover:opacity-100 lg:block"
         aria-hidden
       />
     </a>
@@ -57,25 +59,28 @@ export default function Contact() {
   const [state, handleSubmit, reset] = useForm(FORM_ID, {
     data: { 'g-recaptcha-response': executeRecaptcha },
   })
+  // En mobile el formulario arranca colapsado (acordeón) para que la sección
+  // no abra tan alta; desde lg siempre se muestra completo (ver className abajo).
+  const [formOpen, setFormOpen] = useState(false)
 
   return (
-    <section id="contact" className="relative overflow-hidden border-t border-white/5">
+    <section id="contact" className="cv-auto relative overflow-hidden border-t border-white/5">
       <div className="section-container">
-        <div className="rounded-[2rem] border border-white/[0.08] bg-white/[0.02] p-6 sm:p-10 lg:p-14">
+        <div className="rounded-[2rem] border border-white/[0.08] bg-white/[0.02] p-5 sm:p-8 lg:p-14">
           <Reveal>
             <span className="section-label">{lang === 'es' ? 'Contacto' : 'Contact'}</span>
-            <h2 className="mb-4 text-4xl font-extrabold leading-[1.05] tracking-tight text-white md:text-5xl">
+            <h2 className="mb-3 text-3xl font-extrabold leading-[1.05] tracking-tight text-white sm:text-4xl md:text-5xl">
               {lang === 'es' ? 'Hablemos' : "Let's talk"}
             </h2>
-            <p className="mb-10 max-w-xl text-lg text-slate-400">
+            <p className="mb-6 max-w-xl text-base text-slate-400 sm:text-lg lg:mb-10">
               {lang === 'es'
                 ? 'Estoy buscando oportunidades part-time o pasantías. ¡No dudes en escribirme!'
                 : "I'm looking for part-time opportunities or internships. Don't hesitate to reach out!"}
             </p>
           </Reveal>
 
-          <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
-          <Reveal delay={100} className="space-y-2.5 lg:space-y-4">
+          <div className="grid gap-5 lg:grid-cols-2 lg:gap-8">
+          <Reveal delay={100} className="space-y-2 lg:space-y-4">
             <ContactLink
               href={`mailto:${profile.email}`}
               icon={Mail}
@@ -116,10 +121,10 @@ export default function Contact() {
             />
           </Reveal>
 
-          <Reveal delay={200} className="glass-card p-5 lg:p-6">
+          <Reveal delay={200} className="glass-card overflow-hidden">
             {state.succeeded ? (
               <div
-                className="flex min-h-[380px] flex-col items-center justify-center py-6 text-center"
+                className="flex min-h-[380px] flex-col items-center justify-center p-5 py-6 text-center lg:p-6"
                 role="status"
                 aria-live="polite"
               >
@@ -156,116 +161,144 @@ export default function Contact() {
               </div>
             ) : (
               <>
-                <h3 className="mb-3 text-lg font-semibold text-white lg:mb-4">
+                {/* Trigger del acordeón: solo mobile. Desde lg el form siempre está visible. */}
+                <button
+                  type="button"
+                  onClick={() => setFormOpen((v) => !v)}
+                  aria-expanded={formOpen}
+                  aria-controls="contact-form-panel"
+                  className="flex w-full items-center justify-between gap-3 p-5 text-left lg:hidden"
+                >
+                  <span className="text-lg font-semibold text-white">
+                    {lang === 'es' ? 'Enviame un mensaje' : 'Send me a message'}
+                  </span>
+                  <ChevronDown
+                    size={20}
+                    className={`shrink-0 text-slate-400 transition-transform duration-300 ${formOpen ? 'rotate-180' : ''}`}
+                    aria-hidden
+                  />
+                </button>
+
+                <h3 className="hidden text-lg font-semibold text-white lg:block lg:p-6 lg:pb-4">
                   {lang === 'es' ? 'Enviame un mensaje' : 'Send me a message'}
                 </h3>
-                <form onSubmit={handleSubmit} className="space-y-3 lg:space-y-4">
-                  <input
-                    type="text"
-                    name="_gotcha"
-                    style={{ display: 'none' }}
-                    tabIndex={-1}
-                    autoComplete="off"
-                  />
 
-                  <div>
-                    <label htmlFor="name" className="mb-1.5 block text-sm text-slate-400">
-                      {lang === 'es' ? 'Nombre' : 'Name'}
-                    </label>
-                    <input
-                      id="name"
-                      name="name"
-                      type="text"
-                      required
-                      autoComplete="name"
-                      className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-accent/50 focus:ring-1 focus:ring-accent/30 lg:py-3"
-                      placeholder={lang === 'es' ? 'Tu nombre' : 'Your name'}
-                    />
-                    <ValidationError
-                      prefix={lang === 'es' ? 'Nombre' : 'Name'}
-                      field="name"
-                      errors={state.errors}
-                      className="mt-1 text-sm text-red-400"
-                    />
+                <div
+                  id="contact-form-panel"
+                  className={`grid overflow-hidden transition-[grid-template-rows] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] lg:!grid-rows-[1fr] ${
+                    formOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
+                  }`}
+                >
+                  <div className="min-h-0 overflow-hidden px-5 pb-5 lg:px-6 lg:pb-6">
+                    <form onSubmit={handleSubmit} className="space-y-3 lg:space-y-4">
+                      <input
+                        type="text"
+                        name="_gotcha"
+                        style={{ display: 'none' }}
+                        tabIndex={-1}
+                        autoComplete="off"
+                      />
+
+                      <div>
+                        <label htmlFor="name" className="mb-1.5 block text-sm text-slate-400">
+                          {lang === 'es' ? 'Nombre' : 'Name'}
+                        </label>
+                        <input
+                          id="name"
+                          name="name"
+                          type="text"
+                          required
+                          autoComplete="name"
+                          className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-accent/50 focus:ring-1 focus:ring-accent/30 lg:py-3"
+                          placeholder={lang === 'es' ? 'Tu nombre' : 'Your name'}
+                        />
+                        <ValidationError
+                          prefix={lang === 'es' ? 'Nombre' : 'Name'}
+                          field="name"
+                          errors={state.errors}
+                          className="mt-1 text-sm text-red-400"
+                        />
+                      </div>
+
+                      <div>
+                        <label htmlFor="email" className="mb-1.5 block text-sm text-slate-400">
+                          Email
+                        </label>
+                        <input
+                          id="email"
+                          name="email"
+                          type="email"
+                          required
+                          autoComplete="email"
+                          className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-accent/50 focus:ring-1 focus:ring-accent/30 lg:py-3"
+                          placeholder="tu@email.com"
+                        />
+                        <ValidationError
+                          prefix="Email"
+                          field="email"
+                          errors={state.errors}
+                          className="mt-1 text-sm text-red-400"
+                        />
+                      </div>
+
+                      <div>
+                        <label htmlFor="message" className="mb-1.5 block text-sm text-slate-400">
+                          {lang === 'es' ? 'Mensaje' : 'Message'}
+                        </label>
+                        <textarea
+                          id="message"
+                          name="message"
+                          rows={3}
+                          required
+                          className="w-full resize-none rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-accent/50 focus:ring-1 focus:ring-accent/30 lg:py-3"
+                          placeholder={lang === 'es' ? 'Tu mensaje...' : 'Your message...'}
+                        />
+                        <ValidationError
+                          prefix={lang === 'es' ? 'Mensaje' : 'Message'}
+                          field="message"
+                          errors={state.errors}
+                          className="mt-1 text-sm text-red-400"
+                        />
+                      </div>
+
+                      <button
+                        type="submit"
+                        disabled={state.submitting}
+                        className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-6 py-3 text-sm font-semibold text-white transition hover:bg-accent-light disabled:opacity-60"
+                      >
+                        <Send size={16} />
+                        {state.submitting
+                          ? lang === 'es'
+                            ? 'Enviando...'
+                            : 'Sending...'
+                          : lang === 'es'
+                            ? 'Enviar mensaje'
+                            : 'Send message'}
+                      </button>
+
+                      <p className="text-center text-[11px] leading-relaxed text-slate-600">
+                        {lang === 'es' ? 'Protegido por reCAPTCHA · ' : 'Protected by reCAPTCHA · '}
+                        <a
+                          href="https://policies.google.com/privacy"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-slate-500 underline decoration-slate-700 underline-offset-2 transition hover:text-accent"
+                        >
+                          {lang === 'es' ? 'Privacidad' : 'Privacy'}
+                        </a>
+                        {' · '}
+                        <a
+                          href="https://policies.google.com/terms"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-slate-500 underline decoration-slate-700 underline-offset-2 transition hover:text-accent"
+                        >
+                          {lang === 'es' ? 'Términos' : 'Terms'}
+                        </a>
+                      </p>
+                    </form>
                   </div>
-
-                  <div>
-                    <label htmlFor="email" className="mb-1.5 block text-sm text-slate-400">
-                      Email
-                    </label>
-                    <input
-                      id="email"
-                      name="email"
-                      type="email"
-                      required
-                      autoComplete="email"
-                      className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-accent/50 focus:ring-1 focus:ring-accent/30 lg:py-3"
-                      placeholder="tu@email.com"
-                    />
-                    <ValidationError
-                      prefix="Email"
-                      field="email"
-                      errors={state.errors}
-                      className="mt-1 text-sm text-red-400"
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="message" className="mb-1.5 block text-sm text-slate-400">
-                      {lang === 'es' ? 'Mensaje' : 'Message'}
-                    </label>
-                    <textarea
-                      id="message"
-                      name="message"
-                      rows={3}
-                      required
-                      className="w-full resize-none rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-accent/50 focus:ring-1 focus:ring-accent/30 lg:py-3"
-                      placeholder={lang === 'es' ? 'Tu mensaje...' : 'Your message...'}
-                    />
-                    <ValidationError
-                      prefix={lang === 'es' ? 'Mensaje' : 'Message'}
-                      field="message"
-                      errors={state.errors}
-                      className="mt-1 text-sm text-red-400"
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={state.submitting}
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-6 py-3 text-sm font-semibold text-white transition hover:bg-accent-light disabled:opacity-60"
-                  >
-                    <Send size={16} />
-                    {state.submitting
-                      ? lang === 'es'
-                        ? 'Enviando...'
-                        : 'Sending...'
-                      : lang === 'es'
-                        ? 'Enviar mensaje'
-                        : 'Send message'}
-                  </button>
-
-                  <p className="text-center text-[11px] leading-relaxed text-slate-600">
-                    {lang === 'es' ? 'Protegido por reCAPTCHA · ' : 'Protected by reCAPTCHA · '}
-                    <a
-                      href="https://policies.google.com/privacy"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-slate-500 underline decoration-slate-700 underline-offset-2 transition hover:text-accent"
-                    >
-                      {lang === 'es' ? 'Privacidad' : 'Privacy'}
-                    </a>
-                    {' · '}
-                    <a
-                      href="https://policies.google.com/terms"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-slate-500 underline decoration-slate-700 underline-offset-2 transition hover:text-accent"
-                    >
-                      {lang === 'es' ? 'Términos' : 'Terms'}
-                    </a>
-                  </p>
-                </form>
+                </div>
               </>
             )}
           </Reveal>

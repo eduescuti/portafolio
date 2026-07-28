@@ -14,10 +14,10 @@ import {
   X,
 } from 'lucide-react'
 import { projects } from '../data/portfolio'
-import { techIcons } from '../lib/techIcons'
 import { useLanguage } from '../context/LanguageContext'
 import { useCoarsePointer } from '../lib/useDeviceCapabilities'
 import Reveal, { RevealGroup, RevealItem } from './Reveal'
+import TechBadge from './TechBadge'
 
 const iconMap = { BarChart3, MessageSquare, Zap, Calendar, GraduationCap }
 
@@ -40,20 +40,6 @@ function ProjectThumb({ project, className = '' }) {
     <div className={`flex h-full w-full items-center justify-center bg-gradient-to-br ${project.color || 'from-navy-800 to-navy-900'} ${className}`}>
       <Icon size={44} className="text-white/80" />
     </div>
-  )
-}
-
-function TechChip({ name, small = false }) {
-  const Icon = techIcons[name]
-  return (
-    <span
-      className={`inline-flex items-center gap-1.5 rounded-md bg-white/[0.04] font-mono text-accent-light ${
-        small ? 'px-2 py-0.5 text-[11px]' : 'px-2.5 py-1 text-xs'
-      }`}
-    >
-      {Icon && <Icon size={small ? 11 : 13} className="shrink-0" />}
-      {name}
-    </span>
   )
 }
 
@@ -141,7 +127,7 @@ function ProjectCard({ project, t, onOpen, sharedLayout }) {
 
         <div className="mt-auto flex flex-wrap gap-1.5">
           {project.tech.slice(0, 4).map((tech) => (
-            <TechChip key={tech} name={tech} small />
+            <TechBadge key={tech} name={tech} size="sm" />
           ))}
           {project.tech.length > 4 && (
             <span className="inline-flex items-center px-1.5 py-0.5 font-mono text-[11px] text-slate-600">
@@ -205,7 +191,7 @@ function ProjectGallery({ images, lang }) {
             type="button"
             onClick={() => go(-1)}
             aria-label={lang === 'es' ? 'Imagen anterior' : 'Previous image'}
-            className="absolute left-3 top-1/2 z-10 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-navy-950/60 text-slate-200 backdrop-blur-sm transition-colors duration-300 hover:border-accent/40 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+            className="absolute left-3 top-1/2 z-10 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-navy-950/80 text-slate-200 transition-colors duration-300 hover:border-accent/40 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 sm:bg-navy-950/60 sm:backdrop-blur-sm"
           >
             <ChevronLeft size={18} />
           </button>
@@ -213,7 +199,7 @@ function ProjectGallery({ images, lang }) {
             type="button"
             onClick={() => go(1)}
             aria-label={lang === 'es' ? 'Imagen siguiente' : 'Next image'}
-            className="absolute right-3 top-1/2 z-10 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-navy-950/60 text-slate-200 backdrop-blur-sm transition-colors duration-300 hover:border-accent/40 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+            className="absolute right-3 top-1/2 z-10 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-white/10 bg-navy-950/80 text-slate-200 transition-colors duration-300 hover:border-accent/40 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 sm:bg-navy-950/60 sm:backdrop-blur-sm"
           >
             <ChevronRight size={18} />
           </button>
@@ -305,7 +291,7 @@ function ProjectModal({ project, t, lang, onClose, sharedLayout }) {
           type="button"
           onClick={onClose}
           aria-label={lang === 'es' ? 'Cerrar' : 'Close'}
-          className="absolute right-4 top-4 z-10 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-navy-950/60 text-slate-300 backdrop-blur-sm transition-colors duration-300 hover:border-accent/40 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+          className="absolute right-4 top-4 z-10 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-navy-950/80 text-slate-300 transition-colors duration-300 hover:border-accent/40 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 sm:bg-navy-950/60 sm:backdrop-blur-sm"
         >
           <X size={18} />
         </button>
@@ -353,8 +339,8 @@ function ProjectModal({ project, t, lang, onClose, sharedLayout }) {
             <p className="mb-2 font-mono text-xs uppercase tracking-widest text-slate-500">Stack</p>
             <RevealGroup className="flex flex-wrap gap-2" stagger={0.04}>
               {project.tech.map((tech) => (
-                <RevealItem as="span" key={tech}>
-                  <TechChip name={tech} />
+                <RevealItem as="span" key={tech} variant="scale">
+                  <TechBadge name={tech} />
                 </RevealItem>
               ))}
             </RevealGroup>

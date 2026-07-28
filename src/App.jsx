@@ -20,7 +20,7 @@ export default function App() {
         <SmoothScroll />
         <GlobalBackground />
         <CustomCursor />
-        <div className="relative min-h-screen overflow-x-hidden">
+        <div className="relative min-h-[100svh] overflow-x-hidden">
           <Navbar />
           <main>
             <Hero />

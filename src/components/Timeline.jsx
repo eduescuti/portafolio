@@ -1,10 +1,10 @@
 import { m, useReducedMotion } from 'framer-motion'
 import { Briefcase, GraduationCap, FolderKanban, Clock } from 'lucide-react'
 import { timeline, projects, profile } from '../data/portfolio'
-import { techIcons } from '../lib/techIcons'
 import { useLanguage } from '../context/LanguageContext'
-import Reveal from './Reveal'
+import Reveal, { RevealGroup, RevealItem } from './Reveal'
 import AnimatedCounter from './AnimatedCounter'
+import TechBadge from './TechBadge'
 
 function yearsSince(anchor) {
   const start = new Date(`${anchor}-01T00:00:00`)
@@ -55,8 +55,9 @@ function TimelineItem({ node, t, lang }) {
           </span>
         </div>
 
+        {/* En mobile se ocultan los bullets: queda título, empresa, fecha y stack. */}
         {node.highlights && (
-          <ul className="mt-2 space-y-1">
+          <ul className="mt-2 hidden space-y-1 md:block">
             {t(node.highlights).map((h, i) => (
               <li key={i} className="flex gap-2 text-sm leading-snug text-slate-400">
                 <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-accent" />
@@ -67,20 +68,13 @@ function TimelineItem({ node, t, lang }) {
         )}
 
         {node.tech && (
-          <div className="mt-3 flex flex-wrap gap-1.5">
-            {node.tech.map((tech) => {
-              const TechIcon = techIcons[tech]
-              return (
-                <span
-                  key={tech}
-                  className="inline-flex items-center gap-1.5 rounded-md bg-white/[0.04] px-2 py-0.5 font-mono text-[11px] text-accent-light"
-                >
-                  {TechIcon && <TechIcon size={11} className="shrink-0" />}
-                  {tech}
-                </span>
-              )
-            })}
-          </div>
+          <RevealGroup className="mt-3 flex flex-wrap gap-1.5" stagger={0.05} amount={0.4}>
+            {node.tech.map((tech) => (
+              <RevealItem as="span" key={tech} variant="scale">
+                <TechBadge name={tech} size="sm" />
+              </RevealItem>
+            ))}
+          </RevealGroup>
         )}
       </div>
     </Reveal>
@@ -93,7 +87,7 @@ export default function Timeline() {
   const years = yearsSince(profile.experienceStart)
 
   return (
-    <section id="timeline" className="relative overflow-hidden border-t border-white/5">
+    <section id="timeline" className="cv-auto relative overflow-hidden border-t border-white/5">
       <div className="section-container">
         <Reveal>
           <span className="section-label">{lang === 'es' ? 'Trayectoria' : 'Journey'}</span>
