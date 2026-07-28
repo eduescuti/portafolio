@@ -530,14 +530,34 @@ section[id] {
   transform: translateY(-1px) scale(1.04);
 }
 
-/* Variante "de marca": el color no espera al hover, se muestra en reposo. La usa el
-   dorso de ProfileCard, donde la gracia es justamente que la tira de tecnologías
-   aporte color. En listas largas (Trayectoria, Proyectos) se sigue usando la neutra,
-   que es más escaneable. */
+/* Variante "de marca": el color no espera al hover, se muestra en reposo. La usa todo
+   lo que se dibuja como tira en movimiento (TechRow: dorso de ProfileCard, modal de
+   Proyectos, Trayectoria), donde la gracia es justamente que el stack aporte color.
+   Antes Trayectoria y Proyectos usaban la neutra por ser listas largas y escaneables;
+   ya no son listas que se escanean sino cintas que pasan, y ahí el color es lo que las
+   hace legibles de un vistazo. La neutra queda para los badges estáticos (grilla de
+   Proyectos, Skills). */
 .tech-badge--brand {
   border-color: color-mix(in srgb, var(--tc, #4f8cff) 40%, transparent);
   background-color: color-mix(in srgb, var(--tc, #4f8cff) 12%, transparent);
   color: color-mix(in srgb, var(--tc, #4f8cff) 80%, white);
+}
+
+/* Chip dentro de una tira en movimiento (TechRow): no reacciona al puntero. El
+   contenedor de la tira recorta (overflow-hidden + máscara), así que el
+   `translateY(-1px) scale(1.04)` y el glow del hover se cortaban arriba y abajo. Darle
+   aire vertical al contenedor no alcanzaba: la sombra necesita ~14px y eso engorda la
+   tira en todos lados. Además es un blanco móvil —los chips pasan por debajo del
+   cursor— así que el efecto sólo parpadeaba. Se repiten los valores de reposo de
+   `--brand` en vez de un `all: unset` para no depender del orden de las cascadas. */
+.tech-badge--static:hover,
+.tech-badge--static:focus-visible,
+.tech-badge--static:active {
+  border-color: color-mix(in srgb, var(--tc, #4f8cff) 40%, transparent);
+  background-color: color-mix(in srgb, var(--tc, #4f8cff) 12%, transparent);
+  color: color-mix(in srgb, var(--tc, #4f8cff) 80%, white);
+  box-shadow: none;
+  transform: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -593,6 +613,40 @@ section[id] {
 
 .section-title {
   @apply mb-4 text-3xl font-bold leading-tight tracking-tight text-white md:text-4xl;
+}
+
+/* Acordeón sin JS por frame: la fila del grid pasa de 0fr a 1fr y el navegador
+   interpola. Nada de `height: auto` animado por Motion — eso recalcula layout en
+   cada frame desde el hilo principal y encima desmonta el formulario al cerrarlo.
+   El hijo lleva overflow/min-height porque una fila de 0fr no recorta sola. */
+.accordion {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.accordion[data-open='true'] {
+  grid-template-rows: 1fr;
+}
+
+.accordion > * {
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Desde lg el formulario está siempre visible y no hay trigger que lo cierre:
+   se fuerza abierto por CSS en vez de por estado de React. */
+@media (min-width: 1024px) {
+  .accordion {
+    grid-template-rows: 1fr;
+    transition: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .accordion {
+    transition: none;
+  }
 }
 
 /* Card editorial: fondo casi plano, borde sutil; el hover solo intensifica el borde. */

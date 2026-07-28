@@ -17,7 +17,7 @@ import { useLanguage } from '../context/LanguageContext'
 import { useCoarsePointer } from '../lib/useDeviceCapabilities'
 import { useScrollLock } from '../lib/useScrollLock'
 import AnimatedCounter from './AnimatedCounter'
-import TechBadge from './TechBadge'
+import TechRow from './TechRow'
 import SocialButton from './SocialButton'
 
 // El micro-balanceo de descubribilidad se muestra una única vez por carga de página:
@@ -122,43 +122,6 @@ function CardFront({ fill = false, children }) {
   )
 }
 
-/** Una fila de la tira de tecnologías. Se detiene cuando el dorso no está a la vista. */
-function TechRow({ items, active, reverse = false, duration }) {
-  const from = reverse ? '-50%' : '0%'
-  const to = reverse ? '0%' : '-50%'
-
-  return (
-    <div className="relative overflow-hidden">
-      {/* La lista va duplicada y el recorrido es exactamente 50%: al terminar, la copia
-          quedó donde estaba el original y el ciclo reinicia sin corte. El margen va en
-          cada chip (no `gap`) porque un gap final rompería esa equivalencia. */}
-      <m.div
-        className="flex w-max"
-        animate={active ? { x: [from, to] } : { x: from }}
-        // Pausada, la transición pasa a duración 0: con `repeat: Infinity` sobre un
-        // valor fijo Motion seguiría pidiendo frames para siempre sin mover nada.
-        transition={active ? { duration, repeat: Infinity, ease: 'linear' } : { duration: 0 }}
-      >
-        {[...items, ...items].map((name, i) => (
-          <TechBadge key={`${name}-${i}`} name={name} size="sm" tone="brand" className="mr-1.5" />
-        ))}
-      </m.div>
-
-      {/* Difuminado de bordes con el color del dorso. Se usa un degradado y no
-          `mask-image` porque esto vive dentro de un elemento que rota en 3D y una
-          máscara se re-evalúa en cada frame del giro. */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-y-0 left-0 w-5 bg-gradient-to-r from-navy-900 to-transparent"
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-y-0 right-0 w-5 bg-gradient-to-l from-navy-900 to-transparent"
-      />
-    </div>
-  )
-}
-
 /** Dorso: los datos que no entran en una foto. Se monta recién al primer giro. */
 function CardBack({ lang, active }) {
   const es = lang === 'es'
@@ -202,8 +165,11 @@ function CardBack({ lang, active }) {
           <p className="px-5 font-mono text-[10px] uppercase tracking-[0.2em] text-slate-500">
             Stack
           </p>
-          <TechRow items={TECH_ROW_A} active={active} duration={26} />
-          <TechRow items={TECH_ROW_B} active={active} duration={32} reverse />
+          {/* `fade="gradient"`: acá el difuminado no puede ser una máscara — la tira vive
+              dentro de un elemento que rota en 3D y la máscara se re-evaluaría en cada
+              frame del giro. El degradado se apoya en el navy-900 opaco del dorso. */}
+          <TechRow items={TECH_ROW_A} active={active} speed={48} fade="gradient" />
+          <TechRow items={TECH_ROW_B} active={active} speed={36} fade="gradient" reverse />
         </div>
 
         <div className="relative space-y-3 px-5">

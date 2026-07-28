@@ -153,7 +153,15 @@ export const timeline = [
         'Automations with Edge Functions, crons and n8n workflows.',
       ],
     },
-    tech: ['React', 'Supabase', 'PostgreSQL', 'n8n'],
+    // El stack de cada trabajo se dibuja como una tira en movimiento (TechRow), no como
+    // una lista: con 4 chips no da la vuelta y queda un hueco. Sólo tecnologías con logo
+    // propio — TechRow filtra lo que no lo tenga, así que "APIs", "Webhooks" o
+    // "Email Marketing" no entrarían igual: eso se cuenta en los highlights.
+    tech: [
+      'React', 'Supabase', 'PostgreSQL', 'Redis', 'n8n', 'Brevo',
+      'JWT', 'Chatwoot', 'Claude Code', 'AI Cursor', 'Git', 'GitHub',
+      'Whatsapp', 'JavaScript', 'Typescript', 'Docker', 'HTML / CSS'
+    ],
   },
   {
     id: 'alexandria',
@@ -166,7 +174,9 @@ export const timeline = [
       es: ['Sistema de turnos con Laravel + Filament, containerizado con Docker.'],
       en: ['Appointment system with Laravel + Filament, containerized with Docker.'],
     },
-    tech: ['Laravel', 'Filament', 'MySQL', 'Docker'],
+    // 'Composer' quedó afuera: su logo son 39 kB de SVG, no vale un chip (ver techIcons).
+    tech: ['Laravel', 'Filament', 'PHP', 'MySQL', 'Docker', 'phpMyAdmin',
+      'Git', 'GitHub', 'AI Cursor'],
   },
   {
     id: 'uca',
@@ -196,10 +206,20 @@ export const projects = [
       es: 'Panel para clientes médicos, con roles admin y cliente sobre Supabase.',
       en: 'Medical client panel with admin and client roles, built on Supabase.',
     },
-    tech: ['React', 'Supabase', 'UX/UI Design', 'APIs', 'Recharts', 'Email Marketing'],
+    // `tech` alimenta la tira animada (TechRow) y por eso lleva sólo tecnologías con
+    // logo propio. Lo que es una capacidad y no una herramienta —Recharts entra acá
+    // porque no tiene logo en ningún set de íconos— vive en `highlights`.
+    tech: ['React', 'Supabase', 'PostgreSQL', 'Brevo', 'JavaScript', 'Git', 'Typescript', 'JWT', 'GitHub',
+      'Chatwoot', 'Claude Code', 'AI Cursor', 'Docker', 'HTML / CSS'],
     highlights: {
-      es: ['Dashboard Analítico', 'Gráficos interactivos', 'Carga de Archivos', 'Panel admin'],
-      en: ['Analytics Dashboard', 'Interactive charts', 'File Upload', 'Admin panel'],
+      es: [
+        'Dashboard Analítico', 'Gráficos interactivos', 'Carga de Archivos', 'Panel admin',
+        'Recharts', 'APIs', 'Email Marketing', 'UX/UI Design',
+      ],
+      en: [
+        'Analytics Dashboard', 'Interactive charts', 'File Upload', 'Admin panel',
+        'Recharts', 'APIs', 'Email Marketing', 'UX/UI Design',
+      ],
     },
     color: 'from-blue-600 to-indigo-700',
     icon: 'BarChart3',
@@ -219,7 +239,9 @@ export const projects = [
       es: 'Automatizaciones serverless para emails, encuestas y seguimiento de leads.',
       en: 'Serverless automations for emails, surveys and lead follow-up.',
     },
-    tech: ['Supabase', 'Brevo', 'PostgreSQL', 'JWT', 'Webhooks'],
+    // 'Webhooks' salió del stack: no es una tecnología con logo y ya figura como highlight.
+    tech: ['Supabase', 'Brevo', 'PostgreSQL', 'Typescript', 'Git', 'JWT', 'n8n', 'GitHub',
+      'Claude Code', 'AI Cursor', 'Docker'],
     highlights: {
       es: ['Serverless', 'Crons', 'Edge Functions', 'Webhooks', 'n8n workflows'],
       en: ['Serverless', 'Crons', 'Edge Functions', 'Webhooks', 'n8n workflows'],
@@ -242,10 +264,12 @@ export const projects = [
       es: 'CRM para secretarias: gestión de conversaciones de WhatsApp sobre Chatwoot.',
       en: 'CRM for secretaries: WhatsApp conversation management built on Chatwoot.',
     },
-    tech: ['n8n', 'Chatwoot', 'PostgreSQL', 'AI Agents', 'Bots'],
+    // 'AI Agents' y 'Bots' eran capacidades, no tecnologías: el agente corre sobre
+    // Claude, que sí es una herramienta concreta y con logo.
+    tech: ['n8n', 'Chatwoot', 'PostgreSQL', 'Docker', 'Claude', 'Git', 'Whatsapp', 'AI Cursor', 'GitHub'],
     highlights: {
-      es: ['Filtros', 'Respuestas rápidas', 'Tiempo real', 'AI Response'],
-      en: ['Filters', 'Quick replies', 'Real-time', 'AI Response'],
+      es: ['Filtros', 'Respuestas rápidas', 'Tiempo real', 'AI Response', 'Bots'],
+      en: ['Filters', 'Quick replies', 'Real-time', 'AI Response', 'Bots'],
     },
     color: 'from-emerald-600 to-teal-700',
     icon: 'MessageSquare',
@@ -262,7 +286,7 @@ export const projects = [
       es: 'Gestión de turnos para centros de estética, construido con Laravel Filament.',
       en: 'Appointment management for beauty centers, built with Laravel Filament.',
     },
-    tech: ['Laravel', 'Filament', 'PHP', 'MySQL', 'Docker'],
+    tech: ['Laravel', 'Filament', 'PHP', 'MySQL', 'Docker', 'Git', 'GitHub'],
     highlights: {
       es: ['Panel admin', 'Panel cliente', 'Turnos', 'Pagos'],
       en: ['Admin panel', 'Client panel', 'Appointments', 'Payments'],
@@ -285,7 +309,7 @@ export const projects = [
       es: 'Organizador de horarios para estudiantes de la UCA, con backend en Flask.',
       en: 'Schedule organizer for UCA students, backend built with Flask.',
     },
-    tech: ['Python', 'Flask', 'MySQL', 'JavaScript', 'HTML/CSS'],
+    tech: ['Python', 'Flask', 'MySQL', 'XAMPP', 'JavaScript', 'HTML/CSS', 'AWS', 'Git', 'GitHub'],
     highlights: {
       es: ['Organizador visual', 'Inscripciones', 'Roles admin/alumno', 'MySQL'],
       en: ['Visual scheduler', 'Enrollments', 'Admin/student roles', 'MySQL'],
@@ -308,10 +332,12 @@ export const projects = [
       es: 'Estoy emprendiendo por mi cuenta: un proyecto personal que combina una aplicación web con integración de agentes de IA, y que estará disponible pronto.',
       en: 'I am venturing out on my own: a personal project that combines a web application with AI agent integration, coming soon.',
     },
-    tech: ['AWS', 'React', 'Tailwind CSS', 'Node.js', 'PostgreSQL', 'AI Agents'],
+    tech: ['AWS', 'React', 'Tailwind CSS', 'Node.js', 'PostgreSQL', 'GitHub', 'Redis', 'Claude', 'Git'],
     highlights: {
-      es: ['Aplicacion Web', 'Futura App Móvil', 'Integración con AI Agents', 'Redis'],
-      en: ['Web Application', 'Future Mobile App', 'Integration with AI Agents', 'Redis'],
+      // 'Redis' pasó a `tech` (tiene logo) y 'AI Agents' se volvió 'Claude' allá: acá
+      // queda sólo la capacidad, que es lo que describe al proyecto.
+      es: ['Aplicacion Web', 'Futura App Móvil', 'Integración con AI Agents'],
+      en: ['Web Application', 'Future Mobile App', 'Integration with AI Agents'],
     },
     color: 'from-blue-800 to-darkblue-600',
     icon: 'Zap',

@@ -26,7 +26,16 @@ import {
   SiJsonwebtokens,
   SiChatwoot,
   SiNodedotjs,
+  SiClaude,
+  SiWhatsapp
 } from 'react-icons/si'
+// AWS no está en Simple Icons (Amazon lo sacó por su política de marca), así que el
+// único logo disponible en react-icons viene del set de Font Awesome. Cuesta ~2 kB.
+import { FaAws } from 'react-icons/fa'
+
+// Sin ícono a propósito: SiComposer pesa 39 kB él solo (el logo es una ilustración
+// completa, no un glifo) y engordaba el bundle un 9% por un chip. Sin ícono, TechRow
+// lo deja fuera de las tiras; sigue apareciendo como texto en la grilla de Skills.
 
 // Mapa único de íconos de tecnologías, reutilizable en proyectos y trayectoria.
 export const techIcons = {
@@ -55,7 +64,10 @@ export const techIcons = {
   Filament: SiFilament,
   'Claude Code': SiClaudecode,
   'AI Cursor': SiCursor,
+  Claude: SiClaude,
+  AWS: FaAws,
   JWT: SiJsonwebtokens,
   Chatwoot: SiChatwoot,
   'Node.js': SiNodedotjs,
+  Whatsapp: SiWhatsapp
 }

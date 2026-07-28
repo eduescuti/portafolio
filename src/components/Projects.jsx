@@ -16,8 +16,10 @@ import {
 import { projects } from '../data/portfolio'
 import { useLanguage } from '../context/LanguageContext'
 import { useCoarsePointer } from '../lib/useDeviceCapabilities'
+import { useScrollLock } from '../lib/useScrollLock'
 import Reveal, { RevealGroup, RevealItem } from './Reveal'
 import TechBadge from './TechBadge'
+import TechRow from './TechRow'
 
 const iconMap = { BarChart3, MessageSquare, Zap, Calendar, GraduationCap }
 
@@ -231,9 +233,13 @@ function ProjectModal({ project, t, lang, onClose, sharedLayout }) {
   const closeRef = useRef(null)
   const Icon = iconMap[project.icon] || FolderOpen
   const hasLink = Boolean(project.url)
+  const reduce = useReducedMotion()
+
+  // `body { overflow: hidden }` a mano no alcanzaba: Lenis scrollea de forma
+  // programática y seguía corriendo la página por debajo del modal en desktop.
+  useScrollLock()
 
   useEffect(() => {
-    document.body.style.overflow = 'hidden'
     closeRef.current?.focus()
 
     const onKeyDown = (e) => {
@@ -259,10 +265,7 @@ function ProjectModal({ project, t, lang, onClose, sharedLayout }) {
     }
 
     window.addEventListener('keydown', onKeyDown)
-    return () => {
-      document.body.style.overflow = ''
-      window.removeEventListener('keydown', onKeyDown)
-    }
+    return () => window.removeEventListener('keydown', onKeyDown)
   }, [onClose])
 
   return (
@@ -336,13 +339,17 @@ function ProjectModal({ project, t, lang, onClose, sharedLayout }) {
 
           <div className="mb-8">
             <p className="mb-2 font-mono text-xs uppercase tracking-widest text-slate-500">Stack</p>
-            <RevealGroup className="flex flex-wrap gap-2" stagger={0.04}>
-              {project.tech.map((tech) => (
-                <RevealItem as="span" key={tech} variant="scale">
-                  <TechBadge name={tech} />
-                </RevealItem>
-              ))}
-            </RevealGroup>
+            {/* Sangra hasta los bordes del panel (-mx) para que la tira lea como cinta que
+                pasa y no como una caja con contenido moviéndose adentro. El padding del
+                panel lo recupera el propio difuminado de la máscara.
+                `active` no necesita useInView: el modal se monta al abrir y se desmonta
+                al cerrar, así que la tira nunca corre fuera de pantalla. */}
+            <TechRow
+              items={project.tech}
+              active={!reduce}
+              speed={38}
+              className="-mx-6 sm:-mx-8"
+            />
           </div>
 
           <div className="flex flex-wrap items-center gap-3">

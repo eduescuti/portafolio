@@ -32,7 +32,10 @@ export const techColors = {
   Filament: '#FDAE4B',
   'Claude Code': '#D97757',
   'AI Cursor': NEUTRAL_LIGHT,
+  Claude: '#D97757',
+  AWS: '#FF9900',
   JWT: '#FB015B',
   Chatwoot: '#1F93FF',
   'Node.js': '#339933',
+  Whatsapp: '#339933'
 }

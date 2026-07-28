@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { m, AnimatePresence } from 'framer-motion'
 import { useForm, ValidationError } from '@formspree/react'
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3'
 import {
@@ -29,12 +28,11 @@ const FORM_ID = 'mwvjlgzq'
  */
 function ContactLink({ href, icon: Icon, label, value, color, external = false }) {
   return (
-    <m.a
+    <a
       href={href}
       {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-      whileTap={{ scale: 0.98 }}
       style={color ? { '--lc': color } : undefined}
-      className="contact-link group glass-card relative flex items-center gap-3 overflow-hidden p-3.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:ring-offset-2 focus-visible:ring-offset-navy-950 lg:flex-1 lg:gap-4 lg:p-5"
+      className="contact-link group glass-card relative flex items-center gap-3 overflow-hidden p-3.5 transition-transform duration-150 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:ring-offset-2 focus-visible:ring-offset-navy-950 lg:flex-1 lg:gap-4 lg:p-5"
     >
       <span className="contact-link__tile relative shrink-0 rounded-xl p-2.5 lg:p-3" aria-hidden>
         <Icon size={18} className="transition-transform duration-300 group-hover:scale-110 lg:h-5 lg:w-5" />
@@ -54,7 +52,7 @@ function ContactLink({ href, icon: Icon, label, value, color, external = false }
         className="contact-link__chevron relative shrink-0 text-slate-600 transition-transform duration-300"
         aria-hidden
       />
-    </m.a>
+    </a>
   )
 }
 
@@ -65,8 +63,9 @@ export default function Contact() {
     data: { 'g-recaptcha-response': executeRecaptcha },
   })
   // En mobile el formulario arranca colapsado (acordeón) para que la sección no abra
-  // tan alta. En desktop se muestra siempre: como AnimatePresence lo desmonta al
-  // cerrarse, hace falta saberlo en JS (no alcanza con clases CSS).
+  // tan alta. En desktop lo abre el CSS (.accordion en lg:), pero `formOpen` sigue en
+  // false: por eso hace falta saber en JS si estamos en desktop, para no dejar el panel
+  // visible e `inert` a la vez.
   const [formOpen, setFormOpen] = useState(false)
   const alwaysOpen = useIsDesktop()
 
@@ -180,13 +179,12 @@ export default function Contact() {
               ) : (
                 <>
                   {/* Trigger del acordeón: solo mobile. Desde lg el form siempre está visible. */}
-                  <m.button
+                  <button
                     type="button"
                     onClick={() => setFormOpen((v) => !v)}
-                    whileTap={{ scale: 0.99 }}
                     aria-expanded={formOpen}
                     aria-controls="contact-form-panel"
-                    className="flex w-full items-center justify-between gap-3 p-5 text-left lg:hidden"
+                    className="flex w-full items-center justify-between gap-3 p-5 text-left transition-transform duration-150 active:scale-[0.99] lg:hidden"
                   >
                     <span className="text-base font-semibold text-white">
                       {lang === 'es' ? 'Enviame un mensaje' : 'Send me a message'}
@@ -198,147 +196,140 @@ export default function Contact() {
                         aria-hidden
                       />
                     </span>
-                  </m.button>
+                  </button>
 
                   <h3 className="hidden text-lg font-semibold text-white lg:block lg:p-6 lg:pb-4">
                     {lang === 'es' ? 'Enviame un mensaje' : 'Send me a message'}
                   </h3>
 
                   {/*
-                  Acordeón con AnimatePresence: anima height a spring (mucho más natural
-                  que grid-template-rows lineal) y desmonta el form al cerrarse, así no
-                  quedan nodos de más en mobile. El padding va DENTRO del panel que se
-                  recorta: si estuviera en el elemento con overflow-hidden, el recorte
-                  ocurre en el borde de la caja de padding y el contenido se asoma.
+                  Acordeón CSS puro (.accordion, index.css): la fila del grid va de 0fr a
+                  1fr y el navegador interpola, sin recalcular layout desde JS en cada
+                  frame ni desmontar el formulario al cerrarlo (lo escrito sobrevive al
+                  toggle). El padding va DENTRO del panel que se recorta: si estuviera en
+                  el elemento con overflow-hidden, el recorte ocurre en el borde de la
+                  caja de padding y el contenido se asoma.
+                  Como el panel ya no se desmonta, `inert` lo saca del orden de tabulación
+                  mientras está cerrado. En lg lo abre el CSS pero `formOpen` sigue en
+                  false, así que la condición mira también `alwaysOpen`.
                 */}
-                  <AnimatePresence initial={false}>
-                    {(formOpen || alwaysOpen) && (
-                      <m.div
+                  <div className="accordion" data-open={formOpen}>
+                    <div>
+                      <div
                         id="contact-form-panel"
-                        key="form-panel"
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{
-                          type: 'spring',
-                          stiffness: 320,
-                          damping: 34,
-                          opacity: { duration: 0.2 },
-                        }}
-                        className="overflow-hidden"
+                        className="px-5 pb-5 lg:px-6 lg:pb-6"
+                        {...(formOpen || alwaysOpen ? {} : { inert: '' })}
                       >
-                        <div className="px-5 pb-5 lg:px-6 lg:pb-6">
-                          <form onSubmit={handleSubmit} className="space-y-3 lg:space-y-4">
+                        <form onSubmit={handleSubmit} className="space-y-3 lg:space-y-4">
+                          <input
+                            type="text"
+                            name="_gotcha"
+                            style={{ display: 'none' }}
+                            tabIndex={-1}
+                            autoComplete="off"
+                          />
+
+                          <div>
+                            <label htmlFor="name" className="mb-1.5 block text-sm text-slate-400">
+                              {lang === 'es' ? 'Nombre' : 'Name'}
+                            </label>
                             <input
+                              id="name"
+                              name="name"
                               type="text"
-                              name="_gotcha"
-                              style={{ display: 'none' }}
-                              tabIndex={-1}
-                              autoComplete="off"
+                              required
+                              autoComplete="name"
+                              className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-accent/50 focus:ring-1 focus:ring-accent/30 lg:py-3"
+                              placeholder={lang === 'es' ? 'Tu nombre' : 'Your name'}
                             />
+                            <ValidationError
+                              prefix={lang === 'es' ? 'Nombre' : 'Name'}
+                              field="name"
+                              errors={state.errors}
+                              className="mt-1 text-sm text-red-400"
+                            />
+                          </div>
 
-                            <div>
-                              <label htmlFor="name" className="mb-1.5 block text-sm text-slate-400">
-                                {lang === 'es' ? 'Nombre' : 'Name'}
-                              </label>
-                              <input
-                                id="name"
-                                name="name"
-                                type="text"
-                                required
-                                autoComplete="name"
-                                className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-accent/50 focus:ring-1 focus:ring-accent/30 lg:py-3"
-                                placeholder={lang === 'es' ? 'Tu nombre' : 'Your name'}
-                              />
-                              <ValidationError
-                                prefix={lang === 'es' ? 'Nombre' : 'Name'}
-                                field="name"
-                                errors={state.errors}
-                                className="mt-1 text-sm text-red-400"
-                              />
-                            </div>
+                          <div>
+                            <label htmlFor="email" className="mb-1.5 block text-sm text-slate-400">
+                              Email
+                            </label>
+                            <input
+                              id="email"
+                              name="email"
+                              type="email"
+                              required
+                              autoComplete="email"
+                              className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-accent/50 focus:ring-1 focus:ring-accent/30 lg:py-3"
+                              placeholder="tu@email.com"
+                            />
+                            <ValidationError
+                              prefix="Email"
+                              field="email"
+                              errors={state.errors}
+                              className="mt-1 text-sm text-red-400"
+                            />
+                          </div>
 
-                            <div>
-                              <label htmlFor="email" className="mb-1.5 block text-sm text-slate-400">
-                                Email
-                              </label>
-                              <input
-                                id="email"
-                                name="email"
-                                type="email"
-                                required
-                                autoComplete="email"
-                                className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-accent/50 focus:ring-1 focus:ring-accent/30 lg:py-3"
-                                placeholder="tu@email.com"
-                              />
-                              <ValidationError
-                                prefix="Email"
-                                field="email"
-                                errors={state.errors}
-                                className="mt-1 text-sm text-red-400"
-                              />
-                            </div>
+                          <div>
+                            <label htmlFor="message" className="mb-1.5 block text-sm text-slate-400">
+                              {lang === 'es' ? 'Mensaje' : 'Message'}
+                            </label>
+                            <textarea
+                              id="message"
+                              name="message"
+                              rows={3}
+                              required
+                              className="w-full resize-none rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-accent/50 focus:ring-1 focus:ring-accent/30 lg:py-3"
+                              placeholder={lang === 'es' ? 'Tu mensaje...' : 'Your message...'}
+                            />
+                            <ValidationError
+                              prefix={lang === 'es' ? 'Mensaje' : 'Message'}
+                              field="message"
+                              errors={state.errors}
+                              className="mt-1 text-sm text-red-400"
+                            />
+                          </div>
 
-                            <div>
-                              <label htmlFor="message" className="mb-1.5 block text-sm text-slate-400">
-                                {lang === 'es' ? 'Mensaje' : 'Message'}
-                              </label>
-                              <textarea
-                                id="message"
-                                name="message"
-                                rows={3}
-                                required
-                                className="w-full resize-none rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-accent/50 focus:ring-1 focus:ring-accent/30 lg:py-3"
-                                placeholder={lang === 'es' ? 'Tu mensaje...' : 'Your message...'}
-                              />
-                              <ValidationError
-                                prefix={lang === 'es' ? 'Mensaje' : 'Message'}
-                                field="message"
-                                errors={state.errors}
-                                className="mt-1 text-sm text-red-400"
-                              />
-                            </div>
+                          <button
+                            type="submit"
+                            disabled={state.submitting}
+                            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-6 py-3 text-sm font-semibold text-white transition hover:bg-accent-light disabled:opacity-60"
+                          >
+                            <Send size={16} />
+                            {state.submitting
+                              ? lang === 'es'
+                                ? 'Enviando...'
+                                : 'Sending...'
+                              : lang === 'es'
+                                ? 'Enviar mensaje'
+                                : 'Send message'}
+                          </button>
 
-                            <button
-                              type="submit"
-                              disabled={state.submitting}
-                              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-6 py-3 text-sm font-semibold text-white transition hover:bg-accent-light disabled:opacity-60"
+                          <p className="text-center text-[11px] leading-relaxed text-slate-600">
+                            {lang === 'es' ? 'Protegido por reCAPTCHA · ' : 'Protected by reCAPTCHA · '}
+                            <a
+                              href="https://policies.google.com/privacy"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-slate-500 underline decoration-slate-700 underline-offset-2 transition hover:text-accent"
                             >
-                              <Send size={16} />
-                              {state.submitting
-                                ? lang === 'es'
-                                  ? 'Enviando...'
-                                  : 'Sending...'
-                                : lang === 'es'
-                                  ? 'Enviar mensaje'
-                                  : 'Send message'}
-                            </button>
-
-                            <p className="text-center text-[11px] leading-relaxed text-slate-600">
-                              {lang === 'es' ? 'Protegido por reCAPTCHA · ' : 'Protected by reCAPTCHA · '}
-                              <a
-                                href="https://policies.google.com/privacy"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-slate-500 underline decoration-slate-700 underline-offset-2 transition hover:text-accent"
-                              >
-                                {lang === 'es' ? 'Privacidad' : 'Privacy'}
-                              </a>
-                              {' · '}
-                              <a
-                                href="https://policies.google.com/terms"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-slate-500 underline decoration-slate-700 underline-offset-2 transition hover:text-accent"
-                              >
-                                {lang === 'es' ? 'Términos' : 'Terms'}
-                              </a>
-                            </p>
-                          </form>
-                        </div>
-                      </m.div>
-                    )}
-                  </AnimatePresence>
+                              {lang === 'es' ? 'Privacidad' : 'Privacy'}
+                            </a>
+                            {' · '}
+                            <a
+                              href="https://policies.google.com/terms"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-slate-500 underline decoration-slate-700 underline-offset-2 transition hover:text-accent"
+                            >
+                              {lang === 'es' ? 'Términos' : 'Terms'}
+                            </a>
+                          </p>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
                 </>
               )}
             </Reveal>

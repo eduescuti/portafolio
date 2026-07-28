@@ -1,11 +1,12 @@
-import { m, useReducedMotion } from 'framer-motion'
+import { useMemo, useRef } from 'react'
+import { m, useInView, useReducedMotion } from 'framer-motion'
 import { Briefcase, GraduationCap, FolderKanban, Clock } from 'lucide-react'
 import { timeline, projects, profile } from '../data/portfolio'
 import { useLanguage } from '../context/LanguageContext'
 import { yearsSince } from '../lib/careerStats'
-import Reveal, { RevealGroup, RevealItem } from './Reveal'
+import Reveal from './Reveal'
 import AnimatedCounter from './AnimatedCounter'
-import TechBadge from './TechBadge'
+import TechRow from './TechRow'
 
 function Metric({ icon: Icon, value, decimals, suffix, label }) {
   return (
@@ -23,9 +24,15 @@ function Metric({ icon: Icon, value, decimals, suffix, label }) {
   )
 }
 
-function TimelineItem({ node, t, lang }) {
+function TimelineItem({ node, t, reverse = false }) {
   const isWork = node.type === 'work'
   const Icon = isWork ? Briefcase : GraduationCap
+  const reduce = useReducedMotion()
+  // En Trayectoria hay una tira por trabajo: sin esto todas correrían a la vez aunque
+  // estén fuera de pantalla. `Reveal` no expone su estado de visibilidad, así que el
+  // hook va aparte, con el ref sobre la card.
+  const cardRef = useRef(null)
+  const inView = useInView(cardRef, { amount: 0.4 })
 
   return (
     <Reveal variant="fade-up" className="relative pl-14 md:pl-16">
@@ -39,7 +46,10 @@ function TimelineItem({ node, t, lang }) {
         <Icon size={18} />
       </span>
 
-      <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-4 transition-colors duration-300 hover:border-white/35 md:p-5">
+      <div
+        ref={cardRef}
+        className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-4 transition-colors duration-300 hover:border-white/35 md:p-5"
+      >
         <div className="mb-1.5 flex flex-wrap items-start justify-between gap-x-3 gap-y-1">
           <div className="min-w-0">
             <h3 className="text-base font-semibold text-white md:text-lg">{t(node.title)}</h3>
@@ -63,13 +73,15 @@ function TimelineItem({ node, t, lang }) {
         )}
 
         {node.tech && (
-          <RevealGroup className="mt-3 flex flex-wrap gap-1.5" stagger={0.05} amount={0.4}>
-            {node.tech.map((tech) => (
-              <RevealItem as="span" key={tech} variant="scale">
-                <TechBadge name={tech} size="sm" />
-              </RevealItem>
-            ))}
-          </RevealGroup>
+          <TechRow
+            items={node.tech}
+            active={inView && !reduce}
+            reverse={reverse}
+            speed={34}
+            // Sangra hasta los bordes de la card: el difuminado necesita apoyarse en algo
+            // y el padding p-4/p-5 le comería el recorrido a la tira.
+            className="-mx-4 mt-3 md:-mx-5"
+          />
         )}
       </div>
     </Reveal>
@@ -80,6 +92,15 @@ export default function Timeline() {
   const { t, lang } = useLanguage()
   const reduce = useReducedMotion()
   const years = yearsSince(profile.experienceStart)
+
+  // El sentido alterna entre tiras, no entre nodos: los de educación no tienen stack y
+  // contarlos dejaría dos trabajos seguidos moviéndose para el mismo lado.
+  const rowDirection = useMemo(() => {
+    const map = {}
+    let i = 0
+    for (const node of timeline) if (node.tech) map[node.id] = i++ % 2 === 0
+    return map
+  }, [])
 
   return (
     <section id="timeline" className="cv-auto relative overflow-hidden border-t border-white/5">
@@ -126,7 +147,7 @@ export default function Timeline() {
 
           <div className="space-y-6 md:space-y-8">
             {timeline.map((node) => (
-              <TimelineItem key={node.id} node={node} t={t} lang={lang} />
+              <TimelineItem key={node.id} node={node} t={t} reverse={rowDirection[node.id]} />
             ))}
           </div>
         </div>
