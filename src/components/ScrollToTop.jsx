@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { ArrowUp } from 'lucide-react'
 import { useLanguage } from '../context/LanguageContext'
+import { scrollToSection } from '../lib/scrollTo'
 
 export default function ScrollToTop() {
   const { lang } = useLanguage()
@@ -13,9 +14,8 @@ export default function ScrollToTop() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
+  // Vía el helper y no window.scrollTo: el scroll nativo pelea con Lenis en desktop.
+  const scrollToTop = () => scrollToSection('hero')
 
   return (
     <button

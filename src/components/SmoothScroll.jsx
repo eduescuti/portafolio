@@ -1,10 +1,11 @@
 import { useEffect } from 'react'
 import Lenis from 'lenis'
+import { scrollToSection } from '../lib/scrollTo'
 
 /**
  * Smooth-scroll inercial global con Lenis (decisión #H).
  * - Se desactiva si el usuario prefiere movimiento reducido.
- * - Intercepta los clicks en anclas (#id) para hacer scroll suave con Lenis.
+ * - Intercepta los clicks en anclas (#id) para aterrizar con el offset correcto.
  */
 export default function SmoothScroll() {
   useEffect(() => {
@@ -29,25 +30,32 @@ export default function SmoothScroll() {
     }
     rafId = requestAnimationFrame(raf)
 
-    const onAnchorClick = (e) => {
-      const link = e.target.closest('a[href^="#"]')
-      if (!link) return
-      const id = link.getAttribute('href')
-      if (!id || id === '#') return
-      const target = document.querySelector(id)
-      if (!target) return
-      e.preventDefault()
-      lenis.scrollTo(target, { offset: -72 })
-    }
-
-    document.addEventListener('click', onAnchorClick)
-
     return () => {
-      document.removeEventListener('click', onAnchorClick)
       cancelAnimationFrame(rafId)
       lenis.destroy()
       delete window.__lenis
     }
+  }, [])
+
+  // La intercepción de anclas va fuera del efecto de Lenis a propósito: antes
+  // vivía dentro y se salteaba en táctil/reduced-motion, así que ahí los links
+  // del Hero (#projects, #contact) caían al scroll nativo y aterrizaban con el
+  // padding entero de la sección como hueco. scrollToSection() ya elige por
+  // dentro entre Lenis y el scroll nativo.
+  useEffect(() => {
+    const onAnchorClick = (e) => {
+      const link = e.target.closest('a[href^="#"]')
+      if (!link) return
+      const href = link.getAttribute('href')
+      if (!href || href === '#') return
+      const id = href.slice(1)
+      if (!document.getElementById(id)) return
+      e.preventDefault()
+      scrollToSection(id)
+    }
+
+    document.addEventListener('click', onAnchorClick)
+    return () => document.removeEventListener('click', onAnchorClick)
   }, [])
 
   return null

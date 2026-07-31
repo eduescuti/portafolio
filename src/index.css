@@ -19,6 +19,20 @@
   --color-accent-light: #7eb0ff;
 }
 
+/* Altura real del navbar fijo y aire que queremos entre la barra y el contenido
+   de la sección al aterrizar por ancla. Es la única fuente de verdad: el JS la
+   lee con getNavHeight() (src/lib/scrollTo.js) y el CSS la usa de fallback. */
+:root {
+  --nav-h: 67px;
+  --nav-gap: 32px;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --nav-h: 72px;
+  }
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -32,9 +46,11 @@ body {
   overflow-x: hidden;
 }
 
-/* Evita que el navbar fijo tape el título al navegar por anclas. */
+/* Fallback para anclas restauradas por el navegador o si el JS no corre; la
+   navegación real pasa por scrollToSection(), que además descuenta el padding
+   superior de .section-container. */
 section[id] {
-  scroll-margin-top: 5rem;
+  scroll-margin-top: calc(var(--nav-h) + var(--nav-gap));
 }
 
 /* Cursor personalizado: oculta el nativo solo en desktop con puntero fino.
@@ -302,7 +318,12 @@ section[id] {
   transition:
     background-color 0.35s cubic-bezier(0.22, 1, 0.36, 1),
     border-color 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    /* Tailwind v4 compila -translate-y-full a la propiedad `translate`,
+       no a `transform`: hay que animar las dos para cubrir ambos casos. */
+    translate 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .mobile-nav-drawer {
@@ -608,7 +629,9 @@ section[id] {
    sensibles (Timeline, Contact) para no interferir con los reveals de Motion. */
 .cv-auto {
   content-visibility: auto;
-  contain-intrinsic-size: 0 900px;
+  /* `auto` hace que el navegador recuerde el alto real tras el primer render:
+     sin eso el placeholder de 900px descoloca el aterrizaje por ancla. */
+  contain-intrinsic-size: auto 900px;
 }
 
 .section-title {
