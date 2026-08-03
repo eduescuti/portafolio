@@ -378,6 +378,55 @@ export const projects = [
     ],
   },
   {
+    id: 'uca-planner',
+    folder: 'uca-planner',
+    title: { es: 'UCA Planner', en: 'UCA Planner' },
+    subtitle: { es: 'Proyecto universitario UCA', en: 'UCA university project' },
+    rarity: 'epic',
+    serie: 'UCA',
+    year: '2024',
+    status: 'live',
+    description: {
+      es: 'Organizador de horarios para estudiantes de la UCA, con backend en Flask.',
+      en: 'Schedule organizer for UCA students, backend built with Flask.',
+    },
+    longDescription: {
+      es: 'Organizador de horarios favorito de la UCA. Permite armar cronogramas visuales de materias y realizar inscripciones a comisiones. Backend Flask con MySQL, roles de administrador y alumno, y gestión completa de cursos, materias y comisiones.',
+      en: "UCA's favorite schedule organizer. Allows building visual subject timetables and enrolling in course sections. Flask backend with MySQL, admin and student roles, and full management of courses, subjects and sections.",
+    },
+    role: {
+      es: 'Backend en Flask, modelo de datos en MySQL y la grilla visual de horarios.',
+      en: 'Flask backend, MySQL data model and the visual timetable grid.',
+    },
+    tech: ['Python', 'Flask', 'MySQL', 'XAMPP', 'JavaScript', 'HTML/CSS', 'AWS', 'Git', 'GitHub'],
+    highlights: {
+      es: ['Organizador visual', 'Inscripciones', 'Roles admin/alumno', 'MySQL'],
+      en: ['Visual scheduler', 'Enrollments', 'Admin/student roles', 'MySQL'],
+    },
+    color: 'from-blue-800 to-black-800',
+    icon: 'GraduationCap',
+    url: 'https://uca-planner.vercel.app/',
+    imageBackground: '/projects/uca-planner.png',
+    previews: [
+      {
+        src: '/projects/previews/uca-planner-1.png',
+        title: { es: 'Portada', en: 'Landing' },
+        description: {
+          es: 'Página de entrada: qué resuelve el planner —ver la semana armada antes de anotarse— con la oferta académica actualizada por la facultad.',
+          en: 'Landing page: what the planner solves — seeing your full week before enrolling — with the course catalog kept up to date by the faculty.',
+        },
+      },
+      {
+        src: '/projects/previews/uca-planner-2.png',
+        title: { es: 'Organizador de horarios', en: 'Timetable organizer' },
+        description: {
+          es: 'La grilla semanal con las materias elegidas, cada una con su color y su franja horaria, para detectar superposiciones de un vistazo antes de inscribirse.',
+          en: 'The weekly grid with the chosen subjects, each with its own color and time slot, to spot overlaps at a glance before enrolling.',
+        },
+      },
+    ],
+  },
+  {
     id: 'estetica-app',
     folder: 'estetica-app',
     title: { es: 'Sistema de Turnos', en: 'Appointment System' },
@@ -422,55 +471,6 @@ export const projects = [
         description: {
           es: 'Panel de disponibilidad semanal: duración del turno, franjas horarias por día y reglas de sobreturno, más las secciones de link de reserva, usuarios y reseñas.',
           en: 'Weekly availability panel: appointment duration, per-day time ranges and overbooking rules, plus booking link, users and ratings sections.',
-        },
-      },
-    ],
-  },
-  {
-    id: 'uca-planner',
-    folder: 'uca-planner',
-    title: { es: 'UCA Planner', en: 'UCA Planner' },
-    subtitle: { es: 'Proyecto universitario UCA', en: 'UCA university project' },
-    rarity: 'rare',
-    serie: 'UCA',
-    year: '2024',
-    status: 'live',
-    description: {
-      es: 'Organizador de horarios para estudiantes de la UCA, con backend en Flask.',
-      en: 'Schedule organizer for UCA students, backend built with Flask.',
-    },
-    longDescription: {
-      es: 'Organizador de horarios favorito de la UCA. Permite armar cronogramas visuales de materias y realizar inscripciones a comisiones. Backend Flask con MySQL, roles de administrador y alumno, y gestión completa de cursos, materias y comisiones.',
-      en: "UCA's favorite schedule organizer. Allows building visual subject timetables and enrolling in course sections. Flask backend with MySQL, admin and student roles, and full management of courses, subjects and sections.",
-    },
-    role: {
-      es: 'Backend en Flask, modelo de datos en MySQL y la grilla visual de horarios.',
-      en: 'Flask backend, MySQL data model and the visual timetable grid.',
-    },
-    tech: ['Python', 'Flask', 'MySQL', 'XAMPP', 'JavaScript', 'HTML/CSS', 'AWS', 'Git', 'GitHub'],
-    highlights: {
-      es: ['Organizador visual', 'Inscripciones', 'Roles admin/alumno', 'MySQL'],
-      en: ['Visual scheduler', 'Enrollments', 'Admin/student roles', 'MySQL'],
-    },
-    color: 'from-blue-800 to-black-800',
-    icon: 'GraduationCap',
-    url: 'https://uca-planner.vercel.app/',
-    imageBackground: '/projects/uca-planner.png',
-    previews: [
-      {
-        src: '/projects/previews/uca-planner-1.png',
-        title: { es: 'Portada', en: 'Landing' },
-        description: {
-          es: 'Página de entrada: qué resuelve el planner —ver la semana armada antes de anotarse— con la oferta académica actualizada por la facultad.',
-          en: 'Landing page: what the planner solves — seeing your full week before enrolling — with the course catalog kept up to date by the faculty.',
-        },
-      },
-      {
-        src: '/projects/previews/uca-planner-2.png',
-        title: { es: 'Organizador de horarios', en: 'Timetable organizer' },
-        description: {
-          es: 'La grilla semanal con las materias elegidas, cada una con su color y su franja horaria, para detectar superposiciones de un vistazo antes de inscribirse.',
-          en: 'The weekly grid with the chosen subjects, each with its own color and time slot, to spot overlaps at a glance before enrolling.',
         },
       },
     ],

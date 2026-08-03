@@ -34,41 +34,29 @@ export const RARITY = {
     label: { es: 'Legendaria', en: 'Legendary' },
     prism: true,
     gems: 3,
-    hoverSweep: 'prism',
+    hoverSweep: 'prism', // El Efecto del hover tiene que comenzar apenas se hace el hover sin tardar ningun tiempo
     border: 'holo-border--legendary',
-    gem: 'bg-[linear-gradient(135deg,#8b5cf6,#ec4899_45%,#2dd4bf)]',
-    // El violeta arrancó al 50% de opacidad (`80`) y se notaba MUCHO más fuerte que el
-    // halo de `epic`/`rare` (que rondan 30-42%): la legendaria se leía como si tuviera
-    // otro tipo de efecto, no la misma familia con un color distinto. Bajado a 36%
-    // (`5c`) y con la turquesa un poco más atrás (30%, `4d`) para que el conjunto quede
-    // parejo con las otras dos rarezas — sigue siendo la única con tres colores, que es
-    // la señal que la distingue, sólo que ya no grita al lado de sus vecinas.
-    glow: 'bg-[linear-gradient(135deg,#8b5cf65c,#ec48995c_45%,#2dd4bf4d)]',
+    gem: 'bg-[linear-gradient(135deg,#8b5cf6,#ec4899_15%,#2dd4bf)]',
+    glow: 'bg-[linear-gradient(135deg,#8b5cf65c_10%,#ec48995c_15%,#2dd4bf4d_80%)]', // Mejorar este linear gradient para que sea más predominante el turquesa
   },
   epic: {
     key: 'epic',
     label: { es: 'Épica', en: 'Epic' },
     prism: false,
     gems: 2,
-    hoverSweep: 'default',
+    hoverSweep: 'default', // El Efecto del hover tiene que comenzar apenas se hace el hover sin tardar ningun tiempo
     border: 'holo-border--epic',
     gem: 'bg-[linear-gradient(135deg,#a78bfa,#4f8cff)]',
-    glow: 'bg-[linear-gradient(135deg,#a78bfa6b,#4f8cff61)]',
+    glow: 'bg-[linear-gradient(135deg,#6835ffcc_10%,#545ff85d_15%)]', // Mejorar este linear gradient para que sea más predominante el violeta
   },
   rare: {
     key: 'rare',
     label: { es: 'Rara', en: 'Rare' },
     prism: false,
     gems: 1,
-    // Sin barrido: la carta común no brilla. Es la ausencia lo que le da valor al brillo
-    // de las otras dos.
     hoverSweep: false,
     border: 'holo-border--rare',
-    gem: 'bg-[#4f8cff]',
-    // La común SÍ tiene halo, a diferencia del barrido: el halo es lo que hace que la
-    // carta se despegue del fondo, y dejar seis figuritas sin despegar para castigar a
-    // tres sería castigar a la grilla entera. Lo que la distingue es el color, que es el
-    // mismo azul del acento del sitio — el más sobrio de los tres.
+    gem: 'bg-[linear-gradient(135deg,#dd8c0a_10%,#4f8cff)]',
     glow: 'bg-[linear-gradient(135deg,#4f8cff61,#4f46e547)]',
   },
 }

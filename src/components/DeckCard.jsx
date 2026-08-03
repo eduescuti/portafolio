@@ -32,7 +32,7 @@ export function RarityGems({ rarity, className = '' }) {
       {Array.from({ length: rarity.gems }).map((_, i) => (
         <span
           key={i}
-          className={`h-1.5 w-1.5 rotate-45 rounded-[1px] ring-1 ring-white/40 ${rarity.gem}`}
+          className={`h-2 w-2 rotate-45 rounded-[1px] ring-1 ring-white/40 ${rarity.gem}`}
         />
       ))}
     </span>
@@ -59,9 +59,8 @@ function Thumb({ src, project, className = '' }) {
 
   return (
     <div
-      className={`flex h-full w-full items-center justify-center bg-gradient-to-br ${
-        project.color || 'from-navy-800 to-navy-900'
-      } ${className}`}
+      className={`flex h-full w-full items-center justify-center bg-gradient-to-br ${project.color || 'from-navy-800 to-navy-900'
+        } ${className}`}
     >
       <Icon size={44} className="text-white/80" />
     </div>
@@ -357,9 +356,8 @@ function ShotBack({ card, project, t, lang, index, isDesktop, active }) {
   return (
     <div className={`relative flex h-full flex-col ${isDesktop ? 'p-6' : 'p-3'}`}>
       <p
-        className={`truncate font-mono uppercase tracking-[0.18em] text-slate-500 ${
-          isDesktop ? 'text-[10px]' : 'text-[9px]'
-        }`}
+        className={`truncate font-mono uppercase tracking-[0.18em] text-slate-500 ${isDesktop ? 'text-[10px]' : 'text-[9px]'
+          }`}
       >
         {t(project.subtitle)}
         {isDesktop && ` · ${project.year}`}
@@ -368,9 +366,8 @@ function ShotBack({ card, project, t, lang, index, isDesktop, active }) {
       {hasText ? (
         <>
           <h3
-            className={`mt-1.5 font-bold leading-tight text-white ${
-              isDesktop ? 'text-2xl' : 'text-sm'
-            }`}
+            className={`mt-1.5 font-bold leading-tight text-white ${isDesktop ? 'text-2xl' : 'text-sm'
+              }`}
           >
             {t(card.title) || t(project.title)}
           </h3>
@@ -378,9 +375,8 @@ function ShotBack({ card, project, t, lang, index, isDesktop, active }) {
               de una carta de 780×520, y a 13px se leían como una nota al pie de la captura
               en vez de como lo que explica lo que estás mirando. */}
           <p
-            className={`mt-2.5 leading-relaxed text-slate-300 ${
-              isDesktop ? 'text-base' : 'line-clamp-3 text-[11px] leading-snug'
-            }`}
+            className={`mt-2.5 leading-relaxed text-slate-300 ${isDesktop ? 'text-base' : 'line-clamp-3 text-[11px] leading-snug'
+              }`}
           >
             {t(card.description)}
           </p>
