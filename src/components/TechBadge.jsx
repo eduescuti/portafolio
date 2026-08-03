@@ -12,9 +12,16 @@ export default function TechBadge({ name, size = 'md', tone = 'neutral', classNa
   const Icon = techIcons[name]
   const color = techColors[name]
 
+  // `xs` existe para el dorso de la portada en mobile, donde la tira de stack tiene que
+  // entrar en ~17px de alto: ahí el chip no lleva padding vertical propio y el alto se lo
+  // da el interlineado del texto. Ver el presupuesto de alto en `CoverBack`.
   const sizeClasses =
-    size === 'sm' ? 'px-2 py-0.5 text-[11px]' : 'px-2.5 py-1 text-xs'
-  const iconSize = size === 'sm' ? 11 : 13
+    size === 'xs'
+      ? 'px-1.5 py-0 text-[10px]'
+      : size === 'sm'
+        ? 'px-2 py-0.5 text-[11px]'
+        : 'px-2.5 py-1 text-xs'
+  const iconSize = size === 'xs' ? 10 : size === 'sm' ? 11 : 13
   const toneClass = tone === 'brand' ? 'tech-badge--brand' : ''
 
   return (

@@ -7,11 +7,17 @@ import TechBadge from './TechBadge'
 // tecnologías eso no se cumple y aparece un hueco, así que la lista se repite hasta
 // llegar al ancho objetivo. No se mide el DOM: alcanza con estimar y pasarse — los
 // chips de más nunca entran en pantalla y son spans de CSS puro, no cuestan nada.
-const CHIP_FIXED_PX = 39 // px-2 ×2 + ícono + gap + mr-1.5
-const CHAR_PX = 6.6 // mono a 11px
+// Por tamaño de chip: ancho fijo (padding ×2 + ícono + gap + mr-1.5) y ancho de carácter
+// de la mono. La estimación alimenta dos cosas —cuántas copias repetir y la duración del
+// loop—, y la segunda es la que obliga a tenerla por tamaño: la duración sale de
+// `estimate / speed`, así que estimar de más no sólo agrega copias invisibles, también
+// frena la tira por debajo de la velocidad pedida.
+const CHIP_FIXED_PX = { xs: 32, sm: 39, md: 45 }
+const CHAR_PX = { xs: 6, sm: 6.6, md: 7.2 }
 const TARGET_COPY_PX = 1040 // el contenedor más ancho donde se usa la tira (Trayectoria)
 
-const estimate = (list) => list.reduce((w, n) => w + n.length * CHAR_PX + CHIP_FIXED_PX, 0)
+const estimate = (list, size) =>
+  list.reduce((w, n) => w + n.length * (CHAR_PX[size] ?? CHAR_PX.sm) + (CHIP_FIXED_PX[size] ?? CHIP_FIXED_PX.sm), 0)
 
 const MASK = 'linear-gradient(to right, transparent, #000 20px, #000 calc(100% - 20px), transparent)'
 
@@ -30,6 +36,7 @@ export default function TechRow({
   fade = 'mask',
   fadeClass = 'from-navy-900',
   tone = 'brand',
+  size = 'sm',
   className = '',
 }) {
   // La tira es de tecnologías, no de capacidades: sólo entra lo que tiene logo propio.
@@ -39,9 +46,9 @@ export default function TechRow({
   const real = items.filter((name) => techIcons[name])
   if (real.length === 0) return null
 
-  const reps = Math.max(1, Math.ceil(TARGET_COPY_PX / estimate(real)))
+  const reps = Math.max(1, Math.ceil(TARGET_COPY_PX / estimate(real, size)))
   const copy = Array.from({ length: reps }, () => real).flat()
-  const duration = estimate(copy) / speed
+  const duration = estimate(copy, size) / speed
 
   const from = reverse ? '-50%' : '0%'
   const to = reverse ? '0%' : '-50%'
@@ -68,7 +75,7 @@ export default function TechRow({
           <TechBadge
             key={`${name}-${i}`}
             name={name}
-            size="sm"
+            size={size}
             tone={tone}
             // `--static`: sin hover. El contenedor recorta y el chip se mueve, así que
             // el efecto se cortaba arriba y abajo (ver .tech-badge--static en index.css).
