@@ -14,7 +14,8 @@ import CustomCursor from './components/CustomCursor'
 export default function App() {
   return (
     // LazyMotion + `m` cargan solo el subset necesario de Motion (bundle inicial mucho
-    // menor). domMax incluye layout animations (layoutId del modal de Projects).
+    // menor). domMax hace falta por el `drag` con el que se giran las cartas; ya no por
+    // las layout animations, que se eliminaron junto con el modal de Proyectos.
     <LazyMotion features={domMax}>
       <MotionConfig reducedMotion="user">
         <SmoothScroll />

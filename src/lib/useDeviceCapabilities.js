@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react'
  * equivocado — en mobile alcanzaría a montarse el glow del cursor, y en desktop el
  * acordeón de Contacto se abriría animándose en cada carga de página.
  */
-function useMediaQuery(query) {
+export function useMediaQuery(query) {
   const [matches, setMatches] = useState(
     () => typeof window !== 'undefined' && window.matchMedia(query).matches
   )
@@ -40,3 +40,4 @@ export function useCoarsePointer() {
 export function useIsDesktop() {
   return useMediaQuery('(min-width: 1024px)')
 }
+

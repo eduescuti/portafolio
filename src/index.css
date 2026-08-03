@@ -606,19 +606,65 @@ section[id] {
   box-shadow: 0 4px 14px -4px color-mix(in srgb, var(--lc, #4f8cff) 55%, transparent);
 }
 
-/* Borde con degradado tipo "holográfico" para la tarjeta del Hero.
+/* Borde con degradado tipo "holográfico" de las cartas.
    Técnica de doble background: el color de relleno se pinta en el padding-box y el
    degradado en el border-box, con el borde transparente. Es puro pintado — no anima
-   nada ni agrega capas extra, a diferencia de un pseudo-elemento con blur. */
+   nada ni agrega capas extra, a diferencia de un pseudo-elemento con blur.
+
+   El color entra por --holo-a / --holo-b, así las rarezas de dos tonos (epic, rare) son
+   una línea de variables cada una. La legendaria necesita TRES paradas de color y por eso
+   lleva regla propia más abajo. */
 .holo-border {
+  --holo-a: var(--color-accent);
+  --holo-b: #818cf8;
   border: 1px solid transparent;
   background:
     linear-gradient(var(--color-navy-900), var(--color-navy-900)) padding-box,
     linear-gradient(
         135deg,
-        color-mix(in srgb, var(--color-accent) 55%, transparent),
+        color-mix(in srgb, var(--holo-a) 55%, transparent),
         transparent 42%,
-        color-mix(in srgb, #818cf8 45%, transparent)
+        color-mix(in srgb, var(--holo-b) 45%, transparent)
+      )
+      border-box;
+}
+
+/* Rareza `rare`: color PLANO, sin degradado y a baja opacidad. Es a propósito la más
+   sobria de las tres — que la carta común no brille es lo que hace que el degradado de
+   `epic` y el iridescente de `legendary` se lean como algo. Antes las tres eran
+   degradados y no se distinguía una de otra sobre una portada oscura. */
+.holo-border--rare {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--color-navy-900), var(--color-navy-900)) padding-box,
+    linear-gradient(135deg,
+      color-mix(in srgb, #4f8cff 30%, transparent),
+      color-mix(in srgb, #4f8cff 30%, transparent)) border-box;
+}
+
+/* Épica: dos tonos y bastante más opacidad que `rare`, para que el salto se vea. */
+.holo-border--epic {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--color-navy-900), var(--color-navy-900)) padding-box,
+    linear-gradient(135deg,
+      color-mix(in srgb, #a78bfa 65%, transparent),
+      color-mix(in srgb, #4f8cff 55%, transparent) 100%) border-box;
+}
+
+/* Legendaria: violeta → magenta → turquesa, la paleta de la carta legendaria de Clash
+   Royale. Las opacidades son las mismas que usa el borde de dos tonos (55/45/50 mezclado
+   a transparente) y el grosor sigue siendo 1px: es más COLORIDO, no más fuerte. Sin esa
+   restricción la carta legendaria le comería la atención al resto de la grilla. */
+.holo-border--legendary {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--color-navy-900), var(--color-navy-900)) padding-box,
+    linear-gradient(
+        135deg,
+        color-mix(in srgb, #8b5cf6 55%, transparent),
+        color-mix(in srgb, #ec4899 45%, transparent) 45%,
+        color-mix(in srgb, #2dd4bf 50%, transparent) 100%
       )
       border-box;
 }
