@@ -54,10 +54,25 @@ section[id] {
 }
 
 /* Cursor personalizado: oculta el nativo solo en desktop con puntero fino.
-   En táctil o reduced-motion se conserva el cursor del sistema. */
+   En táctil o reduced-motion se conserva el cursor del sistema.
+
+   `.cursor-pointer` y `[data-cursor="hover"]` están en la lista por una razón de cascada,
+   no de estilo. La utilidad `cursor-pointer` de Tailwind es una CLASE (0,1,0) y le gana por
+   especificidad a `button` (0,0,1), así que cualquier elemento con esa clase reponía la
+   manita NATIVA encima del cursor custom: se veían los dos a la vez. Pasaba en la figurita
+   de la grilla (un <button class="cursor-pointer">) y, sobre todo, en las cartas de fondo
+   del mazo, que son <div> con un onClick de atajo y por lo tanto ni siquiera entraban por
+   `button` o `[role="button"]`.
+
+   Repitiendo el selector acá el empate de especificidad lo desempata el orden: este bloque
+   va después del `@import "tailwindcss"` del principio del archivo, así que gana.
+
+   El `cursor-pointer` se conserva igual en el marcado: es lo único que le queda al usuario
+   con reduced-motion, donde este bloque no aplica y el cursor custom ni se monta. */
 @media (hover: hover) and (pointer: fine) {
   @media (prefers-reduced-motion: no-preference) {
-    html, a, button, [role="button"], input, textarea, select, label {
+    html, a, button, [role="button"], input, textarea, select, label,
+    .cursor-pointer, [data-cursor="hover"] {
       cursor: none;
     }
   }

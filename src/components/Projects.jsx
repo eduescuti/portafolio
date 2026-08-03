@@ -69,7 +69,7 @@ export default function Projects() {
         <Reveal delay={160}>
           <p className="mb-10 max-w-2xl text-lg text-slate-400">
             {lang === 'es'
-              ? 'Proyectos reales desarrollados en Andersson Consultores, Alexandria Solutions y la UCA. Tocá cualquier figurita para darla vuelta.'
+              ? 'Proyectos reales desarrollados en Andersson Consultores, Alexandria Solutions y la UCA. Tocá cualquier carta para darla vuelta.'
               : 'Real projects developed at Andersson Consultores, Alexandria Solutions and UCA. Tap any card to flip it.'}
           </p>
         </Reveal>

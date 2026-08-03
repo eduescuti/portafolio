@@ -40,7 +40,35 @@ export default function ProjectDeck({
   // La pista de gestos es una pista, no un cartel: se va apenas el usuario demuestra que
   // ya entendió, sea girando una carta o moviéndose por el mazo.
   const [interacted, setInteracted] = useState(initialBack)
-  const markInteracted = useCallback(() => setInteracted(true), [])
+
+  /**
+   * Qué cartas del mazo quedaron mostrando el dorso.
+   *
+   * Vive acá y no dentro de cada `CardFlipper` porque el flipper se DESMONTA cuando su
+   * carta deja de ser la activa: las inactivas dibujan sólo el frente (una carta borrosa
+   * mostrando un dorso no se entiende). Sin este registro, volver a una carta que habías
+   * dado vuelta la mostraba de frente de nuevo, como si no hubiera pasado nada.
+   *
+   * Es un Set de índices y no un booleano del mazo entero: cada carta se acuerda de lo
+   * suyo. Y se muere con el overlay —cerrar y volver a abrir el proyecto arranca el mazo
+   * de cero—, que es lo que quiere decir "únicamente en ese carrusel".
+   */
+  const [flipped, setFlipped] = useState(() =>
+    initialBack ? new Set([originIndex]) : new Set()
+  )
+
+  const onCardFlip = useCallback((i, back) => {
+    setFlipped((prev) => {
+      // El flipper avisa en cada giro asentado, incluso cuando vuelve al estado en el que
+      // ya estaba: devolver el mismo Set evita un render que no cambia nada.
+      if (prev.has(i) === back) return prev
+      const next = new Set(prev)
+      if (back) next.add(i)
+      else next.delete(i)
+      return next
+    })
+    setInteracted(true)
+  }, [])
 
   // El índice también vive en una ref para poder comparar sin meter un efecto secundario
   // dentro del updater de `setIndex` (React puede llamarlo dos veces en StrictMode). Sin
@@ -96,8 +124,8 @@ export default function ProjectDeck({
     rarity,
     tone,
     reduce,
-    initialBack,
-    onFlip: markInteracted,
+    flipped,
+    onCardFlip,
   }
 
   return (

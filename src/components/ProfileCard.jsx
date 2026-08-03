@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { AnimatePresence, m, useInView, useReducedMotion } from 'framer-motion'
 import { Download } from 'lucide-react'
@@ -103,6 +103,14 @@ function CardFront({ fill = false, shine = false, tone = 'default' }) {
 function CardBack({ lang, active, shine = false, tone = 'default' }) {
   const es = lang === 'es'
 
+  // `yearsSince` lee `Date.now()`, así que llamarla en cada render devuelve un número
+  // apenas distinto del anterior. El dorso se re-renderiza en cada giro (el `active` que
+  // recibe cambia), y `AnimatedCounter` vuelve a contar desde 0 cada vez que su prop
+  // `value` cambia — con los otros dos contadores no pasa porque son enteros estables
+  // (cantidad de proyectos, edad) que no cambian de un giro a otro. Memoizado una sola vez
+  // por apertura de la carta, el número queda fijo el resto de los giros.
+  const expYears = useMemo(() => yearsSince(profile.experienceStart), [])
+
   return (
     <div
       className={`holo-border ${HERO_BORDER} relative h-full rounded-2xl p-1.5 shadow-xl shadow-black/40 lg:rounded-[2rem] lg:p-2 lg:shadow-2xl`}
@@ -127,7 +135,7 @@ function CardBack({ lang, active, shine = false, tone = 'default' }) {
         <div className="relative mx-5 grid grid-cols-3 divide-x divide-white/10 border-y border-white/10">
           <div className="px-1 py-3 text-center">
             <p className="text-3xl font-bold leading-none text-white tabular-nums">
-              <AnimatedCounter value={yearsSince(profile.experienceStart)} decimals={1} />
+              <AnimatedCounter value={expYears} decimals={1} />
             </p>
             <p className="mt-1.5 font-mono text-[9px] uppercase tracking-[0.15em] text-slate-500">
               {es ? 'años exp.' : 'yrs exp.'}

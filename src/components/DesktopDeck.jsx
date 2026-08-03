@@ -6,7 +6,22 @@ import { useNoDragRef } from '../lib/useNoDragRef'
 import DeckCard from './DeckCard'
 
 const NEIGHBOR_SCALE = 0.82
-const SLIDE_SPRING = { type: 'spring', stiffness: 260, damping: 30 }
+
+// Grados que las vecinas giran hacia el centro, más la perspectiva desde la que se las
+// mira. Es lo que convierte el carrusel en una escena con profundidad en vez de tres
+// recortes deslizándose de costado: la vecina izquierda muestra su canto derecho y la
+// derecha el izquierdo, así que la activa queda adelante y no sólo "más grande".
+//
+// La rotación va sobre la MISMA capa que ya animaba `x` y `scale`, y que ya llevaba el
+// blur fijo: no agrega una capa nueva ni obliga a re-rasterizar nada que no se estuviera
+// componiendo igual.
+const NEIGHBOR_ROTATE = 12
+const PERSPECTIVE = 1400
+
+// Más blando que `OPEN_SPRING`: la carta que entra no tiene que llegar y frenar como
+// cuando se abre el mazo, tiene que deslizarse. La masa es lo que le da el arrastre —
+// sin ella, bajar la rigidez sola deja el movimiento lento pero igual de seco.
+const SLIDE_SPRING = { type: 'spring', stiffness: 190, damping: 26, mass: 0.9 }
 
 /**
  * El mazo en desktop: la carta activa al centro y las vecinas espiando a los costados,
@@ -29,8 +44,8 @@ export default function DesktopDeck({
   rarity,
   tone,
   reduce,
-  initialBack,
-  onFlip,
+  flipped,
+  onCardFlip,
 }) {
   const noDrag = useNoDragRef()
   const offsetX = neighborOffset(target.width, peek, NEIGHBOR_SCALE)
@@ -108,17 +123,43 @@ export default function DesktopDeck({
                 compartiera elemento con el FLIP, Motion tendría que resolver la misma `x`
                 desde dos fuentes. */}
             <m.div
-              className="h-full w-full"
+              className="relative h-full w-full"
               animate={{
                 x: offset * offsetX,
                 scale: isActive ? 1 : NEIGHBOR_SCALE,
                 opacity: isActive ? 1 : 0.5,
+                rotateY: isActive || reduce ? 0 : offset * -NEIGHBOR_ROTATE,
               }}
               transition={SLIDE_SPRING}
-              // El blur es FIJO y nunca se anima: se rasteriza una vez y lo que se mueve
-              // es la capa. Animar el radio sería repintar en cada frame.
-              style={{ filter: isActive || reduce ? 'none' : 'blur(6px)' }}
+              style={{
+                // La perspectiva queda fija aunque la activa no rote: alternarla entre
+                // un valor y `undefined` reescribiría el transform en el frame del
+                // cambio de carta y se vería el salto.
+                transformPerspective: PERSPECTIVE,
+                // El blur es FIJO y nunca se anima: se rasteriza una vez y lo que se mueve
+                // es la capa. Animar el radio sería repintar en cada frame.
+                filter: isActive || reduce ? 'none' : 'blur(6px)',
+              }}
             >
+              {/* Halo de rareza: la misma iluminación que la carta del Hero, con el color
+                  de la rareza del proyecto.
+                  Cuelga de ESTA capa y no de la del FLIP porque acá es donde la carta se
+                  desplaza: todas las cartas del mazo comparten la posición absoluta de
+                  afuera y lo único que las separa es la `x` de esta capa. Colgado de la de
+                  afuera, el halo de la carta entrante se encendía en el centro del mazo
+                  antes de que la carta llegara hasta él.
+                  Queda montado siempre en vez de condicionarse a `isActive`: así se apaga
+                  con un fundido en lugar de desaparecer de golpe al cambiar de carta. */}
+              {!reduce && (
+                <m.div
+                  aria-hidden
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: isActive ? 1 : 0 }}
+                  transition={{ duration: 0.4, ease: 'easeOut' }}
+                  className={`pointer-events-none absolute -inset-6 rounded-[2.5rem] blur-2xl ${rarity.glow}`}
+                />
+              )}
+
               {isActive ? (
                 <DeckCard
                   card={card}
@@ -132,16 +173,29 @@ export default function DesktopDeck({
                   active
                   isDesktop
                   reduce={reduce}
-                  initialBack={isOrigin && initialBack}
+                  // El flipper se monta de nuevo cada vez que esta carta vuelve a ser la
+                  // activa, así que `initialBack` es lo que la devuelve al lado en el que
+                  // la dejaste. El registro lo lleva `ProjectDeck` (ver `flipped` ahí).
+                  initialBack={flipped.has(i)}
                   onDeckNavigate={go}
-                  onFlip={onFlip}
+                  onFlip={(back) => onCardFlip(i, back)}
                 />
               ) : (
                 // Las vecinas no giran ni reciben foco: para el teclado y el lector de
                 // pantalla el mazo es una sola carta más sus controles (las flechas y los
                 // puntos, que sí son botones de verdad). Por eso van `aria-hidden` y sin
                 // rol: acá el click es un atajo con el mouse, no la vía accesible.
-                <div aria-hidden onClick={() => onIndexChange(i)} className="h-full w-full cursor-pointer">
+                //
+                // `data-cursor="hover"` es justamente porque no son ni <button> ni
+                // [role="button"]: sin él, el `cursor-pointer` reponía la manita NATIVA
+                // encima del cursor custom (ver el bloque del cursor en index.css) y de
+                // paso el anillo del cursor no crecía sobre una carta que sí es clickeable.
+                <div
+                  aria-hidden
+                  data-cursor="hover"
+                  onClick={() => onIndexChange(i)}
+                  className="h-full w-full cursor-pointer"
+                >
                   <DeckCard
                     card={card}
                     project={project}
@@ -154,6 +208,11 @@ export default function DesktopDeck({
                     active={false}
                     isDesktop
                     reduce={reduce}
+                    // Sin esto la vecina siempre mostraba el frente aunque estuviera en
+                    // `flipped`: `DeckCard` sólo respeta `initialBack` si se lo pasan, y acá
+                    // no llegaba — era la causa real del bug de "se acomoda sola" al dejar
+                    // de ser la activa (ver ítem 11 de notas.txt).
+                    initialBack={flipped.has(i)}
                   />
                 </div>
               )}

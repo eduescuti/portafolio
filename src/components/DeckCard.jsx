@@ -105,12 +105,15 @@ export function CardFace({
 
         {/* La escala `lg:` de la variante chica creció junto con la grilla: dos columnas
             dejan la figurita en ~530px de ancho, y ahí un título de 18px se leía como un
-            pie de foto en vez de como el nombre de la carta. */}
-        <div className={`absolute inset-x-0 bottom-0 ${fill ? 'p-4' : 'p-2.5 sm:p-3.5 lg:p-5'}`}>
+            pie de foto en vez de como el nombre de la carta.
+            La variante `fill` subió por lo mismo un escalón más arriba: es la carta
+            abierta, 780px de ancho, y a 24px el título todavía se leía como un epígrafe
+            sobre una foto enorme en vez de como el nombre de la carta. */}
+        <div className={`absolute inset-x-0 bottom-0 ${fill ? 'p-4 sm:p-5' : 'p-2.5 sm:p-3.5 lg:p-5'}`}>
           <p
             className={
               fill
-                ? 'text-xl font-bold leading-tight text-white sm:text-2xl'
+                ? 'text-2xl font-bold leading-tight text-white sm:text-3xl'
                 : 'line-clamp-2 text-sm font-bold leading-tight text-white sm:text-base lg:text-xl'
             }
           >
@@ -119,7 +122,7 @@ export function CardFace({
           <p
             className={
               fill
-                ? 'mt-1.5 truncate font-mono text-xs leading-none text-accent sm:text-sm'
+                ? 'mt-2 truncate font-mono text-sm leading-none text-accent sm:text-base'
                 : 'mt-1 truncate font-mono text-[10px] leading-none text-accent sm:text-xs lg:mt-1.5 lg:text-sm'
             }
           >
@@ -268,9 +271,9 @@ function CoverBack({ project, t, lang, active, isDesktop, total, index }) {
         <p className="truncate font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">
           {t(project.serie)} · {project.year}
         </p>
-        <h3 className="mt-1.5 text-xl font-bold leading-tight text-white">{t(project.title)}</h3>
+        <h3 className="mt-1.5 text-2xl font-bold leading-tight text-white">{t(project.title)}</h3>
 
-        <p className="mt-2.5 text-[13px] leading-relaxed text-slate-300">
+        <p className="mt-2.5 text-sm leading-relaxed text-slate-300">
           {t(project.longDescription) || t(project.description)}
         </p>
 
@@ -326,16 +329,30 @@ function CoverBack({ project, t, lang, active, isDesktop, total, index }) {
 }
 
 /**
- * Dorso de una captura: describe esa pantalla y nada más.
+ * Dorso de una captura: describe esa pantalla y cierra con el stack (y, en desktop, unos
+ * highlights del proyecto).
  *
- * El epígrafe dice la empresa y no "Captura 2 de 3": el contador no le contaba nada a
- * nadie —la posición en el mazo ya la marcan los puntos en desktop y el scroll en
- * mobile— mientras que el contexto de dónde se desarrolló el proyecto sí importa, y es
- * lo único que estas cartas sueltas no tenían.
+ * El epígrafe dice la empresa y el año, no "Captura 2 de 3": el contador no le contaba
+ * nada a nadie —la posición en el mazo ya la marcan los puntos en desktop y el scroll en
+ * mobile— mientras que el contexto de dónde y cuándo se desarrolló el proyecto sí importa,
+ * y es lo único que estas cartas sueltas no tenían.
+ *
+ * El stack y los highlights se repiten en todas las cartas del mazo porque son del
+ * proyecto y no de la captura puntual, y está bien que así sea: son el mismo dato que ya
+ * está en la portada, pero acá evitan que quien entró por una captura suelta —por un link
+ * directo, por ejemplo— tenga que volver a la primera carta para saber con qué está hecho
+ * lo que está mirando. Es contenido real, no relleno: una descripción corta de dos líneas
+ * dentro de una carta de 780×520 dejaba la mitad de abajo vacía.
+ *
+ * Los highlights van sólo en desktop y acotados a 4 (`CoverBack` muestra hasta 8): ahí
+ * sobra alto para una segunda lista sin competir con la descripción. En mobile el dorso no
+ * scrollea (ver `CoverBack`) y el alto es más escaso, así que se suma sólo el stack —el
+ * mismo criterio que ya usa la portada en mobile, que tampoco muestra highlights ahí.
  */
-function ShotBack({ card, project, t, lang, index, isDesktop }) {
+function ShotBack({ card, project, t, lang, index, isDesktop, active }) {
   const es = lang === 'es'
   const hasText = Boolean(card.title || card.description)
+  const highlights = t(project.highlights).slice(0, 4)
 
   return (
     <div className={`relative flex h-full flex-col ${isDesktop ? 'p-6' : 'p-3'}`}>
@@ -345,20 +362,24 @@ function ShotBack({ card, project, t, lang, index, isDesktop }) {
         }`}
       >
         {t(project.subtitle)}
+        {isDesktop && ` · ${project.year}`}
       </p>
 
       {hasText ? (
         <>
           <h3
             className={`mt-1.5 font-bold leading-tight text-white ${
-              isDesktop ? 'text-xl' : 'text-sm'
+              isDesktop ? 'text-2xl' : 'text-sm'
             }`}
           >
             {t(card.title) || t(project.title)}
           </h3>
+          {/* `text-base` y no el `text-[13px]` que traía: son dos líneas de texto dentro
+              de una carta de 780×520, y a 13px se leían como una nota al pie de la captura
+              en vez de como lo que explica lo que estás mirando. */}
           <p
-            className={`mt-2 leading-relaxed text-slate-300 ${
-              isDesktop ? 'text-[13px]' : 'line-clamp-3 text-[11px] leading-snug'
+            className={`mt-2.5 leading-relaxed text-slate-300 ${
+              isDesktop ? 'text-base' : 'line-clamp-3 text-[11px] leading-snug'
             }`}
           >
             {t(card.description)}
@@ -371,19 +392,60 @@ function ShotBack({ card, project, t, lang, index, isDesktop }) {
       )}
 
       {isDesktop ? (
-        // En desktop sobra ancho: el nombre del proyecto y los botones comparten la fila.
-        <div className="mt-auto flex items-center justify-between gap-6 border-t border-white/10 pt-4">
-          <p className="min-w-0 truncate font-mono text-[11px] text-slate-500">
-            {t(project.title)}
-          </p>
-          <div className="w-72 shrink-0">
-            <Actions project={project} index={index} lang={lang} es={es} layout="row" showStatus={false} />
+        <>
+          {/* En flujo normal y no en el bloque `mt-auto` de más abajo: tiene que quedar
+              pegado a la descripción, no flotar pegado al pie. Lo que sobra de alto se
+              lo queda el hueco entre esto y el bloque de Stack. */}
+          {highlights.length > 0 && (
+            <div className="mt-5 min-w-0">
+              <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">
+                {es ? 'Destacado' : 'Highlights'}
+              </p>
+              <ul className="mt-1.5 space-y-1">
+                {highlights.map((h) => (
+                  <li key={h} className="flex gap-1.5 text-[12px] leading-snug text-slate-300">
+                    <span aria-hidden className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-accent/70" />
+                    {h}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* `mt-auto` acá y no en el pie: el stack y el pie son un bloque solo, y lo que
+              tiene que crecer es el hueco entre lo anterior y ese bloque. */}
+          <div className="mt-auto min-w-0 space-y-1.5 pt-5">
+            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">
+              Stack
+            </p>
+            {/* Sangra hasta los bordes de la carta (el padre tiene p-6): refuerza la
+                lectura de "cinta que pasa" y le da al difuminado dónde apoyarse.
+                `fade="gradient"` y no `mask` por lo mismo que en la portada — esto vive
+                dentro de un elemento que rota en 3D. */}
+            <div className="-mx-6">
+              <TechRow items={project.tech} active={active} speed={38} fade="gradient" />
+            </div>
           </div>
-        </div>
+
+          {/* En desktop sobra ancho: el nombre del proyecto y los botones comparten fila. */}
+          <div className="mt-4 flex items-center justify-between gap-6 border-t border-white/10 pt-4">
+            <p className="min-w-0 truncate font-mono text-[11px] text-slate-500">
+              {t(project.title)}
+            </p>
+            <div className="w-72 shrink-0">
+              <Actions project={project} index={index} lang={lang} es={es} layout="row" showStatus={false} />
+            </div>
+          </div>
+        </>
       ) : (
         // En mobile el dorso no scrollea (ver `CoverBack`), así que la línea con el
         // nombre del proyecto se cae: el epígrafe de arriba ya ubica la carta.
-        <div className="mt-auto border-t border-white/10 pt-2.5">
+        <div className="mt-auto space-y-2 border-t border-white/10 pt-2.5">
+          {/* Mismo criterio que `CoverBack` en mobile: el stack sangra a los bordes de la
+              carta (cancela el `p-3` del padre) y las Acciones se quedan adentro. */}
+          <div className="-mx-3">
+            <TechRow items={project.tech} active={active} speed={38} fade="gradient" />
+          </div>
           <Actions project={project} index={index} lang={lang} es={es} layout="row" showStatus={false} />
         </div>
       )}
@@ -395,8 +457,14 @@ function ShotBack({ card, project, t, lang, index, isDesktop }) {
  * Una carta del mazo.
  *
  * Activa: gira (por tap, nunca por arrastre — el arrastre horizontal navega el mazo en
- * desktop y en mobile ni existe). Inactiva: se dibuja sólo el frente, sin envoltura 3D ni
- * interactividad, porque una carta borrosa mostrando un dorso no se entiende.
+ * desktop y en mobile ni existe).
+ *
+ * Inactiva: sin envoltura 3D ni interactividad, porque una carta borrosa girando no se
+ * entiende — pero SÍ respeta si el usuario la había dejado dada vuelta (`initialBack`,
+ * que arma `ProjectDeck` a partir de qué cartas giraste en este mazo): mostrar el frente
+ * de una carta que dejaste mirando el dorso sería que la figurita "se acomodara sola" en
+ * cuanto dejás de mirarla directamente, que es lo raro que se reportó. El dorso ahí es
+ * estático — mismo contenido que el de la carta activa, sin `CardFlipper` alrededor.
  */
 export default function DeckCard({
   card,
@@ -435,7 +503,37 @@ export default function DeckCard({
     />
   )
 
-  if (!active) return face(true, false)
+  // `isActiveFace` sólo importa para el ticker del stack (TechRow se detiene cuando no
+  // está a la vista): en la rama inactiva-pero-girada de acá abajo siempre es `false`,
+  // igual que el resto de lo que le pasa a una carta que no es la activa (blur fijo,
+  // sin shine).
+  const back = (isActiveFace) => (
+    <BackShell rarity={rarity} shine={isActiveFace && !reduce ? 'edge' : false} tone={tone}>
+      {isCover ? (
+        <CoverBack
+          project={project}
+          t={t}
+          lang={lang}
+          active={isActiveFace}
+          isDesktop={isDesktop}
+          total={total}
+          index={index}
+        />
+      ) : (
+        <ShotBack
+          card={card}
+          project={project}
+          t={t}
+          lang={lang}
+          index={index}
+          isDesktop={isDesktop}
+          active={isActiveFace}
+        />
+      )}
+    </BackShell>
+  )
+
+  if (!active) return initialBack ? back(false) : face(true, false)
 
   return (
     <CardFlipper
@@ -449,30 +547,7 @@ export default function DeckCard({
       onDeckNavigate={onDeckNavigate}
       onFlip={onFlip}
       front={() => face(true, reduce ? false : 'edge')}
-      back={(isActive) => (
-        <BackShell rarity={rarity} shine={reduce ? false : 'edge'} tone={tone}>
-          {isCover ? (
-            <CoverBack
-              project={project}
-              t={t}
-              lang={lang}
-              active={isActive}
-              isDesktop={isDesktop}
-              total={total}
-              index={index}
-            />
-          ) : (
-            <ShotBack
-              card={card}
-              project={project}
-              t={t}
-              lang={lang}
-              index={index}
-              isDesktop={isDesktop}
-            />
-          )}
-        </BackShell>
-      )}
+      back={back}
     />
   )
 }
