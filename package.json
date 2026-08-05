@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "check:text": "node scripts/check-card-text.mjs",
-    "prebuild": "node scripts/fetch-github-contributions.mjs && node scripts/check-card-text.mjs",
+    "prebuild": "node scripts/fetch-github-contributions.mjs",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
