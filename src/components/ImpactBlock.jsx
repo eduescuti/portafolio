@@ -30,6 +30,9 @@ import AnimatedCounter from './AnimatedCounter'
  * al primer giro, así que el `useInView` interno de `AnimatedCounter` se cumple justo
  * cuando la carta se da vuelta. Es el mismo mecanismo del que ya depende el Hero.
  *
+ * `instant` y `onCounted` viajan derecho a `AnimatedCounter`: ver ahí por qué existen
+ * (persistencia de los números al navegar el mazo, ver `ProjectDeck`).
+ *
  * `compact` es la versión de mobile, donde hay ~190px de alto para TODA la carta y este
  * bloque tiene que entrar sin empujar al pie fuera de cuadro. No es "lo mismo más chico":
  * lo que se conserva es la RELACIÓN de tamaño entre el número y su etiqueta, que es lo que
@@ -41,7 +44,14 @@ import AnimatedCounter from './AnimatedCounter'
  * interlineado en el 1.5 que hereda de Preflight metía 4-5px por renglón que no estaban en
  * la cuenta. Si alguien saca un `leading-none` de acá, el pie de la carta se va de cuadro.
  */
-export default function ImpactBlock({ impact, lang, compact = false, className = '' }) {
+export default function ImpactBlock({
+  impact,
+  lang,
+  compact = false,
+  className = '',
+  instant = false,
+  onCounted,
+}) {
   if (!impact) return null
 
   const es = lang === 'es'
@@ -105,6 +115,8 @@ export default function ImpactBlock({ impact, lang, compact = false, className =
                     value={item.value}
                     decimals={item.decimals ?? 0}
                     locale={locale}
+                    instant={instant}
+                    onComplete={onCounted}
                   />
                   {item.suffix}
                 </p>

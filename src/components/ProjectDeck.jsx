@@ -70,6 +70,20 @@ export default function ProjectDeck({
     setInteracted(true)
   }, [])
 
+  /**
+   * Qué cartas ya terminaron de contar sus números al menos una vez.
+   *
+   * Mismo motivo que `flipped`: `DeckCard` se desmonta cuando su carta deja de ser la
+   * activa, así que el `AnimatedCounter` de adentro se desmonta con ella y su `useInView`
+   * "once" no sirve de nada la próxima vez que se monta. Sin este registro, volver a una
+   * carta ya vista hacía que sus números arrancaran de 0 y contaran de nuevo, como si fuera
+   * la primera vez.
+   */
+  const [counted, setCounted] = useState(() => new Set())
+  const onCardCounted = useCallback((i) => {
+    setCounted((prev) => (prev.has(i) ? prev : new Set(prev).add(i)))
+  }, [])
+
   // El índice también vive en una ref para poder comparar sin meter un efecto secundario
   // dentro del updater de `setIndex` (React puede llamarlo dos veces en StrictMode). Sin
   // esta guarda, el listener de scroll de mobile —que dispara con el mismo valor muchas
@@ -126,6 +140,8 @@ export default function ProjectDeck({
     reduce,
     flipped,
     onCardFlip,
+    counted,
+    onCardCounted,
   }
 
   return (

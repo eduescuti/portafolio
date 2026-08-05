@@ -376,7 +376,7 @@ function resolveBack(card, project, isDesktop) {
  * alguien alarga un texto o si el viewport es más angosto que 360px. Lo que cede es ella y
  * el resto queda intacto, que es el único modo de falla aceptable.
  */
-function CardBack({ card, project, t, lang, active, isDesktop, total, index }) {
+function CardBack({ card, project, t, lang, active, isDesktop, total, index, instant, onCounted }) {
   const es = lang === 'es'
   const isCover = card.kind === 'cover'
   const { impact, description, role } = resolveBack(card, project, isDesktop)
@@ -414,7 +414,14 @@ function CardBack({ card, project, t, lang, active, isDesktop, total, index }) {
 
     return (
       <div className="relative flex h-full flex-col gap-1.5 p-2.5">
-        <ImpactBlock impact={impact} lang={lang} compact className="shrink-0" />
+        <ImpactBlock
+          impact={impact}
+          lang={lang}
+          compact
+          className="shrink-0"
+          instant={instant}
+          onCounted={onCounted}
+        />
 
         <div className="min-h-0 flex-1 overflow-hidden">
           <p
@@ -440,7 +447,13 @@ function CardBack({ card, project, t, lang, active, isDesktop, total, index }) {
 
   return (
     <div className="relative flex h-full flex-col p-6">
-      <ImpactBlock impact={impact} lang={lang} className="shrink-0" />
+      <ImpactBlock
+        impact={impact}
+        lang={lang}
+        className="shrink-0"
+        instant={instant}
+        onCounted={onCounted}
+      />
 
       {role && (
         // La barra de acento a la izquierda es lo que separa este bloque del de abajo de un
@@ -540,6 +553,8 @@ export default function DeckCard({
   initialBack = false,
   onDeckNavigate,
   onFlip,
+  instant,
+  onCounted,
 }) {
   const isCover = card.kind === 'cover'
   const src = isCover ? project.imageBackground : card.src
@@ -577,6 +592,8 @@ export default function DeckCard({
         isDesktop={isDesktop}
         total={total}
         index={index}
+        instant={instant}
+        onCounted={onCounted}
       />
     </BackShell>
   )

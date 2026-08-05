@@ -48,6 +48,8 @@ export default function MobileDeck({
   reduce,
   flipped,
   onCardFlip,
+  counted,
+  onCardCounted,
   onClose,
 }) {
   const scrollRef = useRef(null)
@@ -209,6 +211,8 @@ export default function MobileDeck({
                     // que la dejaste. El registro lo lleva `ProjectDeck` (ver `flipped`).
                     initialBack={flipped.has(i)}
                     onFlip={(back) => onCardFlip(i, back)}
+                    instant={counted.has(i)}
+                    onCounted={() => onCardCounted(i)}
                     // Sin `onDeckNavigate`: en mobile no hay arrastre, navega el scroll.
                   />
                 ) : (
@@ -240,6 +244,7 @@ export default function MobileDeck({
                       // Mismo motivo que en DesktopDeck.jsx: sin esto la carta que asoma
                       // siempre mostraba el frente aunque estuviera en `flipped`.
                       initialBack={flipped.has(i)}
+                      instant={counted.has(i)}
                     />
                   </div>
                 )}

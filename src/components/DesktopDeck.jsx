@@ -46,6 +46,8 @@ export default function DesktopDeck({
   reduce,
   flipped,
   onCardFlip,
+  counted,
+  onCardCounted,
 }) {
   const noDrag = useNoDragRef()
   const offsetX = neighborOffset(target.width, peek, NEIGHBOR_SCALE)
@@ -179,6 +181,8 @@ export default function DesktopDeck({
                   initialBack={flipped.has(i)}
                   onDeckNavigate={go}
                   onFlip={(back) => onCardFlip(i, back)}
+                  instant={counted.has(i)}
+                  onCounted={() => onCardCounted(i)}
                 />
               ) : (
                 // Las vecinas no giran ni reciben foco: para el teclado y el lector de
@@ -213,6 +217,7 @@ export default function DesktopDeck({
                     // no llegaba — era la causa real del bug de "se acomoda sola" al dejar
                     // de ser la activa (ver ítem 11 de notas.txt).
                     initialBack={flipped.has(i)}
+                    instant={counted.has(i)}
                   />
                 </div>
               )}
