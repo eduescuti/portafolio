@@ -14,7 +14,7 @@ export default function TechBadge({ name, size = 'md', tone = 'neutral', classNa
 
   // `xs` existe para el dorso de la portada en mobile, donde la tira de stack tiene que
   // entrar en ~17px de alto: ahí el chip no lleva padding vertical propio y el alto se lo
-  // da el interlineado del texto. Ver el presupuesto de alto en `CoverBack`.
+  // da el interlineado del texto. Ver el presupuesto de alto en `CardBack`.
   const sizeClasses =
     size === 'xs'
       ? 'px-1.5 py-0 text-[10px]'

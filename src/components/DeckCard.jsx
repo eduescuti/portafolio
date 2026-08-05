@@ -155,7 +155,17 @@ function BackShell({ rarity, shine, tone, children }) {
   )
 }
 
-function CopyLinkButton({ project, index, lang, className = '' }) {
+/**
+ * Métrica de los botones del pie. En desktop la carta mide 780×520 y los botones a 12px se
+ * leían como controles secundarios de la captura; a esta escala se leen como la salida de
+ * la carta, que es lo que son. En mobile el alto es el recurso escaso y se quedan chicos.
+ */
+const BTN = {
+  sm: { box: 'gap-1.5 px-3 py-2 text-xs', icon: 13 },
+  lg: { box: 'gap-2 px-4 py-2.5 text-[13px]', icon: 15 },
+}
+
+function CopyLinkButton({ project, index, lang, size = 'sm', className = '' }) {
   const [copied, setCopied] = useState(false)
   const timerRef = useRef(null)
   const noDrag = useNoDragRef()
@@ -173,6 +183,8 @@ function CopyLinkButton({ project, index, lang, className = '' }) {
     }
   }
 
+  const { box, icon } = BTN[size]
+
   return (
     <button
       type="button"
@@ -181,9 +193,13 @@ function CopyLinkButton({ project, index, lang, className = '' }) {
         e.stopPropagation()
         copy()
       }}
-      className={`inline-flex min-w-0 items-center justify-center gap-1.5 truncate rounded-lg border border-white/15 px-3 py-2 text-xs font-semibold text-slate-300 transition-colors duration-300 hover:border-accent/40 hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 ${className}`}
+      className={`inline-flex min-w-0 items-center justify-center truncate rounded-lg border border-white/15 font-semibold text-slate-300 transition-colors duration-300 hover:border-accent/40 hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 ${box} ${className}`}
     >
-      {copied ? <Check size={13} className="shrink-0 text-accent" /> : <Link2 size={13} className="shrink-0" />}
+      {copied ? (
+        <Check size={icon} className="shrink-0 text-accent" />
+      ) : (
+        <Link2 size={icon} className="shrink-0" />
+      )}
       {copied ? (lang === 'es' ? '¡Copiado!' : 'Copied!') : lang === 'es' ? 'Copiar link' : 'Copy link'}
     </button>
   )
@@ -200,19 +216,20 @@ function CopyLinkButton({ project, index, lang, className = '' }) {
  * `layout='row'` las pone lado a lado: en el dorso de una captura el alto es el recurso
  * escaso y el ancho sobra.
  */
-function Actions({ project, index, lang, es, layout = 'stack', showStatus = true }) {
+function Actions({ project, index, lang, es, layout = 'stack', showStatus = true, size = 'sm' }) {
   const noDrag = useNoDragRef()
   const canCopy = typeof navigator !== 'undefined' && Boolean(navigator.clipboard)
   const row = layout === 'row'
   const item = row ? 'min-w-0 flex-1' : 'w-full'
+  const { box, icon } = BTN[size]
 
   return (
     <div className={row ? 'flex items-center gap-2' : 'space-y-2'}>
       {showStatus && project.status === 'wip' && (
         <span
-          className={`inline-flex items-center justify-center gap-1.5 rounded-lg border border-dashed border-white/15 px-3 py-2 text-xs font-medium text-slate-400 ${item}`}
+          className={`inline-flex items-center justify-center rounded-lg border border-dashed border-white/15 font-medium text-slate-400 ${box} ${item}`}
         >
-          <Zap size={13} className="shrink-0 text-accent" />
+          <Zap size={icon} className="shrink-0 text-accent" />
           {es ? 'En desarrollo' : 'In development'}
         </span>
       )}
@@ -224,333 +241,273 @@ function Actions({ project, index, lang, es, layout = 'stack', showStatus = true
           rel="noopener noreferrer"
           ref={noDrag}
           onClick={(e) => e.stopPropagation()}
-          className={`inline-flex items-center justify-center gap-1.5 truncate rounded-lg bg-accent px-3 py-2 text-xs font-semibold text-white transition-colors duration-300 hover:bg-accent-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 ${item}`}
+          className={`inline-flex items-center justify-center truncate rounded-lg bg-accent font-semibold text-white transition-colors duration-300 hover:bg-accent-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 ${box} ${item}`}
         >
-          <ExternalLink size={13} className="shrink-0" />
+          <ExternalLink size={icon} className="shrink-0" />
           {es ? 'Ir al proyecto' : 'Visit project'}
         </a>
       )}
 
-      {canCopy && <CopyLinkButton project={project} index={index} lang={lang} className={item} />}
+      {canCopy && (
+        <CopyLinkButton project={project} index={index} lang={lang} size={size} className={item} />
+      )}
     </div>
   )
 }
 
+/** Rótulo de sección del dorso (Rol · Descripción · Stack). */
+function SectionLabel({ children, className = '' }) {
+  return (
+    <p
+      className={`font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500 ${className}`}
+    >
+      {children}
+    </p>
+  )
+}
+
 /**
- * Dorso de la portada. Es el único que lleva toda la información del proyecto.
+ * Resalta los tramos que el texto marca con **dobles asteriscos**.
  *
- * En desktop va a UNA sola columna, igual que `ShotBack`. Antes iba a dos y las dos cartas
- * del mismo mazo se leían como dos diseños distintos: al pasar de la portada a una captura
- * se movía todo de lugar. De paso, la tira de tecnologías vivía en una columna de ~45% del
- * ancho y quedaba cortada a la mitad de un badge; a ancho completo vuelve a leerse como la
- * cinta que pretende ser.
+ * Existe por un pedido puntual —"Agentes de IA" tiene que brillar dentro del rol del CRM—
+ * y se resolvió en el dato y no en el componente a propósito: qué palabra es la importante
+ * lo sabe quien escribe la frase, no quien dibuja la carta. Cualquier texto del dorso puede
+ * usarlo sin tocar código.
  *
- * Es también el único dorso que lleva `ImpactBlock`: las métricas son del proyecto y no de
- * cada captura, así que repetirlas en las tres cartas del mazo sería decir tres veces lo
- * mismo mientras se pasa. Vale igual en mobile — es el dato que justifica el proyecto, y
- * dejarlo sólo en escritorio equivalía a esconderlo del visitante mayoritario.
+ * Un `split` con grupo de captura devuelve [texto, marcado, texto, marcado, …], así que los
+ * índices impares son siempre lo que iba entre asteriscos. Sin librería de markdown: acá
+ * hace falta UNA marca, y traer un parser entero para eso sería pagar un kilobyte por
+ * carácter.
+ */
+function Highlighted({ text }) {
+  if (!text) return null
+  const parts = text.split(/\*\*(.+?)\*\*/g)
+  return (
+    <>
+      {parts.map((part, i) =>
+        i % 2 === 1 ? (
+          <strong key={i} className="card-mark font-semibold">
+            {part}
+          </strong>
+        ) : (
+          part
+        )
+      )}
+    </>
+  )
+}
+
+/**
+ * Resuelve QUÉ texto le toca a esta carta. La portada no tiene contenido propio y usa el
+ * del proyecto; una captura pisa sólo los campos que trae escritos y hereda el resto.
  *
- * En mobile hay ~279×186 y NO scrollea: se recorta. El mazo en mobile ya se navega con
- * scroll vertical, así que un segundo scroll adentro de la carta dejaría al dedo sin forma
- * de saber si está leyendo el dorso o pasando a la próxima carta.
+ * `impactMobile` existe porque en dos proyectos los números que mejor resumen la carta no
+ * son los mismos en las dos pantallas: en mobile hay tres columnas de ~95px y una etiqueta
+ * como "páginas del flujo de reserva" no entra, así que ahí van los datos que se dicen más
+ * corto. No es un capricho de diseño — es la misma carta contada con las palabras que
+ * entran.
+ */
+function resolveBack(card, project, isDesktop) {
+  const impact = isDesktop
+    ? (card.impact ?? project.impact)
+    : (card.impactMobile ?? card.impact ?? project.impactMobile ?? project.impact)
+
+  const description = isDesktop
+    ? (card.longDescription ?? card.description ?? project.longDescription ?? project.description)
+    : (card.description ?? project.description)
+
+  return { impact, description, role: card.role ?? project.role }
+}
+
+/**
+ * Dorso de una carta del mazo — portada y capturas usan el MISMO componente.
  *
- * El dorso en mobile es un PRESUPUESTO de píxeles contra un alto de carta atado al ancho
- * del teléfono (ver `computeTarget`), no una pila que fluye. En un viewport de 360px la
- * carta mide 336×224, y descontando el marco (`p-1.5` de `BackShell`) y el `p-2.5` de acá
- * quedan 192px para repartir entre SEIS bloques. Así se reparten, medido:
+ * Antes eran dos (`CoverBack` y `ShotBack`) y se leían como dos diseños distintos: al pasar
+ * de la portada a una captura se movía todo de lugar, el marcador de números aparecía y
+ * desaparecía, y el pie cambiaba de tamaño. Ahora la única diferencia entre una y otra es
+ * QUÉ dice cada campo (ver `resolveBack`) y qué se muestra en el ángulo del pie.
  *
- *      epígrafe 11 · título 18 · descripción 30 (2 renglones) · impacto 53-58
- *      · stack 17 · acciones 34 · cinco huecos de 4 = 20
+ * El orden es el de una figurita de verdad, de arriba hacia abajo:
  *
- * o sea 183 con métricas y 188 con "Qué resuelve", contra 192 disponibles. Es ajustado a
- * propósito, y de ahí salen varias decisiones que de otro modo parecen caprichos:
+ *      [ NÚMEROS GRANDES ] · Rol · Descripción · Stack · acciones
  *
- *   · `p-2.5` y `gap-1` en vez de `p-3`/`gap-1.5`: son 14px, o sea casi un renglón entero.
+ * Los números arriba y enormes, calcados del dorso de la carta del Hero, porque son el
+ * gancho: tres cifras se leen antes que cualquier párrafo. Por eso además el dorso ya NO
+ * lleva ni el título del proyecto ni el epígrafe de empresa · año — los dos vivían justo
+ * en ese lugar y competían con lo único que se lee de un vistazo. La identidad de la carta
+ * ya está en el frente que se acaba de girar, y en el pie sigue estando el nombre.
+ *
+ * Rol y Descripción van en contenedores DISTINTOS y no en dos párrafos seguidos: son dos
+ * cosas distintas —qué hice yo contra qué es el proyecto— y a un reclutador le importa
+ * poder saltar directo al primero. El Rol lleva caja propia con una barra de acento a la
+ * izquierda; la Descripción es texto corriendo, sin caja. Sólo en desktop: en mobile no hay
+ * alto para dos bloques y el Rol se cae entero (es lo primero que sobra cuando hay que
+ * elegir, porque la descripción todavía dice qué es el proyecto y el rol no).
+ *
+ * En DESKTOP (780×520) la descripción es el bloque elástico y scrollea por dentro: los
+ * textos de las capturas son largos a propósito —cuentan la decisión técnica detrás de esa
+ * pantalla— y recortarlos en seco dejaría la explicación por la mitad. Todo lo demás es
+ * `shrink-0`: perder los botones dejaría la carta sin salida.
+ *
+ * En MOBILE el dorso NO scrollea: se recorta. El mazo ya se navega con scroll vertical, así
+ * que un segundo scroll adentro de la carta dejaría al dedo sin forma de saber si está
+ * leyendo el dorso o pasando a la próxima carta.
+ *
+ * Y en mobile esto es un PRESUPUESTO de píxeles contra un alto atado al ancho del teléfono
+ * (ver `computeTarget`), no una pila que fluye. En un viewport de 360px la carta mide
+ * 336×224, y descontando el marco (`p-1.5` de `BackShell`) y el `p-2.5` de acá quedan 192px
+ * para CUATRO bloques. Así se reparten, medido:
+ *
+ *      marcador 50 (+15 si lleva nota de alcance) · stack 17 · acciones 34
+ *      · tres huecos de 6 = 18   →   119-134, y el resto es la descripción
+ *
+ * o sea 58-73px para el párrafo, que son cuatro o cinco renglones. De ahí salen varias
+ * decisiones que de otro modo parecen caprichos:
+ *
+ *   · `p-2.5` y `gap-1.5` en vez de `p-3`/`gap-2`: son ~12px, casi un renglón entero.
  *   · Los chips del stack van en `size="xs"` (17px contra los 22,5 del `sm`). Es la única
  *     pieza que se podía achicar sin tocar texto que se lee.
+ *   · El `line-clamp` de la descripción se afloja a 5 renglones cuando el marcador no tiene
+ *     nota de alcance, que es justo cuando sobran esos 15px.
  *   · Todo lleva `leading` explícito. Sin eso el 1.5 que heredan de Preflight suma ~5px por
  *     renglón, y cinco renglones de más son el pie fuera de cuadro.
  *
- * El orden cambia según la variante de impacto, y no es un descuido: con `metrics` el
- * marcador va pegado al título porque es el gancho —tres números grandes se leen antes que
- * cualquier párrafo—, y la descripción explica después. Con `value` no hay gancho numérico,
- * así que primero se dice qué es el proyecto y recién después qué resuelve.
- *
  * El `flex-1 min-h-0` de la descripción es la red, no el presupuesto: absorbe el error si
  * alguien alarga un texto o si el viewport es más angosto que 360px. Lo que cede es ella y
- * el resto queda intacto, que es el único modo de falla aceptable — perder los botones
- * dejaría la carta sin salida.
+ * el resto queda intacto, que es el único modo de falla aceptable.
  */
-function CoverBack({ project, t, lang, active, isDesktop, total, index }) {
+function CardBack({ card, project, t, lang, active, isDesktop, total, index }) {
   const es = lang === 'es'
+  const isCover = card.kind === 'cover'
+  const { impact, description, role } = resolveBack(card, project, isDesktop)
+
+  // El chip "En desarrollo" sale una sola vez por mazo, en la portada: repetirlo en cada
+  // captura sería decir tres veces lo mismo mientras se pasa.
+  const actions = (size) => (
+    <Actions
+      project={project}
+      index={index}
+      lang={lang}
+      es={es}
+      layout="row"
+      size={size}
+      showStatus={isCover}
+    />
+  )
+
+  // El stack se repite en todas las cartas del mazo porque es del proyecto y no de la
+  // captura puntual, y está bien que así sea: evita que quien entró por una captura suelta
+  // —por un link directo, por ejemplo— tenga que volver a la portada para saber con qué
+  // está hecho lo que está mirando.
+  const stack = (
+    <TechRow
+      items={project.tech}
+      active={active}
+      speed={38}
+      fade="gradient"
+      size={isDesktop ? 'sm' : 'xs'}
+    />
+  )
 
   if (!isDesktop) {
-    // Cuántos renglones de descripción entran. Con impacto quedan dos; sin él, tres.
-    const lines = project.impact ? 'line-clamp-2' : 'line-clamp-3'
-
-    // La descripción es el único bloque elástico (`flex-1 min-h-0`): si algo tiene que
-    // ceder, cede acá y no el pie. Todo lo demás va `shrink-0`.
-    const description = (
-      <div className="min-h-0 flex-1 overflow-hidden">
-        <p className={`text-[11px] leading-snug text-slate-300 ${lines}`}>
-          {t(project.description)}
-        </p>
-      </div>
-    )
-    const impact = (
-      <ImpactBlock impact={project.impact} lang={lang} compact className="shrink-0" />
-    )
+    const hasNote = Boolean(impact?.note || impact?.noteShort || impact?.kind === 'pending')
 
     return (
-      <div className="relative flex h-full flex-col gap-1 p-2.5">
-        <p className="shrink-0 truncate font-mono text-[9px] uppercase leading-tight tracking-[0.18em] text-slate-500">
-          {t(project.serie)} · {project.year}
-        </p>
-        <h3 className="shrink-0 text-sm font-bold leading-tight text-white">{t(project.title)}</h3>
+      <div className="relative flex h-full flex-col gap-1.5 p-2.5">
+        <ImpactBlock impact={impact} lang={lang} compact className="shrink-0" />
 
-        {/* Ver el encabezado: el marcador de métricas sube porque es el gancho, la lista de
-            "Qué resuelve" baja porque necesita que primero se diga qué es el proyecto. */}
-        {project.impact?.kind === 'metrics' ? (
-          <>
-            {impact}
-            {description}
-          </>
-        ) : (
-          <>
-            {description}
-            {impact}
-          </>
-        )}
+        <div className="min-h-0 flex-1 overflow-hidden">
+          <p
+            className={`text-[11px] leading-snug text-slate-300 ${
+              hasNote ? 'line-clamp-4' : 'line-clamp-5'
+            }`}
+          >
+            <Highlighted text={t(description)} />
+          </p>
+        </div>
 
-        {/* El stack, en chips `xs` para que la tira entre en 17px. Sangra hasta los bordes
-            de la carta (cancela el `p-2.5` del padre) y usa `fade="gradient"` y no `mask`
-            porque esto vive dentro de un elemento que rota en 3D.
+        {/* Sangra hasta los bordes de la carta (cancela el `p-2.5` del padre) y usa
+            `fade="gradient"` y no `mask` porque esto vive dentro de un elemento que rota
+            en 3D.
             Por debajo de 360px de viewport se cae: ahí la carta pierde ~27px de alto y esta
-            es la única pieza que se puede sacar sin que falte un dato — el stack vuelve a
-            aparecer en el dorso de cada captura del mazo. */}
-        <div className="-mx-2.5 hidden shrink-0 min-[360px]:block">
-          <TechRow items={project.tech} active={active} speed={38} fade="gradient" size="xs" />
-        </div>
+            es la única pieza que se puede sacar sin que falte un dato. */}
+        <div className="-mx-2.5 hidden shrink-0 min-[360px]:block">{stack}</div>
 
-        {/* `layout='row'` igual que en `ShotBack`: en mobile el alto es el recurso escaso y
-            los dos botones apilados se comían una franja de carta que la descripción
-            necesita. De paso, el pie de la portada y el de las capturas quedan idénticos,
-            que es lo que se espera al pasar de una a otra dentro del mismo mazo. */}
-        <div className="shrink-0">
-          <Actions project={project} index={index} lang={lang} es={es} layout="row" />
-        </div>
+        <div className="shrink-0">{actions('sm')}</div>
       </div>
     )
   }
 
   return (
     <div className="relative flex h-full flex-col p-6">
-      {/* `shrink-0` NO es decorativo. `truncate` trae `overflow: hidden`, y eso hace que el
-          `min-height: auto` que traen los flex items por defecto resuelva a 0 — o sea que
-          este párrafo es el ÚNICO hijo capaz de encogerse. Sin el `shrink-0`, cualquier
-          desborde de la carta lo absorbe entero él: se aplasta a la mitad primero y
-          desaparece después, mientras el resto queda intacto. Es un modo de falla que
-          confunde, porque el síntoma aparece lejos de la causa. */}
-      <p className="shrink-0 truncate font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">
-        {t(project.serie)} · {project.year}
-      </p>
-      <h3 className="shrink-0 text-2xl font-bold leading-tight text-white">{t(project.title)}</h3>
+      <ImpactBlock impact={impact} lang={lang} className="shrink-0" />
 
-      {/* Y este es el que SÍ tiene permitido ceder, por eso lleva `overflow-hidden`
-          explícito: si algún día un proyecto trae una descripción más larga de la que
-          entra, preferimos que se recorte el último renglón del párrafo —que se lee como
-          un párrafo largo— y no que se evapore el encabezado o se corten los botones. */}
-      <p className="mt-2 overflow-hidden text-sm leading-relaxed text-slate-300">
-        {t(project.longDescription) || t(project.description)}
-      </p>
-
-      {project.role && (
-        <div className="mt-3 min-w-0 shrink-0">
-          <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">
-            {es ? 'Rol' : 'Role'}
+      {role && (
+        // La barra de acento a la izquierda es lo que separa este bloque del de abajo de un
+        // vistazo, sin necesidad de leer el rótulo. La Descripción, en contraste, no lleva
+        // caja: si las dos la tuvieran volverían a leerse como el mismo bloque partido.
+        <div className="mt-3 min-w-0 shrink-0 rounded-xl border border-white/10 border-l-2 border-l-accent/60 bg-white/[0.04] px-4 py-2">
+          <SectionLabel>{es ? 'Rol' : 'Role'}</SectionLabel>
+          <p className="mt-1 text-[13px] leading-snug text-slate-200">
+            <Highlighted text={t(role)} />
           </p>
-          <p className="mt-1 text-[13px] leading-snug text-slate-300">{t(project.role)}</p>
         </div>
       )}
 
-      {/* Lo que antes era la lista con viñetas de "Destacado". Ver `ImpactBlock`. */}
-      <ImpactBlock
-        impact={project.impact}
-        highlights={t(project.highlights)}
-        lang={lang}
-        className="mt-3 shrink-0"
-      />
+      <div className="mt-3 flex min-h-0 flex-1 flex-col">
+        <SectionLabel className="shrink-0">{es ? 'Descripción' : 'Description'}</SectionLabel>
 
-      {/* `mt-auto` acá y no en el pie: el stack y el pie son un bloque solo, y lo que tiene
-          que crecer es el hueco entre lo anterior y ese bloque. Mismo criterio que
-          `ShotBack` desktop. */}
-      <div className="mt-auto min-w-0 shrink-0 space-y-1.5 pt-3">
-        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">Stack</p>
-        {/* Sangra hasta los bordes de la carta (el padre tiene p-6). En la versión a dos
-            columnas esta tira vivía en una columna de ~45% y quedaba cortada a la mitad de
-            un badge; a ancho completo la lectura de "cinta que pasa" vuelve a funcionar.
-            `fade="gradient"` y no `mask` porque esto rota en 3D. */}
-        <div className="-mx-6">
-          <TechRow items={project.tech} active={active} speed={38} fade="gradient" />
+        {/* `overflow-y-auto` es la RED, no el diseño: los textos están escritos para entrar
+            enteros en este hueco (ver el presupuesto de caracteres en `portfolio.js`) y en
+            una carta de 780×520 no aparece ninguna barra. Existe porque `computeTarget`
+            achica la carta en ventanas de menos de ~630px de alto, y ahí prefiero una
+            barrita antes que texto cortado a mitad de palabra o un pie fuera de cuadro. */}
+        <div className="mt-1.5 min-h-0 flex-1 overflow-y-auto pr-1">
+          <p className="text-sm leading-relaxed text-slate-300">
+            <Highlighted text={t(description)} />
+          </p>
         </div>
       </div>
 
-      {/* El contador de capturas ocupa el lugar que en `ShotBack` tiene el nombre del
-          proyecto. `showStatus` queda en su default: la portada es el único lugar donde
-          aparece el chip "En desarrollo". */}
+      <div className="mt-3 min-w-0 shrink-0 space-y-1">
+        <SectionLabel>Stack</SectionLabel>
+        {/* Sangra hasta los bordes de la carta (el padre tiene p-6): refuerza la lectura de
+            "cinta que pasa" y le da al difuminado dónde apoyarse. */}
+        <div className="-mx-6">{stack}</div>
+      </div>
+
+      {/* En desktop sobra ancho: el ángulo del pie y los botones comparten fila. La portada
+          pone ahí cuántas capturas trae el mazo; una captura, el nombre del proyecto —que
+          es el dato que el dorso ya no muestra arriba. */}
       <div className="mt-3 flex shrink-0 items-center justify-between gap-6 border-t border-white/10 pt-3">
-        {total > 1 ? (
-          <p className="flex min-w-0 items-center gap-1.5 font-mono text-[11px] text-slate-500">
-            <Images size={13} className="shrink-0 text-accent/70" />
-            {/* Singular cuando hay una sola captura: el mazo del CRM tiene exactamente una
-                y decía "1 capturas en este mazo". */}
-            <span className="truncate">
-              {total - 1}{' '}
-              {total === 2
-                ? es
-                  ? 'captura en este mazo'
-                  : 'screenshot in this deck'
-                : es
-                  ? 'capturas en este mazo'
-                  : 'screenshots in this deck'}
-            </span>
-          </p>
+        {isCover ? (
+          total > 1 ? (
+            <p className="flex min-w-0 items-center gap-1.5 font-mono text-[11px] text-slate-500">
+              <Images size={13} className="shrink-0 text-accent/70" />
+              {/* Singular cuando hay una sola captura: el mazo del CRM tiene exactamente
+                  una y decía "1 capturas en este mazo". */}
+              <span className="truncate">
+                {total - 1}{' '}
+                {total === 2
+                  ? es
+                    ? 'captura en este mazo'
+                    : 'screenshot in this deck'
+                  : es
+                    ? 'capturas en este mazo'
+                    : 'screenshots in this deck'}
+              </span>
+            </p>
+          ) : (
+            <span />
+          )
         ) : (
-          <span />
-        )}
-        <div className="w-72 shrink-0">
-          <Actions project={project} index={index} lang={lang} es={es} layout="row" />
-        </div>
-      </div>
-    </div>
-  )
-}
-
-/**
- * Dorso de una captura: describe esa pantalla, cuenta la decisión técnica detrás y cierra
- * con el stack.
- *
- * El epígrafe dice la empresa y el año, no "Captura 2 de 3": el contador no le contaba
- * nada a nadie —la posición en el mazo ya la marcan los puntos en desktop y el scroll en
- * mobile— mientras que el contexto de dónde y cuándo se desarrolló el proyecto sí importa,
- * y es lo único que estas cartas sueltas no tenían.
- *
- * El stack se repite en todas las cartas del mazo porque es del proyecto y no de la
- * captura puntual, y está bien que así sea: es el mismo dato que ya está en la portada,
- * pero acá evita que quien entró por una captura suelta —por un link directo, por ejemplo—
- * tenga que volver a la primera carta para saber con qué está hecho lo que está mirando.
- *
- * Lo que NO se repite son los highlights ni las métricas: eso vive sólo en la portada. Acá
- * lo que aporta valor es `card.detail`, que es lo único de toda la carta que habla de ESA
- * pantalla y no del proyecto entero.
- *
- * `detail` es opcional: la portada del planner, por ejemplo, no tiene decisión técnica que
- * contar y se queda sin él.
- *
- * Tres de las nueve capturas no son del producto sino de la plataforma sobre la que corre
- * (ver la nota al pie de `portfolio.js`). Esas SÍ llevan detalle, pero con una regla
- * distinta: cuentan PARA QUÉ se usó la herramienta, nunca insinúan haberla construido.
- * "Lo usé para rastrear una falla de los crons" es cierto y aporta; "resolví esta pantalla
- * así" sería atribuirse trabajo ajeno. La distinción está en el sujeto de la frase, y hay
- * que sostenerla si alguna vez se reescriben.
- */
-function ShotBack({ card, project, t, lang, index, isDesktop, active }) {
-  const es = lang === 'es'
-  const hasText = Boolean(card.title || card.description)
-
-  return (
-    <div className={`relative flex h-full flex-col ${isDesktop ? 'p-6' : 'p-3'}`}>
-      <p
-        className={`shrink-0 truncate font-mono uppercase tracking-[0.18em] text-slate-500 ${isDesktop ? 'text-[10px]' : 'text-[9px]'
-          }`}
-      >
-        {t(project.subtitle)}
-        {isDesktop && ` · ${project.year}`}
-      </p>
-
-      {hasText ? (
-        <>
-          <h3
-            className={`mt-1.5 shrink-0 font-bold leading-tight text-white ${isDesktop ? 'text-2xl' : 'text-sm'
-              }`}
-          >
-            {t(card.title) || t(project.title)}
-          </h3>
-          {/* `text-base` y no el `text-[13px]` que traía: son dos líneas de texto dentro
-              de una carta de 780×520, y a 13px se leían como una nota al pie de la captura
-              en vez de como lo que explica lo que estás mirando.
-              En mobile es además la única pieza elástica de la carta (`min-h-0 flex-1`):
-              con un teléfono muy angosto algo se tiene que recortar, y tiene que ser esto
-              antes que el pie — perder los botones deja la carta sin salida. */}
-          <p
-            className={`mt-2.5 leading-relaxed text-slate-300 ${isDesktop ? 'text-base' : 'min-h-0 flex-1 line-clamp-3 text-[11px] leading-snug'
-              }`}
-          >
-            {t(card.description)}
+          <p className="min-w-0 truncate font-mono text-[11px] text-slate-500">
+            {t(project.title)}
           </p>
-        </>
-      ) : (
-        <p
-          className={`mt-2 italic text-slate-500 ${isDesktop ? 'text-sm' : 'min-h-0 flex-1 text-[11px]'
-            }`}
-        >
-          {es ? 'Sin descripción todavía.' : 'No description yet.'}
-        </p>
-      )}
+        )}
 
-      {isDesktop ? (
-        <>
-          {/* En flujo normal y no en el bloque `mt-auto` de más abajo: tiene que quedar
-              pegado a la descripción, no flotar pegado al pie. Lo que sobra de alto se
-              lo queda el hueco entre esto y el bloque de Stack. */}
-          {card.detail && (
-            <div className="mt-5 min-w-0">
-              <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">
-                {es ? 'Detalle' : 'Behind it'}
-              </p>
-              <p className="mt-1 text-[13px] leading-snug text-slate-300">{t(card.detail)}</p>
-            </div>
-          )}
-
-          {/* `mt-auto` acá y no en el pie: el stack y el pie son un bloque solo, y lo que
-              tiene que crecer es el hueco entre lo anterior y ese bloque. */}
-          <div className="mt-auto min-w-0 space-y-1.5 pt-5">
-            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-500">
-              Stack
-            </p>
-            {/* Sangra hasta los bordes de la carta (el padre tiene p-6): refuerza la
-                lectura de "cinta que pasa" y le da al difuminado dónde apoyarse.
-                `fade="gradient"` y no `mask` por lo mismo que en la portada — esto vive
-                dentro de un elemento que rota en 3D. */}
-            <div className="-mx-6">
-              <TechRow items={project.tech} active={active} speed={38} fade="gradient" />
-            </div>
-          </div>
-
-          {/* En desktop sobra ancho: el nombre del proyecto y los botones comparten fila. */}
-          <div className="mt-4 flex items-center justify-between gap-6 border-t border-white/10 pt-4">
-            <p className="min-w-0 truncate font-mono text-[11px] text-slate-500">
-              {t(project.title)}
-            </p>
-            <div className="w-72 shrink-0">
-              <Actions project={project} index={index} lang={lang} es={es} layout="row" showStatus={false} />
-            </div>
-          </div>
-        </>
-      ) : (
-        // En mobile el dorso no scrollea (ver `CoverBack`), así que la línea con el
-        // nombre del proyecto se cae: el epígrafe de arriba ya ubica la carta.
-        // `shrink-0`: el pie es lo último que puede ceder alto. Lo elástico es la
-        // descripción de arriba.
-        <div className="mt-auto shrink-0 space-y-2 border-t border-white/10 pt-2.5">
-          {/* Mismo criterio que `CoverBack` en mobile: el stack sangra a los bordes de la
-              carta (cancela el `p-3` del padre) y las Acciones se quedan adentro. */}
-          <div className="-mx-3">
-            <TechRow items={project.tech} active={active} speed={38} fade="gradient" />
-          </div>
-          <Actions project={project} index={index} lang={lang} es={es} layout="row" showStatus={false} />
-        </div>
-      )}
+        <div className="w-[21rem] shrink-0">{actions('lg')}</div>
+      </div>
     </div>
   )
 }
@@ -611,27 +568,16 @@ export default function DeckCard({
   // sin shine).
   const back = (isActiveFace) => (
     <BackShell rarity={rarity} shine={isActiveFace && !reduce ? 'edge' : false} tone={tone}>
-      {isCover ? (
-        <CoverBack
-          project={project}
-          t={t}
-          lang={lang}
-          active={isActiveFace}
-          isDesktop={isDesktop}
-          total={total}
-          index={index}
-        />
-      ) : (
-        <ShotBack
-          card={card}
-          project={project}
-          t={t}
-          lang={lang}
-          index={index}
-          isDesktop={isDesktop}
-          active={isActiveFace}
-        />
-      )}
+      <CardBack
+        card={card}
+        project={project}
+        t={t}
+        lang={lang}
+        active={isActiveFace}
+        isDesktop={isDesktop}
+        total={total}
+        index={index}
+      />
     </BackShell>
   )
 

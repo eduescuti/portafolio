@@ -712,6 +712,25 @@ section[id] {
   @apply bg-gradient-to-r from-accent to-accent-light bg-clip-text text-transparent;
 }
 
+/* Palabra resaltada dentro de un texto del dorso de una carta (ver `Highlighted` en
+   DeckCard). Lo que se marca es el concepto que el proyecto quiere que te lleves —
+   "Agentes de IA", "estandarización de los datos" — así que tiene que leerse como algo
+   encendido y no como un enlace, y por eso sin subrayado: una línea abajo es justo la
+   lectura de "esto es clickeable" que se quiere evitar.
+
+   El tono sube a accent-light (#7eb0ff, bastante más claro que el accent normal, que sobre
+   navy-900 se lee azul-link) y el text-shadow en dos capas le pone el halo.
+
+   text-shadow y no filter: drop-shadow — esto vive dentro de un elemento que rota en 3D
+   (`CardFlipper`) y un filtro crearía una capa que se re-rasteriza en cada frame del giro.
+   Un text-shadow lo pinta el mismo paso que ya dibuja el texto. */
+.card-mark {
+  color: var(--color-accent-light);
+  text-shadow:
+    0 0 14px color-mix(in srgb, var(--color-accent-light) 55%, transparent),
+    0 0 28px color-mix(in srgb, var(--color-accent) 30%, transparent);
+}
+
 /* Textura de ruido tenue para el fondo global (evita el look "plano"). */
 .bg-noise {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");

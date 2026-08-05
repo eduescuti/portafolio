@@ -29,7 +29,7 @@ const SLIDE_SPRING = { type: 'spring', stiffness: 190, damping: 26, mass: 0.9 }
  * gratis la inercia, el rebote y el snap del sistema — y de paso desaparece el conflicto
  * histórico entre el `drag` de Motion y el scroll del dedo, porque acá no hay ningún drag.
  *
- * La consecuencia está en el dorso (`CoverBack`): como el gesto vertical ya está tomado
+ * La consecuencia está en el dorso (`CardBack`): como el gesto vertical ya está tomado
  * por la navegación, el dorso NO puede scrollear por dentro. Se recorta en vez de
  * scrollear.
  */

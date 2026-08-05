@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "prebuild": "node scripts/fetch-github-contributions.mjs",
+    "check:text": "node scripts/check-card-text.mjs",
+    "prebuild": "node scripts/fetch-github-contributions.mjs && node scripts/check-card-text.mjs",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
