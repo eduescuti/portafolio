@@ -803,7 +803,7 @@ export const projects = [
       kind: 'metrics', // ACORDARSE DE ELIMINAR LAS DEPENDENCIAS QUE TENIA EL KIND DE 'pending' PARA QUE NO HAYA CODIGO MUERTO
       items: [
         { value: 99, label: { es: 'creatividad', en: 'creativity' } },
-        { value: 99, label: { es: 'innovación', en: 'innovation' } },
+        { value: 99, label: { es: 'inpacto', en: 'inpact' } },
         { value: 99, label: { es: 'pasión', en: 'passion' } },
       ],
     },
