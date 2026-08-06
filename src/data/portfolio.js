@@ -349,7 +349,7 @@ export const projects = [
           en: 'This screen looks simple the way you see it, but it carries far more complexity than it seems. The design is not only on the frontend: on the backend there is something very important, the **standardization of the data** a client uploads to the dashboard, so they can send patient files and feed the charts. Every client has its own file format and its own mapping: that was the real complexity, and I solved it with Supabase as the middle layer and OOP.',
         },
         description: {
-          es: 'Parece una pantalla sencilla, pero detrás tiene la estandarización de los datos que cada cliente carga al dashboard. Cada uno tiene su propio formato de archivo y su propio mapeo: esa fue la verdadera complejidad, y la resolví con Supabase de intermediario y **POO**.',
+          es: 'Parece una pantalla sencilla, pero detrás tiene la estandarización de los datos que cada cliente carga al dashboard. Cada uno tiene su propio formato de archivo y su propio mapeo: esa fue la verdadera complejidad, y la resolví con Supabase de intermediario y con **POO**.',
           en: 'It looks like a simple screen, but behind it sits the standardization of the data each client uploads to the dashboard. Every one has its own file format and its own mapping: that was the real complexity, solved with Supabase as the middle layer and **OOP**.',
         },
       },
@@ -369,8 +369,8 @@ export const projects = [
           en: 'Development of the **Dashboard** interface, splitting admin and user roles and scoping metrics, upload and settings sections.',
         },
         longDescription: {
-          es: 'La pantalla del **Dashboard** incluye demasiadas cosas, con rol de administrador y de usuario, y todavía sigue extendiendo sus funcionalidades. En primer lugar cuenta con un sector para visualizar en tiempo real todas las métricas de cada clínica: gráficos, tasas calculadas, porcentajes anuales, ratings de doctores y comentarios de los propios pacientes. Por otro lado, un sector de carga de CSV y, del lado del admin, observabilidad con logs, errores y configuración de emails.',
-          en: 'The **Dashboard** screen packs in a lot, with an admin role and a user role, and it is still growing today. First, it has a section to see every clinic metric in real time: charts, calculated rates, yearly percentages, doctor ratings and tables with comments from the patients themselves. Then a CSV upload section and, on the admin side, observability with logs, errors and email configuration.',
+          es: 'La pantalla del **Dashboard** incluye demasiadas cosas, con rol de administrador y de usuario, y todavía sigue extendiendo sus funcionalidades. En primer lugar cuenta con un sector para visualizar en tiempo real todas las **métricas** de cada clínica: gráficos, tasas calculadas, porcentajes anuales, ratings de doctores y comentarios de los propios pacientes. Por otro lado, un sector de carga de CSV y, del lado del admin, **observabilidad** con logs, errores y configuración de emails.',
+          en: 'The **Dashboard** screen packs in a lot, with an admin role and a user role, and it is still growing today. First, it has a section to see every **clinic metric** in real time: charts, calculated rates, yearly percentages, doctor ratings and tables with comments from the patients themselves. Then a CSV upload section and, on the admin side, **observability** with logs, errors and email configuration.',
         },
         description: {
           es: 'El Dashboard reúne en tiempo real todas las métricas de cada clínica ya sean gráficos, tasas, ratings de doctores y comentarios de pacientes, más un sector de carga de CSV y, del lado del admin, **observabilidad** con logs, errores y configuración de emails.',
@@ -397,8 +397,8 @@ export const projects = [
       en: 'Supabase works here as the database connecting both projects: the **Analytics Dashboard** and the **WhatsApp CRM**. It holds serverless functions for actually sending the emails, registering surveys and client reports. Crons build the daily send queue, with open and unsubscribe tracking in a contact attempts table, spread across different times so nothing saturates.',
     },
     role: {
-      es: 'Diseño backend e implementación de las funciones, los crons y los workflows de automatización, que conectan tanto el proyecto del Dashboard Analítico como el del CRM.',
-      en: 'Backend design and implementation of the functions, crons and automation workflows that connect both the Analytics Dashboard project and the CRM.',
+      es: 'Diseño backend e implementación de las funciones, los crons y los workflows de automatización, que conectan tanto el proyecto del **Dashboard Analítico** como el del **CRM**.',
+      en: 'Backend design and implementation of the functions, crons and automation workflows that connect both the **Analytics Dashboard** project and the **CRM**.',
     },
     // 'Webhooks' salió del stack: no es una tecnología con logo y ya figura como highlight.
     tech: ['Supabase', 'Brevo', 'PostgreSQL', 'Typescript', 'Git', 'JWT', 'n8n', 'GitHub',
@@ -436,7 +436,7 @@ export const projects = [
         // renglones le sumaba 10px de alto a TODO el bloque. El verbo lo pone el número.
         { value: 2500, prefix: '+', label: { es: 'emails x semana', en: 'emails per week' } },
         { value: 220, prefix: '+', suffix: '%', label: { es: 'reseñas', en: 'reviews' } },
-        { value: 4.8, decimals: 1, suffix: '/5', label: { es: 'rating promedio', en: 'avg. rating' } },
+        { value: 100, prefix: '+', label: { es: 'migraciones', en: 'migrations' } },
       ],
     },
     color: 'from-violet-600 to-purple-700',
@@ -459,21 +459,21 @@ export const projects = [
           kind: 'metrics',
           items: [
             { value: 6, label: { es: 'Edge Functions', en: 'Edge Functions' } },
-            { value: 23, label: { es: 'crons', en: 'crons' } },
+            { value: 25, label: { es: 'crons', en: 'crons' } },
             { value: 100, prefix: '+', label: { es: 'migraciones', en: 'migrations' } },
           ],
         },
         role: {
-          es: 'Diseño backend e implementación de las funciones, los crons y los workflows, más el monitoreo de errores y logs de las edge/cron functions y el registro de esa observabilidad dentro del dashboard.',
-          en: 'Backend design and implementation of the functions, crons and workflows, plus error and log monitoring of the edge/cron functions and recording that observability inside the dashboard.',
+          es: 'Diseño backend, implementación y monitoreo de errores y logs de las funciones edge, crons y los workflows, y el registro de esa observabilidad dentro del dashboard.',
+          en: 'Backend design, implementation and monitoring of errors and logs for the edge functions, crons and workflows, and recording that observability inside the dashboard.',
         },
         longDescription: {
-          es: 'Esta imagen de la carta es un indicador de los Logs surgidos de las **Edge Functions** creadas para hacer efectivo el envío de los emails, el registro correcto de las encuestas y la vinculación con las APIs usadas, como Brevo. No sólo cuenta con muchas Edge Functions sino también con muchas Cron Functions, para automatizar los procesos de cada proyecto en horarios diarios distintos y no saturarlos (no es una imagen real del proyecto, por Políticas de Privacidad).',
-          en: 'This card image stands for the Logs coming out of the **Edge Functions** built to actually send the emails, register the surveys correctly and wire up the APIs in use, such as Brevo. It is not only many Edge Functions but also many Cron Functions, automating every process of each project at different daily schedules so nothing saturates (not a real screenshot of the project, for Privacy Policy reasons).',
+          es: 'Esta imagen de la carta es un indicador de los Logs surgidos de las **Edge Functions** creadas para hacer efectivo el envío de los emails, el registro correcto de las encuestas y la vinculación con las APIs usadas, como Brevo. No sólo cuenta con muchas Edge Functions sino también con muchas Cron Functions, para automatizar los procesos de cada proyecto en horarios diarios distintos y no saturarlos (no es una imagen real del proyecto por Políticas de Privacidad).',
+          en: 'This card image stands for the Logs coming out of the **Edge Functions** built to actually send the emails, register the surveys correctly and wire up the APIs in use, such as Brevo. It is not only many Edge Functions but also many Cron Functions, automating every process of each project at different daily schedules so nothing saturates (not a real screenshot of the project for Privacy Policy reasons).',
         },
         description: {
-          es: 'Los Logs de las **Edge Functions** creadas para el envío de emails, el registro de encuestas y la vinculación con APIs como Brevo. Además hay muchas **Cron Functions**, repartidas en horarios distintos para no saturar los procesos (imagen no real, por Políticas de Privacidad.)',
-          en: 'The Logs from the **Edge Functions** built for email sending, survey registration and wiring up APIs such as Brevo. There are also many **Cron Functions**, spread across different times so nothing saturates (not a real screenshot, for Privacy Policy reasons).',
+          es: 'Los Logs de las **Edge Functions** creadas para el envío de emails, el registro de encuestas y la vinculación con APIs como Brevo. Además hay muchas **Cron Functions**, repartidas en horarios distintos para no saturar los procesos (no es una imagen real del proyecto por Políticas de Privacidad).',
+          en: 'The Logs from the **Edge Functions** built for email sending, survey registration and wiring up APIs such as Brevo. There are also many **Cron Functions**, spread across different times so nothing saturates (not a real screenshot of the project for Privacy Policy reasons).',
         },
       },
     ],
@@ -495,8 +495,8 @@ export const projects = [
       // OJO: NO decir "drag & drop". El tablero mueve conversaciones por cambio de estado
       // (`onMoveConversation`), y kanban-board.js aclara en un comentario "sin drag & drop
       // por ahora". Si algún día se implementa el arrastre, se puede volver a mencionar.
-      es: 'Proyecto del CRM de WhatsApp para Andersson Consultores. Sirve para que los clientes manejen sus conversaciones de una manera práctica y sencilla, e incluso con procesos automatizados usando bots y **Agentes de IA** para responder a mensajes. Se usa backend de Supabase y se gestiona desde Chatwoot, con webhooks y crons de n8n. Encima monté un tablero kanban y el alta de turnos desde el chat.',
-      en: 'WhatsApp CRM project for Andersson Consultores. It lets clients handle their conversations in a practical and simple way, even with automated processes using bots and **AI Agents** to reply to messages. It uses a Supabase backend and is run from Chatwoot, with n8n webhooks and crons. On top I built a kanban board and booking from the chat.',
+      es: 'Este es el proyecto del CRM de WhatsApp para Andersson Consultores. Sirve para que los clientes manejen sus conversaciones de una mejor manera, teniendo procesos automatizados con bots y **Agentes de IA** para responder a mensajes. Se usa backend de Supabase y se gestiona desde Chatwoot, con webhooks y crons de n8n. Encima monté un tablero kanban y el alta de turnos desde el chat.',
+      en: 'This is the WhatsApp CRM project for Andersson Consultores. It lets clients handle their conversations in a better way, with automated processes using bots and **AI Agents** to reply to messages. It uses a Supabase backend and is run from Chatwoot, with n8n webhooks and crons. On top I built a kanban board and booking from the chat.',
     },
     role: {
       es: 'Integración de Chatwoot con WhatsApp y n8n, armado del flujo de respuesta asistida por **Agentes de IA**, mantenimiento de los contenedores con microservicios y nuevos workflows.',
@@ -551,12 +551,12 @@ export const projects = [
         // mazo y habla del mismo sistema, así que repetir los números con otra cara sería
         // inventar una diferencia que no existe.
         longDescription: {
-          es: 'Interfaz de Chatwoot y visualización de los mensajes dentro del proyecto. El CRM habla con su API cuenta por cuenta y una tabla de configuración decide sobre qué clínica actúa cada automatización, así que sumar una cuenta nueva no toca una línea de código. Encima monté el tablero por estados y el flujo de respuesta asistida por **Agentes de IA** (no es una imagen real, por Políticas de Privacidad.)',
-          en: 'Chatwoot interface and how messages are displayed inside the project. The CRM talks to its API account by account and a config table decides which clinic each automation acts on, so adding a new account touches no code. On top I built the status board and the reply flow assisted by **AI Agents** (not a real screenshot, for Privacy Policy reasons).',
+          es: 'Este es un ejemplo de la interfaz de Chatwoot y cómo es la visualización de los mensajes dentro del proyecto (no una imagen real del mismo por Políticas de Privacidad). El CRM utiliza los workflows de n8n via API para la automatización de envíos de cada cliente utilizando **Agentes de IA**, que se encargan de agilizar el primer contacto con los pacientes.',
+          en: 'This is an example of the Chatwoot interface and how messages are displayed inside the project (not a real screenshot of it for Privacy Policy reasons). The CRM uses n8n workflows via API to automate each client\'s outreach using **AI Agents**, which speed up the first contact with patients.',
         },
         description: {
-          es: 'La interfaz de Chatwoot y cómo se ven los mensajes en el proyecto. No es el producto final: es la capa de transporte. Sumar una cuenta nueva no toca código. (Imagen no real, por privacidad.)',
-          en: 'The Chatwoot interface and how messages look in the project. Not the final product: it is the transport layer. Adding a new account touches no code. (Not a real screenshot, for privacy.)',
+          es: 'La interfaz de Chatwoot y cómo se ven los mensajes en el proyecto (no es una imagen real por Políticas de Privacidad): el CRM usa workflows de n8n vía API para automatizar los envíos con **Agentes de IA**, que agilizan el primer contacto con los pacientes.',
+          en: 'The Chatwoot interface and how messages look in the project (not a real screenshot for Privacy Policy reasons): the CRM uses n8n workflows via API to automate outreach with **AI Agents**, which speed up the first contact with patients.',
         },
       },
     ],
@@ -571,12 +571,12 @@ export const projects = [
     year: '2024',
     status: 'live',
     description: {
-      es: 'Un **organizador de horarios** que surgió en la universidad y hoy llevé a producción. Permite armar la semana en una grilla visual y ver las superposiciones antes de inscribirse. Backend en TiDB usando MySQL, con **roles admin/alumno**, control de cupos y validaciones en tiempo real.',
-      en: 'A **schedule organizer** that started at university and that I took to production. It lets you lay out your week on a visual grid and see overlaps before enrolling. TiDB backend on MySQL, **admin/student roles**, capacity control and real-time validation.',
+      es: 'Un **organizador de horarios** que surgió en la universidad y hoy está en producción. Permite armar la semana en una grilla visual y ver las superposiciones antes de inscribirse. Backend en TiDB usando MySQL, con **roles admin/alumno**, control de cupos y validaciones en tiempo real.',
+      en: 'A **schedule organizer** that started at university and now is running in production. It lets students build their weekly schedule using a visual timetable and detect conflicts before enrolling. The backend is built with TiDB, MySQL and includes admin/student roles, capacity management, and real-time validation.',
     },
     longDescription: {
-      es: 'Este es un organizador de horarios, un proyecto que surgió en la universidad y que hoy en día llevé a producción. **UCA Planner** permite armar la semana de manera sencilla, en una grilla visual, y detectar superposiciones antes de inscribirse a las comisiones. Es muy útil para los alumnos que tienen la cursada un poco desordenada y no saben cómo organizarla. Uso backend en TiDB usando MySQL, con roles de administrador y alumno, control de cupos y validaciones en tiempo real.',
-      en: 'This is a schedule organizer, a project that started at university and that I took to production. **UCA Planner** lets you lay out your week easily, on a visual grid, and spot overlaps before enrolling in course sections. It is very useful for students whose term is a bit of a mess and who do not know how to organize it. I use a TiDB backend on MySQL, with admin and student roles, capacity control and real-time validation.',
+      es: 'Este es un **organizador de horarios**: un proyecto que surgió en la universidad y que hoy está en producción. UCA Planner permite armar la semana de manera sencilla, en una grilla visual, y detectar superposiciones antes de inscribirse a las comisiones. Es muy útil para los alumnos que tienen la cursada un poco desordenada y no saben cómo organizarla. Uso backend en TiDB usando MySQL, con roles de administrador y alumno, control de cupos y validaciones en tiempo real.',
+      en: 'This is a **schedule organizer**: a project that started at university and now is running in production. UCA Planner lets you lay out your week easily, on a visual grid, and spot overlaps before enrolling in course sections. Useful for students whose term is a bit of a mess and who do not know how to organize it. I use a TiDB backend on MySQL, with admin/student roles, capacity control and real time validation.',
     },
     role: {
       es: 'Desarrollo Backend en Flask, modelo de datos en MySQL usando TiDB y desarrollo frontend de la grilla visual de horarios, hecho con **Motion** para la experiencia de uso.',
@@ -623,11 +623,11 @@ export const projects = [
         },
         longDescription: {
           es: 'Esta es una representación de cómo se ve la página principal de UCA Planner: una interfaz hecha puramente con HTML, CSS y JavaScript, que utiliza **Motion** también en el frontend para tener una mejor experiencia de usuario. Consta de una pantalla de inicio de sesión y de registro simple, para poder hacer el organizador customizable para cada alumno y que cada uno guarde los horarios que arme. El stack es liviano a propósito: cinco dependencias.',
-          en: 'This is a representation of how the UCA Planner main page looks: an interface built purely with HTML, CSS and JavaScript, which also uses **Motion** on the frontend for a better user experience. It has a simple sign-in and sign-up screen, so the organizer can be customized per student and each one can save the schedules they build. The stack is deliberately light: five dependencies.',
+          en: 'This is a representation of how UCA Planner main page looks: an interface built purely with HTML, CSS and JavaScript, which also uses **Motion** on the frontend for a better user experience. It has a simple sign in and sign up screen, so the organizer can be customized per student and each one can save the schedules they build. The stack is deliberately light: five dependencies.',
         },
         description: {
-          es: 'La página principal de UCA Planner, hecha puramente con HTML, CSS y JavaScript, con **Motion** para la experiencia de uso. Consta de un inicio de sesión y registro simple, para que cada alumno guarde los horarios que arme. Stack liviano a propósito: cinco dependencias.',
-          en: 'The UCA Planner main page, built purely with HTML, CSS and JavaScript, with **Motion** for the experience. It has a simple sign-in and sign-up, so each student can save the schedules they build. Deliberately light stack: five dependencies.',
+          es: 'Página principal de UCA Planner, hecha puramente con HTML, CSS y JavaScript, con **Motion** para la experiencia de uso. Consta de un inicio de sesión y registro simple, para que cada alumno guarde los horarios que arme. Stack liviano a propósito: cinco dependencias.',
+          en: 'UCA Planner main page, built purely with HTML, CSS and JavaScript, with **Motion** for the experience. It has a simple sign in and sign up, so each student can save the schedules they build. Deliberately light stack: five dependencies.',
         },
       },
       {
@@ -645,12 +645,12 @@ export const projects = [
           ],
         },
         longDescription: {
-          es: 'La grilla semanal con las **materias de la cursada** elegidas, cada una con su color y su franja horaria, para detectar superposiciones de un vistazo antes de inscribirse. El cupo se verifica contra la base en el momento de inscribirse y no al armar la grilla: dos alumnos anotándose a la vez no pueden quedarse los dos con el último lugar. Usé el mismo criterio en los formularios, donde cada campo dispara su propia consulta y el error aparece al lado, no después de mandar todo.',
-          en: 'The weekly grid with the chosen **course subjects**, each with its own color and time slot, to spot overlaps at a glance before enrolling. Capacity is checked against the database at enrollment time, not while building the grid: two students enrolling at once cannot both take the last seat. I used the same approach on the forms, where each field fires its own request and the error shows up next to it, not after submitting.',
+          es: 'Organizador semanal con las **materias de la cursada** elegidas, cada una con su color y su franja horaria, para detectar superposiciones de un vistazo antes de inscribirse. El cupo se verifica contra la base en el momento de inscribirse y no al armar la grilla: dos alumnos anotándose a la vez no pueden quedarse los dos con el último lugar. Usé el mismo criterio en los formularios, donde cada campo dispara su propia consulta y el error aparece al lado, no después de mandar todo.',
+          en: 'Weekly organizer with the chosen **subjects**, each with its own color and time slot, to spot overlaps at a glance before enrolling. Capacity is checked against the database at enrollment time, not while building the grid: two students enrolling at once cannot both take the last seat. I used the same approach on the forms, where each field fires its own request and the error shows up next to it, not after submitting.',
         },
         description: {
-          es: 'La grilla semanal con las **materias de la cursada** elegidas, cada una con su color y su franja, para ver las superposiciones de un vistazo. El cupo se verifica contra la base al inscribirse y no al armar la grilla, así que dos alumnos a la vez no se quedan los dos con el último lugar.',
-          en: 'The weekly grid with the chosen **course subjects**, each with its color and slot, to see overlaps at a glance. Capacity is checked against the database at enrollment time, not while building the grid, so two students at once cannot both take the last seat.',
+          es: 'Organizador semanal con las **materias de la cursada** elegidas, cada una con su color y su franja, para ver las superposiciones de un vistazo. El cupo se verifica contra la base al inscribirse y no al armar la grilla, así que dos alumnos a la vez no se quedan los dos con el último lugar.',
+          en: 'Weekly organizer with the chosen **subjects**, each with its color and slot, to see overlaps at a glance. Capacity is checked against the database at enrollment time, not while building the grid, so two students at once cannot both take the last seat.',
         },
       },
     ],
@@ -665,12 +665,12 @@ export const projects = [
     year: '2025',
     status: 'live',
     description: {
-      es: 'Plataforma de turnos para centros de estética con dos paneles Filament separados, uno de administración y otro de cliente. Cubre servicios, empleados, estados del turno y cobros, sobre Laravel con Docker. Resuelve desde el panel lo mismo que el CRM desde el chat: agendar sin llamadas.',
-      en: 'Appointment platform for beauty centers with two separate Filament panels, one for administration and one for the client. It covers services, employees, appointment statuses and charges, on Laravel with Docker. It solves from the panel what the CRM solves from the chat.',
+      es: '**Plataforma de turnos** para centros de estética con dos paneles Filament separados, uno de administración y otro de cliente. Cubre servicios, empleados, estados del turno y cobros, sobre Laravel y Filament con Docker. ',
+      en: '**Appointment platform** for beauty centers with two separate Filament panels, one for administration and one for the client. It covers services, employees, appointment statuses and charges, on Laravel and Filament with Docker. ',
     },
     longDescription: {
-      es: 'Plataforma de turnos para centros de estética con dos paneles Filament separados: uno de administración y otro para el cliente. Cubre servicios, empleados y qué servicio presta cada uno, estados del turno, métodos de pago y cobros, sobre Laravel con Docker. Es el mismo problema que atacan los otros proyectos pero desde otro ángulo: acá el turno se agenda desde un panel propio y el **CRM de WhatsApp** lo agenda desde la conversación.',
-      en: 'Appointment platform for beauty centers with two separate Filament panels: one for administration and one for the client. It covers services, employees and which service each one provides, appointment statuses, payment methods and charges, on Laravel with Docker. It is the same problem the other projects attack, from another angle: here the appointment is booked from its own panel and the **WhatsApp CRM** books it from the conversation.',
+      es: '**Plataforma de turnos** para centros de estética con dos paneles Filament separados: uno de administración y otro para el cliente. Cubre servicios, empleados y qué servicio presta cada uno, estados del turno, métodos de pago y cobros, sobre Laravel con Docker. Es el mismo problema que atacan los otros proyectos pero desde otro ángulo: acá el turno se agenda desde un panel propio y el CRM de WhatsApp lo agenda desde la conversación.',
+      en: '**Appointment platform** for beauty centers with two separate Filament panels: one for administration and one for the client. It covers services, employees and which service each one provides, appointment statuses, payment methods and charges, on Laravel with Docker. It is the same problem the other projects attack, from another angle: here the appointment is booked from its own panel and the WhatsApp CRM books it from the conversation.',
     },
     role: {
       es: 'Desarrollo del sistema sobre Laravel + Filament y armado del entorno con Docker.',
@@ -733,12 +733,12 @@ export const projects = [
           ],
         },
         longDescription: {
-          es: 'Esta es una representación de cómo se ve el Login del sistema de turnos, con cuentas de demostración separadas por rol (dueño, encargado y líder), cada una con su propio alcance dentro del panel. Son dos paneles de Filament separados, uno de administración y otro de cliente, y no un panel único con permisos condicionales: separarlos a nivel de aplicación hace que el panel del cliente ni siquiera cargue las pantallas de admin, porque esas rutas no existen para él.',
+          es: 'Esta es una representación de cómo se ve el **Login** del sistema de turnos, con cuentas de demostración separadas por rol (dueño, encargado y líder), cada una con su propio alcance dentro del panel. Son dos paneles de Filament separados, uno de administración y otro de cliente, y no un panel único con permisos condicionales: separarlos a nivel de aplicación hace que el panel del cliente ni siquiera cargue las pantallas de admin, porque esas rutas no existen para él.',
           en: 'This is a representation of how the appointment system Login looks, with demo accounts split by role (owner, manager and leader), each with its own scope inside the panel. These are two separate Filament panels, one for administration and one for the client, and not a single panel with conditional permissions: splitting them at the application level means the client panel never even loads the admin screens, because those routes do not exist for them.',
         },
         description: {
-          es: 'El Login del sistema, con cuentas de demostración separadas por rol y cada una con su propio alcance. Son dos paneles de Filament separados y no un panel único con permisos: el panel del cliente ni siquiera carga las pantallas de admin, porque esas rutas no existen para él.',
-          en: 'The system Login, with demo accounts split by role and each with its own scope. These are two separate Filament panels, not one panel with permissions: the client panel never even loads the admin screens, because those routes do not exist for them.',
+          es: 'El **Login** del sistema, con cuentas de demostración separadas por rol y cada una con su propio alcance. Son dos paneles de Filament separados y no un panel único con permisos: el panel del cliente ni siquiera carga las pantallas de admin, porque esas rutas no existen para él.',
+          en: 'The system **Login**, with demo accounts split by role and each with its own scope. These are two separate Filament panels, not one panel with permissions: the client panel never even loads the admin screens, because those routes do not exist for them.',
         },
       },
       {
@@ -753,12 +753,12 @@ export const projects = [
           ],
         },
         longDescription: {
-          es: 'Muestra un poco cómo funciona el panel de disponibilidad semanal, con las duraciones de los turnos, franjas horarias por día y reglas de sobreturno, más las secciones de link de reserva, usuarios y reseñas. La disponibilidad se guarda como JSON en el turno y no como columnas fijas por día: con columnas fijas, sumar una franja nueva hubiera significado tocar el esquema. Así cada centro define sus horarios sin pedir una migración.',
-          en: 'It shows a bit of how the weekly availability panel works, with appointment durations, per-day time ranges and overbooking rules, plus the booking link, users and ratings sections. Availability is stored as JSON on the appointment instead of fixed per-weekday columns: with fixed columns, adding a new slot would have meant touching the schema. Now each center sets its own schedule without needing a migration.',
+          es: 'Muestra un poco cómo funciona el **panel de disponibilidad** semanal, con las duraciones de los turnos, franjas horarias por día y reglas de sobreturno, más las secciones de link de reserva, usuarios y reseñas. La disponibilidad se guarda como JSON en el turno y no como columnas fijas por día: con columnas fijas, sumar una franja nueva hubiera significado tocar el esquema. Así cada centro define sus horarios sin pedir una migración.',
+          en: 'It shows a bit of how the weekly **availability panel** works, with appointment durations, per-day time ranges and overbooking rules, plus the booking link, users and ratings sections. Availability is stored as JSON on the appointment instead of fixed per-weekday columns: with fixed columns, adding a new slot would have meant touching the schema. Now each center sets its own schedule without needing a migration.',
         },
         description: {
-          es: 'El panel de disponibilidad semanal: duración de los turnos, franjas por día y reglas de sobreturno, más link de reserva, usuarios y reseñas. La disponibilidad se guarda como JSON y no como columnas fijas por día, así cada centro define sus horarios sin pedir una migración.',
-          en: 'The weekly availability panel: appointment durations, per-day ranges and overbooking rules, plus booking link, users and ratings. Availability is stored as JSON instead of fixed per-weekday columns, so each center sets its own schedule without needing a migration.',
+          es: 'El **panel de disponibilidad** semanal: duración de los turnos, franjas por día y reglas de sobreturno, más link de reserva, usuarios y reseñas. La disponibilidad se guarda como JSON y no como columnas fijas por día, así cada centro define sus horarios sin pedir una migración.',
+          en: 'The weekly **availability panel**: appointment durations, per-day ranges and overbooking rules, plus booking link, users and ratings. Availability is stored as JSON instead of fixed per-weekday columns, so each center sets its own schedule without needing a migration.',
         },
       },
     ],
@@ -775,12 +775,12 @@ export const projects = [
     year: '2026',
     status: 'wip',
     description: {
-      es: 'Proyecto propio, todavía en desarrollo: una app web con **Agentes de IA** integrados en el flujo de trabajo, pensada para escalar a móvil. Es el primer producto que llevo de punta a punta por mi cuenta.',
-      en: 'My own project, still in development: a web app with **AI Agents** integrated into the workflow, designed to scale to mobile. It is the first product I am taking end to end on my own.',
+      es: 'Proyecto propio, todavía en desarrollo: una app web con **Agentes de IA** integrados en el flujo de trabajo, pensada para escalar a móvil. Es el primer producto que llevo de punta a punta por mi cuenta. ¿Qué resuelve? Intentaría resolver uno de los problemas más grandes de todo el mundo...',
+      en: 'My own project, still in development: a web app with **AI Agents** integrated into the workflow, designed to scale to mobile. It is the first product I am taking end to end on my own. What problem does it solve? It aims to tackle one of the world\'s biggest challenges... ',
     },
     longDescription: {
-      es: 'Proyecto propio, todavía en desarrollo: una aplicación web con **Agentes de IA** integrados en el flujo de trabajo, pensada desde el arranque para escalar a una app móvil. Es el primer producto que llevo de punta a punta por mi cuenta, desde la idea y la arquitectura hasta el despliegue. ¿Qué resuelve? Los Agentes ayudan al usuario dentro del propio flujo y no como un chat pegado al costado, y cada modelo está especializado en la tarea que mejor hace.',
-      en: 'My own project, still in development: a web application with **AI Agents** integrated into the workflow, designed from the start to scale into a mobile app. It is the first product I am taking end to end on my own, from idea and architecture through to deployment. What does it solve? The Agents help the user inside the flow itself and not as a chat bolted onto the side, and each model is specialized for the task it does best.',
+      es: 'Proyecto propio, todavía en desarrollo: una aplicación web con **Agentes de IA** integrados en el flujo de trabajo, pensada desde el arranque para escalar a una app móvil. Es el primer producto que llevo de punta a punta por mi cuenta, desde la idea y la arquitectura hasta el despliegue. ¿Qué resuelve? Resuelve un problema muy importante en la vida de las personas en donde los Agentes ayudan al usuario y cada modelo está especializado en la tarea que mejor hace.',
+      en: 'My own project, still in development: a web application with **AI Agents** integrated into the workflow, designed from the start to scale into a mobile app. It is the first product I am taking end to end on my own, from idea and architecture through to deployment. What does it solve? It solves a problem that matters a great deal in people\'s lives, where the Agents help the user directly and each model is specialized in the task it does best.',
     },
     role: {
       es: 'Desarrollo completo de la aplicación: producto, arquitectura e infraestructura. Diseño de backend, de frontend, de la marca y el logo, y de la estructura económica del proyecto.',
@@ -799,7 +799,14 @@ export const projects = [
     // hueco vacío, porque dice explícitamente "todavía no hay". Los tres "qué resuelve" que
     // vivían acá se mudaron a `longDescription`, donde se leen como frases y no como
     // titulares.
-    impact: { kind: 'pending' },
+    impact: {
+      kind: 'metrics', // ACORDARSE DE ELIMINAR LAS DEPENDENCIAS QUE TENIA EL KIND DE 'pending' PARA QUE NO HAYA CODIGO MUERTO
+      items: [
+        { value: 99, label: { es: 'creatividad', en: 'creativity' } },
+        { value: 99, label: { es: 'innovación', en: 'innovation' } },
+        { value: 99, label: { es: 'pasión', en: 'passion' } },
+      ],
+    },
     color: 'from-blue-800 to-darkblue-600',
     icon: 'Zap',
     imageBackground: '/projects/app.png',
