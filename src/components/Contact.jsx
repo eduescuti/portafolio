@@ -71,8 +71,8 @@ export default function Contact() {
             </h2>
             <p className="mb-6 max-w-xl text-base text-slate-400 sm:text-lg lg:mb-10">
               {lang === 'es'
-                ? 'Estoy buscando oportunidades part-time o pasantías. ¡No dudes en escribirme!'
-                : "I'm looking for part-time opportunities or internships. Don't hesitate to reach out!"}
+                ? 'Abierto a nuevas oportunidades, colaboraciones y proyectos ambiciosos. ¡No dudes en escribirme!'
+                : "Open to opportunities, collaborations, and exciting projects. Don't hesitate to reach out!"}
             </p>
           </Reveal>
 
