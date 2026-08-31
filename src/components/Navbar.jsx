@@ -4,6 +4,7 @@ import { navLinks } from '../data/portfolio'
 import { useLanguage } from '../context/LanguageContext'
 import { scrollToSection, getNavHeight } from '../lib/scrollTo'
 import { useCoarsePointer } from '../lib/useDeviceCapabilities'
+import LanguageHint from './LanguageHint'
 
 // Arriba de todo la barra siempre se ve (mismo umbral que usa el fondo).
 const TOP_THRESHOLD = 40
@@ -162,6 +163,13 @@ export default function Navbar() {
         onClick={() => setOpen(false)}
         aria-hidden={!open}
       />
+
+      {/* Hermano del <header>, no hijo: el header se va de pantalla con
+          `-translate-y-full`, y adentro el aviso desaparecería exactamente cuando
+          tiene que aparecer. La otra mitad de la condición —estar en el Hero— la
+          resuelve el propio aviso: al navbar no le corresponde saber qué sección
+          se está mirando. */}
+      <LanguageHint navbarHidden={!visible} />
 
       <header
         onFocus={(e) => {

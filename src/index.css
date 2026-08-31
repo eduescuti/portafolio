@@ -10,6 +10,9 @@
 @theme {
   --font-sans: "Inter", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", monospace;
+  /* Sólo la usa el aviso de idioma: es una voz aparte a propósito, para que no se lea
+     como una parte más del navbar. */
+  --font-hand: "Caveat", "Segoe Script", cursive;
   --color-navy-950: #0a1628;
   --color-navy-900: #0f2340;
   --color-navy-800: #1e3a5f;
@@ -761,4 +764,70 @@ textarea {
 /* Textura de ruido tenue para el fondo global (evita el look "plano"). */
 .bg-noise {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+/* ─────────────────────────────────────────────────────────────────────────────
+   Aviso de idioma (ver src/components/LanguageHint.jsx)
+
+   El bucle interno —la flecha dibujándose y las dos frases turnándose— es CSS y no
+   Motion a propósito: corre en el compositor y no re-renderiza React tres veces cada
+   siete segundos. Motion se usa en el sitio para lo que reacciona al usuario; esto es
+   ambiente, y no depende de ningún estado.
+
+   Los tres tiempos están sincronizados sobre el MISMO ciclo de 7s. Si se toca uno hay
+   que tocar los tres, o la flecha termina desapareciendo con una frase a medio entrar.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* Los tres trazos van normalizados con pathLength="1" en el JSX, así que el offset
+   recorre el trazo entero mida lo que mida. Sin eso los largos reales —69.4 la curva,
+   14.1 y 15.0 las puntas— quedaban muy por debajo del dasharray, y el trazo no llegaba
+   a verse hasta pasado medio recorrido: no se dibujaba, aparecía ya empezado. */
+@keyframes hint-draw {
+  0%        { stroke-dashoffset: 1; }
+  11%, 86%  { stroke-dashoffset: 0; }
+  97%, 100% { stroke-dashoffset: 1; }
+}
+
+/* La punta arranca cuando el trazo ya va por la mitad: dibujarla al mismo tiempo que
+   la curva hace que la flecha aparezca antes de tener a dónde apuntar. A la vuelta el
+   orden se invierte solo, porque termina de recogerse antes que la curva. */
+@keyframes hint-draw-tip {
+  0%, 9%    { stroke-dashoffset: 1; }
+  17%, 86%  { stroke-dashoffset: 0; }
+  94%, 100% { stroke-dashoffset: 1; }
+}
+
+@keyframes hint-phrase-a {
+  0%, 6%    { opacity: 0; transform: translateY(9px);  filter: blur(5px); }
+  14%, 38%  { opacity: 1; transform: translateY(0);    filter: blur(0); }
+  45%, 100% { opacity: 0; transform: translateY(-9px); filter: blur(5px); }
+}
+
+@keyframes hint-phrase-b {
+  0%, 44%   { opacity: 0; transform: translateY(9px);  filter: blur(5px); }
+  52%, 84%  { opacity: 1; transform: translateY(0);    filter: blur(0); }
+  91%, 100% { opacity: 0; transform: translateY(-9px); filter: blur(5px); }
+}
+
+/* La flecha no se apaga: se retrae. El offset vuelve a 1 y el trazo se recoge hacia
+   la cola, que es el mismo gesto de dibujarlo al revés; un `opacity: 0` plano era un
+   adiós distinto del de las frases, que se van con desenfoque y desplazamiento.
+   El easing tampoco es el expo de las frases: acá el trazo tiene que avanzar a
+   velocidad de mano, y un expo se come el recorrido en el primer cuadro. */
+.hint-stroke {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: hint-draw 7s cubic-bezier(0.4, 0, 0.25, 1) infinite;
+}
+.hint-stroke--tip { animation-name: hint-draw-tip; }
+
+.hint-phrase   { opacity: 0; animation: hint-phrase-a 7s cubic-bezier(0.22, 1, 0.36, 1) infinite; }
+.hint-phrase--b { animation-name: hint-phrase-b; }
+
+/* Un objeto que se dibuja solo y late cada siete segundos es exactamente lo que
+   `prefers-reduced-motion` pide evitar. Sin movimiento queda la flecha entera y una
+   sola frase, quietas: el mensaje se sigue entendiendo. */
+@media (prefers-reduced-motion: reduce) {
+  .hint-stroke  { animation: none; stroke-dashoffset: 0; }
+  .hint-phrase  { animation: none; opacity: 1; }
+  .hint-phrase--b { opacity: 0; }
 }
