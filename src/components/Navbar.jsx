@@ -19,7 +19,7 @@ function MenuToggle({ open, onClick, label }) {
     <button
       type="button"
       onClick={onClick}
-      className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-300 transition hover:border-accent/30 hover:bg-white/10 hover:text-white md:hidden"
+      className="relative flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-300 transition hover:border-accent/30 hover:bg-white/10 hover:text-white md:hidden"
       aria-label={label}
       aria-expanded={open}
     >
@@ -185,11 +185,11 @@ export default function Navbar() {
           visible ? 'translate-y-0 opacity-100' : 'pointer-events-none -translate-y-full opacity-0'
         } ${open ? 'mobile-nav-header--open' : ''}`}
       >
-        <nav className="relative mx-auto flex max-w-6xl items-center justify-between px-6 py-3.5 md:px-8 md:py-4">
+        <nav className="relative mx-auto flex max-w-6xl items-center justify-between px-6 py-5 md:px-10 md:py-7">
           <button
             type="button"
             onClick={() => scrollTo('hero')}
-            className="group text-lg font-bold tracking-tight text-white transition hover:text-accent"
+            className="group text-xl font-bold tracking-tight text-white transition hover:text-accent md:text-2xl"
           >
             EE
             <span className="text-accent transition group-hover:text-accent-light">.</span>
@@ -203,7 +203,7 @@ export default function Navbar() {
                 <button
                   type="button"
                   onClick={() => scrollTo(link.id)}
-                  className="rounded-lg px-3 py-2 text-sm font-medium text-slate-300 transition hover:bg-white/5 hover:text-white"
+                  className="rounded-lg px-4 py-2.5 text-base font-medium text-slate-300 transition hover:bg-white/5 hover:text-white"
                 >
                   {t(link)}
                 </button>
@@ -222,7 +222,7 @@ export default function Navbar() {
               }`}
               aria-label="Toggle language"
             >
-              <Globe size={15} />
+              <Globe size={16} />
               {lang.toUpperCase()}
             </button>
 

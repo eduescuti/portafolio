@@ -3,11 +3,13 @@ import {
   BarChart3,
   Calendar,
   Check,
+  Clapperboard,
   ExternalLink,
   FolderOpen,
   GraduationCap,
   Images,
   Link2,
+  MapPin,
   MessageSquare,
   Zap,
 } from 'lucide-react'
@@ -18,7 +20,7 @@ import CardFlipper from './CardFlipper'
 import ImpactBlock from './ImpactBlock'
 import TechRow from './TechRow'
 
-const iconMap = { BarChart3, MessageSquare, Zap, Calendar, GraduationCap }
+const iconMap = { BarChart3, MessageSquare, Zap, Calendar, GraduationCap, MapPin, Clapperboard }
 
 // Radio de la figurita. No usa el `lg:rounded-[2rem]` de la carta del Hero: esa es
 // vertical y grande, y 32px de radio sobre una carta horizontal de 224px de alto se comen

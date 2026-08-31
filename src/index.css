@@ -23,13 +23,13 @@
    de la sección al aterrizar por ancla. Es la única fuente de verdad: el JS la
    lee con getNavHeight() (src/lib/scrollTo.js) y el CSS la usa de fallback. */
 :root {
-  --nav-h: 67px;
+  --nav-h: 85px;
   --nav-gap: 32px;
 }
 
 @media (min-width: 768px) {
   :root {
-    --nav-h: 72px;
+    --nav-h: 95px;
   }
 }
 
@@ -53,29 +53,56 @@ section[id] {
   scroll-margin-top: calc(var(--nav-h) + var(--nav-gap));
 }
 
-/* Cursor personalizado: oculta el nativo solo en desktop con puntero fino.
-   En táctil o reduced-motion se conserva el cursor del sistema.
+/* Cursor personalizado: dos PNG servidos como cursor NATIVO del navegador
+   (public/cursors/), no un <div> siguiendo al mouse.
 
-   `.cursor-pointer` y `[data-cursor="hover"]` están en la lista por una razón de cascada,
-   no de estilo. La utilidad `cursor-pointer` de Tailwind es una CLASE (0,1,0) y le gana por
-   especificidad a `button` (0,0,1), así que cualquier elemento con esa clase reponía la
-   manita NATIVA encima del cursor custom: se veían los dos a la vez. Pasaba en la figurita
-   de la grilla (un <button class="cursor-pointer">) y, sobre todo, en las cartas de fondo
-   del mazo, que son <div> con un onClick de atajo y por lo tanto ni siquiera entraban por
-   `button` o `[role="button"]`.
+   Antes esto era un componente de React que dibujaba un punto y un anillo con física
+   de resorte. Se cayó entero, y la razón de fondo es que un cursor pintado por JS
+   NUNCA puede alcanzar al puntero real: el navegador mueve el cursor del sistema en el
+   compositor y el div va un frame o más atrás, así que al mover rápido siempre se
+   separan. Con `cursor: url(...)` lo dibuja el navegador en el mismo lugar donde
+   dibujaría la flecha del sistema: cero retraso, cero JS, y sigue andando mientras la
+   página está ocupada.
 
-   Repitiendo el selector acá el empate de especificidad lo desempata el orden: este bloque
-   va después del `@import "tailwindcss"` del principio del archivo, así que gana.
+   Son dos "tipos" de cursor, como en cualquier sistema operativo:
+     · arrow.png — navegar. Es el estado por defecto de toda la página.
+     · hand.png  — algo que se puede clickear: links, botones, cartas del mazo.
 
-   El `cursor-pointer` se conserva igual en el marcado: es lo único que le queda al usuario
-   con reduced-motion, donde este bloque no aplica y el cursor custom ni se monta. */
-@media (hover: hover) and (pointer: fine) {
-  @media (prefers-reduced-motion: no-preference) {
-    html, a, button, [role="button"], input, textarea, select, label,
-    .cursor-pointer, [data-cursor="hover"] {
-      cursor: none;
-    }
-  }
+   Los dos números después de la URL son el HOTSPOT: qué píxel del dibujo es el que
+   realmente clickea. En la flecha es su vértice de arriba a la izquierda; en la mano,
+   la punta del índice. Sin eso el click cae en el centro de la imagen y todo el sitio
+   se siente corrido.
+
+   `.cursor-pointer` y `[data-cursor="hover"]` están en la lista por una razón de
+   cascada, no de estilo. La utilidad `cursor-pointer` de Tailwind es una CLASE (0,1,0)
+   y le gana por especificidad a `button` (0,0,1), así que cualquier elemento con esa
+   clase repondría el cursor de Tailwind encima del nuestro. Repitiéndola acá el empate
+   de especificidad lo desempata el orden: este bloque va después del
+   `@import "tailwindcss"` del principio del archivo, así que gana.
+
+   El fallback después de la coma (`auto` / `pointer`) es lo que se usa si el PNG no
+   carga, y es obligatorio: sin él la regla entera es inválida. */
+html,
+body {
+  cursor: url('/cursors/arrow.png') 6 2, auto;
+}
+
+a,
+button,
+[role="button"],
+select,
+label,
+summary,
+.cursor-pointer,
+[data-cursor="hover"] {
+  cursor: url('/cursors/hand.png') 15 3, pointer;
+}
+
+/* Los campos de texto conservan el cursor de texto: ahí el cursor no informa "esto se
+   clickea" sino dónde va a caer el cursor de escritura. */
+input:not([type='button']):not([type='submit']):not([type='checkbox']):not([type='radio']),
+textarea {
+  cursor: text;
 }
 
 ::selection {

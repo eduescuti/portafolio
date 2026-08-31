@@ -9,7 +9,6 @@ import Footer from './components/Footer'
 import ScrollToTop from './components/ScrollToTop'
 import GlobalBackground from './components/GlobalBackground'
 import SmoothScroll from './components/SmoothScroll'
-import CustomCursor from './components/CustomCursor'
 
 export default function App() {
   return (
@@ -20,7 +19,6 @@ export default function App() {
       <MotionConfig reducedMotion="user">
         <SmoothScroll />
         <GlobalBackground />
-        <CustomCursor />
         <div className="relative min-h-[100svh] overflow-x-hidden">
           <Navbar />
           <main>

@@ -27,7 +27,12 @@ import {
   SiChatwoot,
   SiNodedotjs,
   SiClaude,
-  SiWhatsapp
+  SiWhatsapp,
+  SiVite,
+  SiVercel,
+  SiGithubactions,
+  SiYoutube,
+  SiHostinger
 } from 'react-icons/si'
 // AWS no está en Simple Icons (Amazon lo sacó por su política de marca), así que el
 // único logo disponible en react-icons viene del set de Font Awesome. Cuesta ~2 kB.
@@ -69,5 +74,10 @@ export const techIcons = {
   JWT: SiJsonwebtokens,
   Chatwoot: SiChatwoot,
   'Node.js': SiNodedotjs,
-  Whatsapp: SiWhatsapp
+  Whatsapp: SiWhatsapp,
+  Vite: SiVite,
+  Vercel: SiVercel,
+  'GitHub Actions': SiGithubactions,
+  YouTube: SiYoutube,
+  Hostinger: SiHostinger
 }

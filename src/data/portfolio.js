@@ -764,6 +764,163 @@ export const projects = [
     ],
   },
   {
+    id: 'latinsco',
+    folder: 'latinsco',
+    title: { es: 'Web del Canal', en: 'Channel Website' },
+    subtitle: { es: 'LATINSCO', en: 'LATINSCO' },
+    rarity: 'rare',
+    serie: 'LATINSCO',
+    year: '2026',
+    status: 'live',
+    description: {
+      es: 'Sitio por encargo para **LATINSCO**, un canal sobre emprendedores de LATAM, armado como un catálogo de streaming: cuatro series en carriles y un único modal de video. Mejoras de frontend con buenos diseños UX/UI para mejor experiencia de usuario.',
+      en: 'Commissioned site for **LATINSCO**, a channel about LATAM founders, built as a streaming catalogue: four series in rails and a single video modal. Frontend work with solid UX/UI design for a better user experience.',
+    },
+    longDescription: {
+      es: 'Sitio hecho por encargo para **LATINSCO**, un canal sobre el ecosistema emprendedor latinoamericano. Es el catálogo del canal en formato streaming: cuatro series en carriles, 48 capítulos y un solo modal de video. Desarrollé una mejora en el frontend con un mejor diseño de UX/UI para una mejor experiencia para el usuario, con interfaces de audio y video para poder visualizar los videos del propio canal de LATINSCO.',
+      en: 'Commissioned site for **LATINSCO**, a channel about the Latin American startup ecosystem. It is the channel catalogue in streaming format: four series in rails, 48 episodes and a single video modal. I built a frontend upgrade with better UX/UI design for a better user experience, with audio and video interfaces to watch the videos from LATINSCO\'s own channel.',
+    },
+    role: {
+      es: 'Diseño y desarrollo completo del sitio en React: el lenguaje de movimiento, el pipeline de métricas de YouTube y el deploy automático por FTP a Hostinger.',
+      en: 'Full design and development of the site in React: the motion language, the build-time YouTube metrics pipeline and the automatic FTP deploy to Hostinger.',
+    },
+    tech: ['React', 'Vite', 'Tailwind CSS', 'JavaScript', 'HTML / CSS', 'YouTube',
+      'PHP', 'Hostinger', 'GitHub Actions', 'Git', 'GitHub', 'Claude Code', 'AI Cursor'],
+    highlights: {
+      es: [
+        'Catálogo tipo streaming', 'Carriles por serie', 'Un solo player',
+        'Métricas horneadas en el build', 'Proxy PHP con caché', 'Deploy por FTP',
+        'Movimiento cinematográfico', 'UX/UI Design',
+      ],
+      en: [
+        'Streaming-style catalogue', 'Rails per series', 'One single player',
+        'Metrics baked at build time', 'PHP proxy with cache', 'FTP deploy',
+        'Cinematic motion', 'UX/UI Design',
+      ],
+    },
+    // Mismo criterio que 'uca-planner': números de escala del sitio, no del canal. Los
+    // suscriptores y las vistas son del CLIENTE y salen de su contenido, no de este
+    // código: por eso no están acá, ni con nota. Lo que sí es de este proyecto es cuánto
+    // catálogo sostiene la página y con qué está construida.
+    impact: {
+      kind: 'metrics',
+      items: [
+        { value: 48, label: { es: 'capítulos', en: 'episodes' } },
+        { value: 4, label: { es: 'series', en: 'series' } },
+        { value: 20, label: { es: 'componentes', en: 'components' } },
+      ],
+    },
+    color: 'from-slate-700 to-blue-900',
+    icon: 'Clapperboard',
+    url: 'https://latinsco.com',
+    imageBackground: '/projects/latinsco.png',
+    previews: [
+      {
+        src: '/projects/previews/latinsco-1.png',
+        title: { es: 'Carriles de series', en: 'Series rails' },
+        impact: {
+          kind: 'metrics',
+          items: [
+            { value: 4, label: { es: 'series', en: 'series' } },
+            { value: 48, label: { es: 'capítulos', en: 'episodes' } },
+            { value: 3, label: { es: 'tamaños de imagen', en: 'image sizes' } },
+          ],
+        },
+        longDescription: {
+          es: 'Las cuatro series viven en carriles en las que se pueden desplazar libremente y el catálogo entero es **estático a propósito**: los capítulos están escritos en un archivo de datos con su id de YouTube. El verdadero desafío fue cómo manejar las miniaturas: salen directo de los servidores de YouTube y se elige la calidad según dónde se dibuja la imagen, para poder renderizar las imagenes de una mejor manera.',
+          en: 'The four series live in rails you can scroll through freely, and the whole catalogue is **static on purpose**: the episodes are written in a data file with their YouTube id. The real challenge was handling the thumbnails: they come straight from YouTube servers and the quality is picked by where the image is drawn, to render the images in a better way.',
+        },
+        description: {
+          es: 'Las cuatro series viven en carriles en las que se pueden desplazar libremente. El catálogo es **estático a propósito** y las miniaturas salen directo de YouTube, con la calidad elegida según dónde se dibuja cada imagen.',
+          en: 'The four series live in rails you can scroll through freely. The catalogue is **static on purpose** and the thumbnails come straight from YouTube, at the quality picked by where each image is drawn.',
+        },
+      },
+    ],
+  },
+  {
+    id: 'donde-vamos',
+    folder: 'donde-vamos',
+    title: { es: '¿Dónde vamos?', en: '¿Dónde vamos?' },
+    subtitle: { es: 'Proyecto personal', en: 'Personal project' },
+    rarity: 'rare',
+    serie: { es: 'Proyecto propio', en: 'Personal project' },
+    year: '2026',
+    status: 'live',
+    description: {
+      es: 'Comparador de **presupuesto por persona** y muestra de **destinos** para decidir un viaje entre amigos. El proyecto está pensado únicamente para uso personal, pero podría escalar e intentar hacerlo para muchas más personas también algún día.',
+      en: '**Per-person budget** comparator and **destination** browser for deciding a trip among friends. The project is meant for personal use only, but it could scale and one day be opened up to a lot more people.',
+    },
+    longDescription: {
+      es: 'Una página para que un grupo de amigos decida a dónde viajar mirando el **presupuesto por persona** y pueda organizar incluso también el **destino** de su viaje. El proyecto puede estar pensado para poder escalarlo todavía a más, pero hoy en día únicamente lo utilizo para mi y mi grupo de amigos. Tiene un sistema de votación severless que puede mantenerse según qué dispositivo y qué browser estés usando.',
+      en: 'A page for a group of friends to decide where to travel by looking at the **per-person budget**, and to organise the **destination** of the trip as well. The project could be scaled up further, but today I only use it for me and my group of friends. It has a serverless voting system that carries over depending on which device and which browser you are using.',
+    },
+    role: {
+      es: 'Producto, diseño y desarrollo completo: el front sin framework ni build, el job diario de GitHub Actions y la función serverless de votación sobre Redis.',
+      en: 'Product, design and full development: the frontend with no framework or build, the daily GitHub Actions job and the serverless voting function on Redis.',
+    },
+    tech: ['JavaScript', 'HTML / CSS', 'Node.js', 'Vercel', 'GitHub Actions', 'Redis',
+      'Git', 'GitHub', 'Claude Code', 'AI Cursor'],
+    highlights: {
+      es: [
+        'Presupuesto por persona', 'Actualización diaria', 'Avión vs. auto',
+        'Curva de 30 días', 'Votación compartida', 'Varios planes de viaje',
+        'Sin build ni dependencias', 'UX/UI Design',
+      ],
+      en: [
+        'Per-person budget', 'Daily updates', 'Plane vs. car',
+        '30-day curve', 'Shared voting', 'Several trip plans',
+        'No build, no dependencies', 'UX/UI Design',
+      ],
+    },
+    // Mismo criterio que 'uca-planner': números de escala del proyecto, no de negocio.
+    // El 0 no es un hueco: es el dato. El sitio no tiene un solo paquete de npm, y por eso
+    // entra entero en el plan gratis de Vercel — es la decisión que define al proyecto.
+    impact: {
+      kind: 'metrics',
+      items: [
+        { value: 12, label: { es: 'destinos comparados', en: 'destinations compared' } },
+        { value: 3, label: { es: 'planes de viaje', en: 'trip plans' } },
+        { value: 7, label: { es: 'propuestas', en: 'proposals' } },
+      ],
+    },
+    // En mobile "destinos comparados" no entra en una columna de ~95px. Las tres etiquetas
+    // cortas dicen lo mismo: el contexto de qué se compara ya lo da el resto de la carta.
+    impactMobile: {
+      kind: 'metrics',
+      items: [
+        { value: 12, label: { es: 'destinos', en: 'destinations' } },
+        { value: 3, label: { es: 'planes', en: 'plans' } },
+        { value: 7, label: { es: 'propuestas', en: 'proposals' } },
+      ],
+    },
+    color: 'from-teal-700 to-emerald-900',
+    icon: 'MapPin',
+    url: 'https://donde-vamos.vercel.app/',
+    imageBackground: '/projects/donde-vamos.png',
+    previews: [
+      {
+        src: '/projects/previews/donde-vamos-1.png',
+        title: { es: 'Comparador de destinos', en: 'Destination comparison' },
+        impact: {
+          kind: 'metrics',
+          items: [
+            { value: 7, label: { es: 'propuestas', en: 'proposals' } },
+            { value: 3, label: { es: 'modos de viaje', en: 'travel modes' } },
+            { value: 30, label: { es: 'días de curva', en: 'days of history' } },
+          ],
+        },
+        longDescription: {
+          es: 'Cada plan abre su propia lista, ordenada de más barato a más caro y con el número por persona, porque es lo único que define si alguien se suma al viaje o no. Para le gestión de los viajes siempre es ideal tener los precios actualizados para saber cuánto va a costarnos el viaje, esto nos ahorra tiempo. Incluso tiene la posibilidad también de buscar a través de **Airbnb** los distintos hospedajes de la zona de destino.',
+          en: 'Each plan opens its own list, sorted cheapest first and with the per-person number, because that is the one thing that decides whether someone joins the trip or not. For planning a trip it is always ideal to have up-to-date prices, to know what it is going to cost us: that saves us time. It can even search **Airbnb** for the places to stay around the destination.',
+        },
+        description: {
+          es: 'Cada plan abre su lista ordenada de más barato a más caro, con el número por persona. Esto para una gestión de viajes con amigos es de gran ayuda porque puede optimizar mucho tiempo de trabajo de búsqueda. Incluso tiene la posibilidad de buscar a través de **Airbnb** también.',
+          en: 'Each plan opens its list sorted cheapest first, with the per-person number. For planning trips with friends this is a big help, because it saves a lot of time spent searching. It can even search through **Airbnb** as well.',
+        },
+      },
+    ],
+  },
+  {
     id: 'coming-soon',
     folder: '...',
     title: { es: 'Próximamente...', en: 'Coming soon...' },
