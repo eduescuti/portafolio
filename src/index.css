@@ -528,6 +528,33 @@ textarea {
   @apply mb-3 inline-block font-mono text-xs font-medium uppercase tracking-widest text-accent;
 }
 
+/* Autocompletado del navegador: Chrome/Edge/Safari pintan el input con un fondo claro
+   (!important en su hoja UA) y texto negro. El fondo no se puede pisar directo, así que
+   se "congela" su transición por horas: el cambio nunca llega a verse y queda el fondo
+   translúcido propio del input. El texto y el caret se fuerzan a blanco. */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus {
+  -webkit-text-fill-color: #fff;
+  caret-color: #fff;
+  transition:
+    background-color 600000s 0s,
+    color 600000s 0s,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+/* Firefox usa :autofill con un tinte amarillo vía background-image/filter. */
+input:autofill,
+textarea:autofill {
+  background-image: none;
+  filter: none;
+  -webkit-text-fill-color: #fff;
+}
+
 /* Links de contacto: el tile del ícono toma el color de cada red (--lc), y en
    hover/tap se tiñe el borde y avanza el chevron. Todo en CSS (sin JS por fila). */
 .contact-link {
